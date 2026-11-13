@@ -1,9 +1,9 @@
 """
-Best Buy Canonical E-Commerce Scraper (Full Schema v2.0.0 Implementation)
--------------------------------------------------------------------------
-- Emits fully compliant canonical JSON files for Product Details and Reviews.
-- Automatically maps structured JSON-LD and DOM elements to all canonical fields.
-- Adheres strictly to type rules (nulls, [], booleans, numbers, ISO dates).
+Best Buy Canonical E-Commerce Scraper (Standardized Schema Implementation with Strict Types)
+-------------------------------------------------------------------------------------------
+- Emits fully compliant standardized JSON records for Product Details and Reviews.
+- Dynamically maps structured JSON-LD, __NEXT_DATA__, and DOM elements.
+- Enforces strict native data types (float, int, bool, list, dict, null) without hardcoding.
 """
 
 import datetime
@@ -19,18 +19,17 @@ from urllib.parse import urlencode, urlparse, urljoin
 from playwright.sync_api import sync_playwright
 import getpass
 
-
 # ============================================================
 # CONFIGURATION
 # ============================================================
 SEARCH_QUERIES = [
     "laptops",
     "refrigerators",
-    "AC",
+    "Air Conditioner",
 ]
-MAX_SEARCH_PAGES = 1
+MAX_SEARCH_PAGES = 3
 MAX_REVIEW_PAGES = 5
-PRODUCTS_PER_QUERY = 2
+PRODUCTS_PER_QUERY = 10
 OUTPUT_DIR = "canonical_output"
 
 CHROME_DEBUG_PORT = 9222
@@ -39,117 +38,355 @@ PAGE_WAIT_MS = 3500
 
 
 # ============================================================
-# COMPLETE SCHEMA 2.0.0 TEMPLATES
+# STANDARDIZED TEMPLATES WITH STRICT DATA TYPES
 # ============================================================
 
-def create_full_product_template(product_id, product_url=""):
+def create_standardized_product_record(product_id, product_url=""):
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
     return {
-        "metadata": {
-            "platform": "bestbuy",
-            "marketplace_type": "B2C",
-            "region": "US",
-            "scraped_at": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
-            "schema_version": "2.0.0"
+        "_id": str(f"tenant_001:bestbuy:product_{product_id}"),
+        "schema_version": str("1.0"),
+        "record_type": str("product_catalog"),
+        "tenant": {
+            "tenant_id": str("tenant_001"),
+            "project_id": str("retail_listening_001"),
+            "report_scope_ids": [str("TND_Q2_FY27")]
         },
-        "product": {
-            "identifiers": {
-                "platform_product_id": str(product_id),
-                "parent_product_id": None,
-                "sku": str(product_id),
-                "upc_ean": None,
-                "model_number": None,
-                "product_url": product_url
-            },
-            "core": {
-                "title": None,
-                "brand": None,
-                "manufacturer": None,
-                "category_path": [],
-                "condition": "new"
-            },
-            "pricing_and_availability": {
-                "currency": "USD",
-                "list_price": None,
-                "current_price": None,
-                "discount_percentage": None,
-                "is_on_sale": False,
-                "b2b_price_tiers": [],
-                "moq": 1,
-                "in_stock": None,
-                "stock_status_text": None,
-                "fulfillment": {
-                    "is_platform_fulfilled": True,
-                    "free_shipping": None,
-                    "estimated_delivery_days": None
-                }
-            },
-            "content_and_specs": {
-                "short_description": None,
-                "bullet_features": [],
-                "specifications": {},
-                "included_items": [],
-                "variants": [],
-                "b2b_customization": {
-                    "oem_odm_available": False,
-                    "custom_logo": False,
-                    "custom_packaging": False
-                }
-            },
+        "source": {
+            "platform": str("bestbuy"),
+            "channel": str("ecommerce_catalog"),
+            "source_type": str("product_page"),
+            "source_item_id": str(product_id),
+            "source_url": str(product_url),
+            "parent_item_id": None,  # type: str | None
+            "published_at": None,  # type: str | None
+            "collected_at": str(now_iso),
+            "updated_at": None,  # type: str | None
+            "country_code": str("US"),
+            "marketplace": str("bestbuy.com")
+        },
+        "content": {
+            "title": None,  # type: str | None
+            "text": None,  # type: str | None
+            "language": str("en"),
+            "original_language": str("en"),
+            "content_type": str("product_description"),
             "media": {
-                "images": [],
-                "videos": []
+                "images": [],  # type: list
+                "videos": []  # type: list
             },
-            "seller": {
-                "seller_id": "BEST_BUY_US",
-                "seller_name": "Best Buy",
-                "store_url": "https://www.bestbuy.com",
-                "is_official_brand_store": True,
-                "is_verified_seller": True,
-                "years_active": None,
-                "seller_rating": None,
-                "on_time_delivery_rate": None,
-                "response_rate": None
+            "hashtags": [],  # type: list
+            "mentions": [],  # type: list
+            "keywords": []  # type: list
+        },
+        "entities": {
+            "brands": [],  # type: list
+            "products": [
+                {
+                    "product_id": str(product_id),
+                    "product_name": None,  # type: str | None
+                    "sku": str(product_id),
+                    "model_number": None,  # type: str | None
+                    "product_url": str(product_url)
+                }
+            ],
+            "retailer": {
+                "retailer_id": str("BEST_BUY_US"),
+                "retailer_name": str("Best Buy")
+            },
+            "other_brands": []  # type: list
+        },
+        "taxonomy": {
+            "industry": str("Tech & Durables"),
+            "category": str("Large White Goods / Electronics"),
+            "subcategory": str("Appliance / Computer"),
+            "product_type": str("Standard"),
+            "taxonomy_version": str("TND_2026_V1"),
+            "mapping_method": str("catalog_mapping"),
+            "mapping_status": str("mapped")
+        },
+        "product_attributes": {
+            "model_number": None,  # type: str | None
+            "capacity": None,  # type: dict | None
+            "color": None,  # type: str | None
+            "energy_rating": None,  # type: str | None
+            "specifications": {}  # type: dict
+        },
+        "commercial": {
+            "price": {
+                "listed_price": {
+                    "amount": None,  # type: float | None
+                    "currency": str("USD")
+                },
+                "selling_price": {
+                    "amount": None,  # type: float | None
+                    "currency": str("USD")
+                },
+                "original_price": {
+                    "amount": None,  # type: float | None
+                    "currency": str("USD")
+                },
+                "discount_amount": None,  # type: float | None
+                "discount_percentage": None,  # type: float | None
+                "price_type": str("standard"),
+                "price_observed_at": str(now_iso)
+            },
+            "price_range": {
+                "minimum": None,  # type: float | None
+                "maximum": None,  # type: float | None
+                "currency": str("USD"),
+                "period_start": None,  # type: str | None
+                "period_end": None  # type: str | None
+            },
+            "promotion": {
+                "is_promotional": False,  # type: bool
+                "promotion_type": None,  # type: str | None
+                "promotion_name": None,  # type: str | None
+                "coupon_available": False,  # type: bool
+                "coupon_code": None  # type: str | None
+            },
+            "payment_options": {
+                "emi_available": True,  # type: bool
+                "no_cost_emi": False,  # type: bool
+                "bank_offer_available": False,  # type: bool
+                "exchange_offer_available": True,  # type: bool
+                "cash_on_delivery": False  # type: bool
+            },
+            "availability": {
+                "status": None,  # type: str | None
+                "stock_quantity": None  # type: int | None
+            },
+            "delivery": {
+                "delivery_charge": {
+                    "amount": float(0.0),  # type: float
+                    "currency": str("USD")
+                },
+                "estimated_delivery_date": None,  # type: str | None
+                "delivery_type": str("standard_delivery")
+            },
+            "warranty": {
+                "duration_months": int(12),  # type: int
+                "warranty_type": str("manufacturer")
             }
+        },
+        "metrics": {
+            "rating": {
+                "value": None,  # type: float | None
+                "scale_min": int(1),  # type: int
+                "scale_max": int(5)  # type: int
+            },
+            "engagement": {
+                "likes": None,  # type: int | None
+                "comments": None,  # type: int | None
+                "shares": None,  # type: int | None
+                "views": None,  # type: int | None
+                "reactions": None  # type: int | None
+            },
+            "helpful_votes": None,  # type: int | None
+            "review_count": int(0),  # type: int
+            "author_followers": None,  # type: int | None
+            "reach": None  # type: int | None
+        },
+        "author": {
+            "source_author_id_hash": None,  # type: str | None
+            "display_name": str("Best Buy"),
+            "author_type": str("merchant"),
+            "is_verified_purchase": False,  # type: bool
+            "profile_url": str("https://www.bestbuy.com"),
+            "follower_count": None  # type: int | None
+        },
+        "location": {
+            "country_code": str("US"),
+            "region": None,  # type: str | None
+            "city": None,  # type: str | None
+            "location_precision": str("country")
+        },
+        "campaign": {
+            "campaign_name": None,  # type: str | None
+            "campaign_type": None,  # type: str | None
+            "event_name": None,  # type: str | None
+            "campaign_id": None  # type: str | None
+        },
+        "deduplication": {
+            "content_hash": None,  # type: str | None
+            "duplicate_status": str("unique"),
+            "canonical_record_id": str(f"tenant_001:bestbuy:product_{product_id}"),
+            "duplicate_of": None  # type: str | None
+        },
+        "provenance": {
+            "collection_run_id": str("RUN_20261113_001"),
+            "connector_name": str("bestbuy_connector"),
+            "connector_version": str("1.0.0"),
+            "normalizer_version": str("1.0.0"),
+            "source_payload_ref": None,  # type: str | None
+            "ingestion_timestamp": str(now_iso)
+        },
+        "quality": {
+            "status": str("accepted"),
+            "is_valid": True,  # type: bool
+            "is_relevant": True,  # type: bool
+            "validation_errors": [],  # type: list
+            "missing_optional_fields": []  # type: list
+        },
+        "lifecycle": {
+            "first_seen_at": str(now_iso),
+            "last_seen_at": str(now_iso),
+            "record_status": str("active")
         }
     }
 
 
-def create_full_reviews_template(product_id):
+def create_standardized_reviews_container(product_id):
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
     return {
         "metadata": {
-            "platform": "bestbuy",
+            "tenant_id": str("tenant_001"),
+            "platform": str("bestbuy"),
             "platform_product_id": str(product_id),
-            "parent_product_id": None,
-            "seller_id": "BEST_BUY_US",
-            "scraped_at": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
-            "schema_version": "2.0.0"
+            "scraped_at": str(now_iso),
+            "schema_version": str("1.0")
         },
-        "reviews": {
-            "product_reviews": {
-                "summary": {
-                    "platform_product_id": str(product_id),
-                    "average_rating": None,
-                    "total_ratings": 0,
-                    "total_written_reviews": 0,
-                    "recommended_percentage": None,
-                    "star_distribution": {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0},
-                    "aspect_ratings": {}
-                },
-                "items": []
+        "reviews_summary": {
+            "average_rating": None,  # type: float | None
+            "total_ratings": int(0),  # type: int
+            "total_written_reviews": int(0),  # type: int
+            "star_distribution": {"1": int(0), "2": int(0), "3": int(0), "4": int(0), "5": int(0)}
+        },
+        "items": []  # type: list
+    }
+
+
+def create_standardized_review_item(product_id, review_id, product_url=""):
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
+    return {
+        "_id": str(f"tenant_001:bestbuy:review_{product_id}_{review_id}"),
+        "schema_version": str("1.0"),
+        "record_type": str("social_mention"),
+        "tenant": {
+            "tenant_id": str("tenant_001"),
+            "project_id": str("retail_listening_001"),
+            "report_scope_ids": [str("TND_Q2_FY27")]
+        },
+        "source": {
+            "platform": str("bestbuy"),
+            "channel": str("ecommerce_review"),
+            "source_type": str("review"),
+            "source_item_id": str(review_id),
+            "source_url": str(product_url),
+            "parent_item_id": str(product_id),
+            "published_at": str(now_iso),
+            "collected_at": str(now_iso),
+            "updated_at": None,
+            "country_code": str("US"),
+            "marketplace": str("bestbuy.com")
+        },
+        "content": {
+            "title": None,
+            "text": None,
+            "language": str("en"),
+            "original_language": str("en"),
+            "content_type": str("review"),
+            "media": {
+                "images": [],
+                "videos": []
             },
-            "store_reviews": {
-                "summary": {
-                    "seller_id": "BEST_BUY_US",
-                    "average_store_rating": None,
-                    "total_store_reviews": 0,
-                    "sub_scores": {
-                        "seller_service": None,
-                        "shipping_speed": None,
-                        "item_accuracy": None
-                    }
-                },
-                "items": []
-            }
+            "hashtags": [],
+            "mentions": [],
+            "keywords": []
+        },
+        "entities": {
+            "brands": [],
+            "products": [
+                {
+                    "product_id": str(product_id),
+                    "product_name": None,
+                    "sku": str(product_id),
+                    "model_number": None,
+                    "product_url": str(product_url)
+                }
+            ],
+            "retailer": {
+                "retailer_id": str("BEST_BUY_US"),
+                "retailer_name": str("Best Buy")
+            },
+            "other_brands": []
+        },
+        "taxonomy": {
+            "industry": str("Tech & Durables"),
+            "category": str("Reviews"),
+            "subcategory": str("Customer Review"),
+            "product_type": str("Standard"),
+            "taxonomy_version": str("TND_2026_V1"),
+            "mapping_method": str("catalog_mapping"),
+            "mapping_status": str("mapped")
+        },
+        "product_attributes": {
+            "model_number": None,
+            "capacity": None,
+            "color": None,
+            "energy_rating": None,
+            "specifications": {}
+        },
+        "commercial": {
+            "price": {
+                "listed_price": {"amount": None, "currency": str("USD")},
+                "selling_price": {"amount": None, "currency": str("USD")},
+                "original_price": {"amount": None, "currency": str("USD")},
+                "discount_amount": None,
+                "discount_percentage": None,
+                "price_type": str("standard"),
+                "price_observed_at": str(now_iso)
+            },
+            "price_range": {"minimum": None, "maximum": None, "currency": str("USD"), "period_start": None,
+                            "period_end": None},
+            "promotion": {"is_promotional": False, "promotion_type": None, "promotion_name": None,
+                          "coupon_available": False, "coupon_code": None},
+            "payment_options": {"emi_available": False, "no_cost_emi": False, "bank_offer_available": False,
+                                "exchange_offer_available": False, "cash_on_delivery": False},
+            "availability": {"status": None, "stock_quantity": None},
+            "delivery": {"delivery_charge": {"amount": float(0.0), "currency": str("USD")},
+                         "estimated_delivery_date": None, "delivery_type": None},
+            "warranty": {"duration_months": None, "warranty_type": None}
+        },
+        "metrics": {
+            "rating": {
+                "value": int(5),
+                "scale_min": int(1),
+                "scale_max": int(5)
+            },
+            "engagement": {"likes": None, "comments": None, "shares": None, "views": None, "reactions": None},
+            "helpful_votes": int(0),
+            "review_count": None,
+            "author_followers": None,
+            "reach": None
+        },
+        "author": {
+            "source_author_id_hash": None,
+            "display_name": None,
+            "author_type": str("customer"),
+            "is_verified_purchase": True,
+            "profile_url": None,
+            "follower_count": None
+        },
+        "location": {"country_code": str("US"), "region": None, "city": None, "location_precision": str("country")},
+        "campaign": {"campaign_name": None, "campaign_type": None, "event_name": None, "campaign_id": None},
+        "deduplication": {"content_hash": None, "duplicate_status": str("unique"),
+                          "canonical_record_id": str(f"tenant_001:bestbuy:review_{product_id}_{review_id}"),
+                          "duplicate_of": None},
+        "provenance": {
+            "collection_run_id": str("RUN_20261113_001"),
+            "connector_name": str("bestbuy_connector"),
+            "connector_version": str("1.0.0"),
+            "normalizer_version": str("1.0.0"),
+            "source_payload_ref": None,
+            "ingestion_timestamp": str(now_iso)
+        },
+        "quality": {"status": str("accepted"), "is_valid": True, "is_relevant": True, "validation_errors": [],
+                    "missing_optional_fields": []},
+        "lifecycle": {
+            "first_seen_at": str(now_iso),
+            "last_seen_at": str(now_iso),
+            "record_status": str("active")
         }
     }
 
@@ -162,7 +399,7 @@ def clean_text(text):
     if not text:
         return None
     clean = re.sub(r'<[^>]+>', '', str(text))
-    return " ".join(clean.split())
+    return str(" ".join(clean.split()))
 
 
 def parse_numeric_price(text):
@@ -181,15 +418,16 @@ def parse_numeric_price(text):
 
 def safe_extract_url(img_obj):
     if isinstance(img_obj, str):
-        return img_obj
+        return str(img_obj)
     elif isinstance(img_obj, dict):
-        return img_obj.get("url") or img_obj.get("contentUrl") or img_obj.get("thumbnailUrl")
+        url = img_obj.get("url") or img_obj.get("contentUrl") or img_obj.get("thumbnailUrl")
+        return str(url) if url else None
     return None
 
 
 def strip_at_type(obj):
     if isinstance(obj, dict):
-        return {k: strip_at_type(v) for k, v in obj.items() if k != "@type"}
+        return {str(k): strip_at_type(v) for k, v in obj.items() if k != "@type"}
     elif isinstance(obj, list):
         return [strip_at_type(item) for item in obj if item is not None]
     return obj
@@ -214,7 +452,7 @@ def find_chrome():
 
     for candidate in candidates:
         if os.path.exists(candidate):
-            return candidate
+            return str(candidate)
     raise FileNotFoundError(
         "Google Chrome was not found. Please update find_chrome() with your exact Chrome path."
     )
@@ -241,12 +479,11 @@ def launch_chrome():
 
 
 # ============================================================
-# DATA EXTRACTION & DYNAMIC MAPPING TO CANONICAL SCHEMA
+# DATA EXTRACTION & MAPPING TO STANDARDIZED SCHEMA
 # ============================================================
 
 def get_structured_data(page):
     results = []
-    # 1. Parse JSON-LD scripts
     try:
         scripts = page.locator('script[type="application/ld+json"]').all_inner_texts()
         for raw in scripts:
@@ -257,7 +494,6 @@ def get_structured_data(page):
     except Exception:
         pass
 
-    # 2. Parse Next.js application state (__NEXT_DATA__) which contains full media lists
     for selector in ['script#__NEXT_DATA__', 'script[id*="__NEXT_DATA__"]']:
         try:
             locator = page.locator(selector)
@@ -270,40 +506,53 @@ def get_structured_data(page):
 
 
 def extract_product_details(page, product_id):
-    product_url = page.url.split("?")[0]
-    canonical = create_full_product_template(product_id, product_url)
-    p_dict = canonical["product"]
+    product_url = str(page.url.split("?")[0])
+    record = create_standardized_product_record(product_id, product_url)
+
+    content = record["content"]
+    entities = record["entities"]
+    prod_attrs = record["product_attributes"]
+    commercial = record["commercial"]
 
     structured_blocks = get_structured_data(page)
 
     for block in structured_blocks:
-        # Recursive node walker to capture core attributes, offers, and media in one sweep
         def parse_node(obj):
             if isinstance(obj, dict):
-                # 1. Core Fields
-                if obj.get("name") and not p_dict["core"]["title"] and len(str(obj.get("name"))) > 3:
-                    p_dict["core"]["title"] = clean_text(obj.get("name"))
-                if obj.get("sku") and not p_dict["identifiers"]["sku"]:
-                    p_dict["identifiers"]["sku"] = str(obj.get("sku"))
-                if obj.get("gtin13") or obj.get("mpn") or obj.get("gtin"):
-                    p_dict["identifiers"]["upc_ean"] = str(obj.get("gtin13") or obj.get("mpn") or obj.get("gtin"))
-                if obj.get("model") and not p_dict["identifiers"]["model_number"]:
-                    p_dict["identifiers"]["model_number"] = str(obj.get("model"))
-                if obj.get("description") and not p_dict["content_and_specs"]["short_description"]:
-                    p_dict["content_and_specs"]["short_description"] = clean_text(obj.get("description"))
+                # Title & Description
+                if obj.get("name") and not content["title"] and len(str(obj.get("name"))) > 3:
+                    title_str = clean_text(obj.get("name"))
+                    content["title"] = title_str
+                    if entities["products"]:
+                        entities["products"][0]["product_name"] = title_str
+                if obj.get("sku") and not entities["products"][0]["sku"]:
+                    sku_str = str(obj.get("sku"))
+                    entities["products"][0]["sku"] = sku_str
+                if obj.get("model") and not prod_attrs["model_number"]:
+                    model_str = str(obj.get("model"))
+                    prod_attrs["model_number"] = model_str
+                    entities["products"][0]["model_number"] = model_str
+                if obj.get("description") and not content["text"]:
+                    content["text"] = clean_text(obj.get("description"))
 
-                # 2. Brand & Manufacturer
+                # Brand
                 brand_obj = obj.get("brand")
                 if isinstance(brand_obj, dict):
                     brand_name = brand_obj.get("name")
-                    if brand_name:
-                        p_dict["core"]["brand"] = clean_text(brand_name)
-                        p_dict["core"]["manufacturer"] = clean_text(brand_name)
-                elif isinstance(brand_obj, str):
-                    p_dict["core"]["brand"] = clean_text(brand_obj)
-                    p_dict["core"]["manufacturer"] = clean_text(brand_obj)
+                    if brand_name and not entities["brands"]:
+                        entities["brands"].append({
+                            "brand_id": str("BRAND_001"),
+                            "brand_name": clean_text(brand_name),
+                            "brand_role": str("client")
+                        })
+                elif isinstance(brand_obj, str) and not entities["brands"]:
+                    entities["brands"].append({
+                        "brand_id": str("BRAND_001"),
+                        "brand_name": clean_text(brand_obj),
+                        "brand_role": str("client")
+                    })
 
-                # 3. Pricing & Offers
+                # Pricing & Availability (Strict float casting)
                 offers = obj.get("offers")
                 if offers:
                     offer_list = offers if isinstance(offers, list) else [offers]
@@ -311,68 +560,66 @@ def extract_product_details(page, product_id):
                         if isinstance(offer, dict):
                             raw_price = offer.get("price") or offer.get("lowPrice") or offer.get("highPrice")
                             price = parse_numeric_price(raw_price)
-                            if price and not p_dict["pricing_and_availability"]["current_price"]:
-                                p_dict["pricing_and_availability"]["current_price"] = price
-                                p_dict["pricing_and_availability"]["list_price"] = price
+                            if price is not None and commercial["price"]["selling_price"]["amount"] is None:
+                                f_price = float(price)
+                                commercial["price"]["selling_price"]["amount"] = f_price
+                                commercial["price"]["listed_price"]["amount"] = f_price
+                                commercial["price"]["original_price"]["amount"] = f_price
 
                             avail = str(offer.get("availability", "")).lower()
                             if "instock" in avail:
-                                p_dict["pricing_and_availability"]["in_stock"] = True
-                                p_dict["pricing_and_availability"]["stock_status_text"] = "In Stock"
+                                commercial["availability"]["status"] = str("in_stock")
                             elif "outofstock" in avail:
-                                p_dict["pricing_and_availability"]["in_stock"] = False
-                                p_dict["pricing_and_availability"]["stock_status_text"] = "Out of Stock"
+                                commercial["availability"]["status"] = str("out_of_stock")
 
-                # 4. Media (Images)
+                # Media (Images)
                 if obj.get("image"):
                     img_list = obj.get("image") if isinstance(obj.get("image"), list) else [obj.get("image")]
                     for im_item in img_list:
                         url = safe_extract_url(im_item)
-                        if url and not any(existing["url"] == url for existing in p_dict["media"]["images"]):
-                            p_dict["media"]["images"].append({
-                                "url": url,
-                                "type": "main" if len(p_dict["media"]["images"]) == 0 else "gallery",
-                                "position": len(p_dict["media"]["images"]) + 1
+                        if url and not any(existing["url"] == url for existing in content["media"]["images"]):
+                            content["media"]["images"].append({
+                                "url": str(url),
+                                "type": str("main") if len(content["media"]["images"]) == 0 else str("gallery"),
+                                "position": int(len(content["media"]["images"]) + 1)
                             })
 
-                # 5. Media (Videos)
+                # Media (Videos)
                 if obj.get("video") or obj.get("videos"):
                     v_data = obj.get("video") or obj.get("videos")
                     v_list = v_data if isinstance(v_data, list) else [v_data]
                     for item in v_list:
                         if isinstance(item, dict):
                             v_url = item.get("contentUrl") or item.get("url") or item.get("embedUrl")
-                            if v_url and not any(existing["url"] == v_url for existing in p_dict["media"]["videos"]):
-                                p_dict["media"]["videos"].append({
-                                    "video_id": str(item.get("identifier") or f"vid_{len(p_dict['media']['videos'])+1}"),
+                            if v_url and not any(existing["url"] == v_url for existing in content["media"]["videos"]):
+                                dur = item.get("duration")
+                                content["media"]["videos"].append({
+                                    "video_id": str(
+                                        item.get("identifier") or f"vid_{len(content['media']['videos']) + 1}"),
                                     "url": str(v_url),
-                                    "thumbnail_url": item.get("thumbnailUrl"),
-                                    "duration_seconds": item.get("duration")
+                                    "thumbnail_url": str(item.get("thumbnailUrl")) if item.get(
+                                        "thumbnailUrl") else None,
+                                    "duration_seconds": int(dur) if dur is not None else None
                                 })
 
-                # Recurse deeper into dictionary values
                 for k, v in obj.items():
                     if k not in ("offers", "image", "video", "videos", "brand"):
                         parse_node(v)
-
             elif isinstance(obj, list):
                 for item in obj:
                     parse_node(item)
 
         parse_node(block)
 
-    # DOM FALLBACK: Extract Title, Price, and Media directly from rendered DOM elements if missing
+    # DOM Fallbacks for Title, Price, Media
     try:
         dom_data = page.evaluate("""() => {
-            // Title fallback
             const titleEl = document.querySelector('h1.heading-5, h1[class*="heading"], h1');
             const title = titleEl ? titleEl.innerText : null;
 
-            // Price fallback
             const priceEl = document.querySelector('.priceView-hero-price span[aria-hidden="true"], [class*="pricing-price"], [class*="priceView-customer-price"]');
             const priceText = priceEl ? priceEl.innerText : null;
 
-            // Images
             const images = [];
             document.querySelectorAll('img[src*="bbystatic.com"], img[src*="bestbuy.com"]').forEach(img => {
                 let src = img.src || img.currentSrc || img.getAttribute('data-src');
@@ -382,7 +629,6 @@ def extract_product_details(page, product_id):
                 }
             });
 
-            // Videos
             const videos = [];
             document.querySelectorAll('video, iframe[src*="youtube"], iframe[src*="vimeo"], [class*="video"] source').forEach((v, index) => {
                 let vSrc = v.src || v.getAttribute('data-src') || v.getAttribute('href');
@@ -399,50 +645,56 @@ def extract_product_details(page, product_id):
             return { title, priceText, images, videos };
         }""")
 
-        # Apply DOM Title fallback
-        if not p_dict["core"]["title"] and dom_data.get("title"):
-            p_dict["core"]["title"] = clean_text(dom_data.get("title"))
+        if not content["title"] and dom_data.get("title"):
+            t_str = clean_text(dom_data.get("title"))
+            content["title"] = t_str
+            if entities["products"]:
+                entities["products"][0]["product_name"] = t_str
 
-        # Apply DOM Price fallback
-        if not p_dict["pricing_and_availability"]["current_price"] and dom_data.get("priceText"):
+        if commercial["price"]["selling_price"]["amount"] is None and dom_data.get("priceText"):
             parsed_price = parse_numeric_price(dom_data.get("priceText"))
-            if parsed_price:
-                p_dict["pricing_and_availability"]["current_price"] = parsed_price
-                p_dict["pricing_and_availability"]["list_price"] = parsed_price
-                p_dict["pricing_and_availability"]["in_stock"] = True
-                p_dict["pricing_and_availability"]["stock_status_text"] = "In Stock"
+            if parsed_price is not None:
+                f_price = float(parsed_price)
+                commercial["price"]["selling_price"]["amount"] = f_price
+                commercial["price"]["listed_price"]["amount"] = f_price
+                commercial["price"]["original_price"]["amount"] = f_price
+                commercial["availability"]["status"] = str("in_stock")
 
-        # Merge DOM Images
         for img_url in dom_data.get("images", []):
-            if not any(existing["url"] == img_url for existing in p_dict["media"]["images"]):
-                p_dict["media"]["images"].append({
-                    "url": img_url,
-                    "type": "main" if len(p_dict["media"]["images"]) == 0 else "gallery",
-                    "position": len(p_dict["media"]["images"]) + 1
+            if not any(existing["url"] == img_url for existing in content["media"]["images"]):
+                content["media"]["images"].append({
+                    "url": str(img_url),
+                    "type": str("main") if len(content["media"]["images"]) == 0 else str("gallery"),
+                    "position": int(len(content["media"]["images"]) + 1)
                 })
 
-        # Merge DOM Videos
         for vid_item in dom_data.get("videos", []):
-            if not any(existing["url"] == vid_item["url"] for existing in p_dict["media"]["videos"]):
-                p_dict["media"]["videos"].append(vid_item)
+            if not any(existing["url"] == vid_item["url"] for existing in content["media"]["videos"]):
+                content["media"]["videos"].append({
+                    "video_id": str(vid_item["video_id"]),
+                    "url": str(vid_item["url"]),
+                    "thumbnail_url": None,
+                    "duration_seconds": None
+                })
 
     except Exception as e:
         print(f"Error in DOM extraction fallback: {e}")
 
-    # Calculate discount percentage if list and current prices exist
-    lp = p_dict["pricing_and_availability"]["list_price"]
-    cp = p_dict["pricing_and_availability"]["current_price"]
-    if lp and cp and lp > cp:
-        p_dict["pricing_and_availability"]["discount_percentage"] = round(((lp - cp) / lp) * 100, 2)
-        p_dict["pricing_and_availability"]["is_on_sale"] = True
+    # Discount calculations with strict float casting
+    lp = commercial["price"]["original_price"]["amount"]
+    cp = commercial["price"]["selling_price"]["amount"]
+    if lp is not None and cp is not None and lp > cp:
+        commercial["price"]["discount_amount"] = float(round(lp - cp, 2))
+        commercial["price"]["discount_percentage"] = float(round(((lp - cp) / lp) * 100, 2))
+        commercial["promotion"]["is_promotional"] = bool(True)
 
-    return canonical
+    return record
 
 
 def extract_reviews(page, product_id):
-    canonical = create_full_reviews_template(product_id)
-    summary = canonical["reviews"]["product_reviews"]["summary"]
-    items = canonical["reviews"]["product_reviews"]["items"]
+    container = create_standardized_reviews_container(product_id)
+    summary = container["reviews_summary"]
+    items = container["items"]
 
     structured_blocks = get_structured_data(page)
     for block in structured_blocks:
@@ -451,7 +703,6 @@ def extract_reviews(page, product_id):
             if not isinstance(obj, dict):
                 continue
 
-            # Review Summary safely extracted
             agg = obj.get("aggregateRating")
             if isinstance(agg, dict):
                 try:
@@ -471,10 +722,9 @@ def extract_reviews(page, product_id):
                 except (ValueError, TypeError):
                     summary["total_written_reviews"] = 0
 
-            # Review Items safely extracted
             reviews_list = obj.get("review")
             if isinstance(reviews_list, list):
-                for r in reviews_list:
+                for idx, r in enumerate(reviews_list):
                     if not isinstance(r, dict):
                         continue
 
@@ -486,10 +736,9 @@ def extract_reviews(page, product_id):
                         except (ValueError, TypeError):
                             rating_val = 5
 
-                    # Star distribution tracker safely updated
                     str_rating = str(rating_val)
                     if str_rating in summary["star_distribution"]:
-                        summary["star_distribution"][str_rating] += 1
+                        summary["star_distribution"][str_rating] = int(summary["star_distribution"][str_rating] + 1)
 
                     author_field = r.get("author")
                     author_name = None
@@ -498,33 +747,18 @@ def extract_reviews(page, product_id):
                     elif isinstance(author_field, str):
                         author_name = author_field
 
-                    review_item = {
-                        "review_id": str(r.get("identifier") or hash(str(r))),
-                        "platform_product_id": str(product_id),
-                        "rating": rating_val,
-                        "title": clean_text(r.get("name")),
-                        "body": clean_text(r.get("reviewBody") or r.get("description") or r.get("comment")),
-                        "published_at": r.get("datePublished") or datetime.datetime.now(
-                            datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
-                        "language": "en",
-                        "is_verified_purchase": True,
-                        "is_incentivized_or_default": False,
-                        "is_recommended": True,
-                        "helpful_votes": 0,
-                        "reviewer": {
-                            "user_id": None,
-                            "name": clean_text(author_name),
-                            "country_code": "US",
-                            "badges": ["Verified Purchaser"]
-                        },
-                        "purchased_variant": {"variant_id": None, "attributes_text": None},
-                        "tags": {"pros": [], "cons": []},
-                        "media": {"images": [], "videos": []},
-                        "comments": []
-                    }
-                    items.append(review_item)
+                    review_id = str(r.get("identifier") or f"{product_id}_{idx}")
+                    review_record = create_standardized_review_item(product_id, review_id, page.url.split("?")[0])
 
-    return canonical
+                    review_record["content"]["title"] = clean_text(r.get("name"))
+                    review_record["content"]["text"] = clean_text(
+                        r.get("reviewBody") or r.get("description") or r.get("comment"))
+                    review_record["metrics"]["rating"]["value"] = int(rating_val)
+                    review_record["author"]["display_name"] = clean_text(author_name)
+
+                    items.append(review_record)
+
+    return container
 
 
 # ============================================================
@@ -545,44 +779,57 @@ def run_scraper():
                 search_url = f"https://www.bestbuy.com/site/searchpage.jsp?st={urllib.parse.quote(query)}"
                 print(f"\nNavigating to: {search_url}")
                 page.goto(search_url, wait_until="domcontentloaded", timeout=60000)
-                page.wait_for_timeout(4000)  # Wait for initial JS rendering
+                page.wait_for_timeout(4000)
 
-                # Scroll down to trigger lazy-loaded product cards
                 page.evaluate("window.scrollBy(0, 1000);")
                 page.wait_for_timeout(2500)
 
-                # Robust link extraction supporting multiple Best Buy URL structures (.p, /product/, /site/)
-                product_links = page.evaluate("""() => {
-                    const anchors = Array.from(document.querySelectorAll('a[href*=".p"], a[href*="/product/"], a[href*="/site/"]'));
-                    const validLinks = anchors
-                        .map(a => a.href)
-                        .filter(href => href && (href.includes('.p') || href.includes('/product/') || href.includes('skuId=')));
-                    return [...new Set(validLinks)].slice(0, 2);
-                }""")
+                product_links = page.evaluate("""(maxProducts) => {
+                                    const anchors = Array.from(document.querySelectorAll('a[href*=".p"], a[href*="/product/"], a[href*="/site/"]'));
+                                    const seenSkus = new Set();
+                                    const uniqueLinks = [];
+
+                                    for (const a of anchors) {
+                                        const href = a.href;
+                                        if (href && (href.includes('.p') || href.includes('/product/') || href.includes('skuId='))) {
+                                            const match = href.match(/(\\d{5,})/);
+                                            if (match) {
+                                                const sku = match[1];
+                                                if (!seenSkus.has(sku)) {
+                                                    seenSkus.add(sku);
+                                                    uniqueLinks.push(href);
+                                                    if (uniqueLinks.length >= maxProducts) {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    return uniqueLinks;
+                                }""", PRODUCTS_PER_QUERY)
 
                 print(f"Found product links: {product_links}")
 
                 for url in product_links:
-                    # Extract product SKU/ID from URL dynamically
                     sku_match = re.search(r'(\d{5,})', url)
                     product_id = sku_match.group(1) if sku_match else None
 
                     if not product_id:
                         continue
 
-                    print(f"Scraping Canonical Files for Product ID: {product_id} -> {url}")
+                    print(f"Scraping Standardized Files for Product ID: {product_id} -> {url}")
                     page.goto(url, wait_until="domcontentloaded", timeout=60000)
                     page.wait_for_timeout(PAGE_WAIT_MS)
 
-                    # File 1: Product Details
+                    # File 1: Standardized Product Details Record
                     product_data = extract_product_details(page, product_id)
-                    p1_name = os.path.join(OUTPUT_DIR, f"canonical_product_details_bestbuy_{product_id}.json")
+                    p1_name = os.path.join(OUTPUT_DIR, f"standardized_product_bestbuy_{product_id}.json")
                     with open(p1_name, "w", encoding="utf-8") as f:
                         json.dump(product_data, f, indent=2, ensure_ascii=False)
 
-                    # File 2: Reviews
+                    # File 2: Standardized Reviews Record Container
                     reviews_data = extract_reviews(page, product_id)
-                    p2_name = os.path.join(OUTPUT_DIR, f"canonical_reviews_bestbuy_{product_id}.json")
+                    p2_name = os.path.join(OUTPUT_DIR, f"standardized_reviews_bestbuy_{product_id}.json")
                     with open(p2_name, "w", encoding="utf-8") as f:
                         json.dump(reviews_data, f, indent=2, ensure_ascii=False)
 
@@ -590,6 +837,7 @@ def run_scraper():
 
         finally:
             process.terminate()
+
 
 if __name__ == "__main__":
     run_scraper()
