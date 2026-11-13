@@ -1,0 +1,1940 @@
+[
+    {
+        "asin": "B0GTVDH4G2",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0GTVDH4G2"
+        },
+        "product_details": {
+            "title": "HP 15, AMD Ryzen 5 7520U (16GB DDR4, 512GB SSD) FHD, Anti-Glare, Micro-Edge, 15.6''/39.6cm, Win11, M365 Basic(1yr), Offic24, Silver,1.59kg, fc0806AU/690AU, FHD Camera w/Privacy Shutter, Backlit Laptop",
+            "brand": "HP",
+            "manufacturer": "HP, HP India Sales Pvt. Ltd.",
+            "model": "D47HRPA",
+            "category": "Computers & Accessories",
+            "subcategory": "Laptops",
+            "description": null,
+            "feature_bullets": [
+                "Processor, Memory & Storage: AMD Ryzen 5 7520U (up to 4.3 GHz max boost clock, 4 MB L3 cache, 4 cores, 8 threads)| Memory: 16 GB DDR4-3200 MT/s (onboard)| Storage: 512 GB PCIe NVMe M.2 SSD",
+                "Operating System & Preinstalled Software: Windows 11 Home| MS Office Home 2024 + MISC Xbox Game Pass PRE DA 2M| 1 year Microsoft 365 Basic Free",
+                "Display & Graphics: 39.6 cm (15.6\") diagonal, FHD (1920 x 1080), micro-edge, anti-glare, 250 nits, 45% NTSC| Graphics: AMD Radeon Graphics",
+                "Ports & Connectivity : 1 USB Type-C 5Gbps signaling rate (supports data transfer only and does not support charging or external monitors); 2 USB Type-A 5Gbps signaling rate; 1 AC smart pin; 1 HDMI 1.4b; 1 headphone/microphone combo| Wireless: Realtek Wi-Fi 6 (2x2) and Bluetooth 5.4 wireless card",
+                "Other Features: Camera: HP True Vision 1080p FHD camera with temporal noise reduction and integrated dual array digital microphones| Keyboard: Full-size, backlit, soft gray keyboard with numeric keypad| Audio:Dual speakers|Battery type: 3-cell, 41 Wh Li-ion polymer; Supports battery fast charge: approximately 50% in 45 minutes|Power supply type: 65 W USB Type-C GaN power adapter"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "23.6L x 36W x 1.9Th Centimeters",
+            "weight": "1 kg 590 g",
+            "warranty": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+            "country_of_origin": "China",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 69990.0,
+                "original_price": 96409.0,
+                "discount_percentage": 27.0,
+                "price_display": "₹69,990",
+                "original_price_display": "₹96,409"
+            },
+            "seller": {
+                "seller_name": "Clicktech Retail Private Ltd",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹2,099.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹2,048.36 EMI interest savings on Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹875.00 discount on HDFC Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE delivery Sunday, 15 November.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "Sunday, 15 November"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Style / Configuration",
+                "variant_name": "R5 8/512 / Without HP Care",
+                "asin": "B0GP6LS92F",
+                "price": "₹61,990.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GP6LS92F"
+            },
+            {
+                "variant_type": "Style / Configuration",
+                "variant_name": "R5 16/512 / Without HP Care",
+                "asin": "B0GTVDH4G2",
+                "price": "₹69,990",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GTVDH4G2"
+            },
+            {
+                "variant_type": "Style / Configuration",
+                "variant_name": "R3 8/512 / With HP Care (+2 years)",
+                "asin": "B0H2D5M4H3",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0H2D5M4H3"
+            },
+            {
+                "variant_type": "Style / Configuration",
+                "variant_name": "R7 217 H/16/512 / Without HP Care",
+                "asin": "B0HK83VS2M",
+                "price": "₹1,05,990.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0HK83VS2M"
+            },
+            {
+                "variant_type": "Style / Configuration",
+                "variant_name": "R3 8/512 / Without HP Care",
+                "asin": "B0FJYJ8LVY",
+                "price": "₹53,990.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0FJYJ8LVY"
+            },
+            {
+                "variant_type": "Style / Configuration",
+                "variant_name": "R5 8/512 / With HP Care (+2 years)",
+                "asin": "B0H2DD7C2X",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0H2DD7C2X"
+            },
+            {
+                "variant_type": "Style / Configuration",
+                "variant_name": "R5 16/512 / With HP Care (+2 years)",
+                "asin": "B0H2DB3NVD",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0H2DB3NVD"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/71FVyverqHL._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/41JVbcDBpML.jpg",
+                "https://m.media-amazon.com/images/I/51b+ydqqSQL.jpg",
+                "https://m.media-amazon.com/images/I/51AX-1rdBML.jpg",
+                "https://m.media-amazon.com/images/I/51Ogy477lJL.jpg",
+                "https://m.media-amazon.com/images/I/41-C3f4w+eL.jpg",
+                "https://m.media-amazon.com/images/I/51tZ72-cjhL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/41JVbcDBpML._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51b+ydqqSQL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51AX-1rdBML._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51Ogy477lJL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41-C3f4w+eL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51tZ72-cjhL._SS40_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/612f591f-2c64-4dfb-9dfc-8a08363aac5b/default.vertical.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 4.0,
+            "total_ratings": 41,
+            "total_reviews": 21,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "57%",
+                "4_star": "16%",
+                "3_star": "12%",
+                "2_star": "6%",
+                "1_star": "9%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R2M7J3E4D0878G",
+                    "reviewer_name": "Uday namdev devardekar",
+                    "review_title": "Laptop works good but key board keys colour is pale",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Laptop works good but key board keys colour is pale so work could not like enjoying,",
+                    "rating": 4.0,
+                    "review_date": "2026-11-04",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 2,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2SH2WCS9YC2BX",
+                    "reviewer_name": "Dharamvir Singh",
+                    "review_title": "Great, go for it. Best price deal.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Great, go for it. Best price deal.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RIR2597XVXMAU",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Cloud 100GB space",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Best and fast",
+                    "rating": 5.0,
+                    "review_date": "2026-10-28",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R376PYM6ZW76C3",
+                    "reviewer_name": "Prabhu C",
+                    "review_title": "Battet is average",
+                    "review_comment": "Battery is average. Product Delivery is not on time.",
+                    "rating": 2.0,
+                    "review_date": "2026-10-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2I1NCDHTTCT6E",
+                    "reviewer_name": "Awanish Kashyap",
+                    "review_title": "DOA & Bad Delivery Experience",
+                    "review_comment": "It was Dead on Arrival(DOA). The delivery agent refuse to turn it ON and when I tried to turn ON it was not. I requested to wait for 2 mins so that I can plug the charger and see for any screen damage or it is turning ON. He said he does not have time for such thing and said I will cancel the order and got cancelled.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-25",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RKWFU7FYCNBRO",
+                    "reviewer_name": "Sanjay",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-24",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R31GT48UE5P5RE",
+                    "reviewer_name": "Lokesh attinti",
+                    "review_title": "Bad quality",
+                    "review_comment": "Build quality is very very bad not expecting this kind of quality of hp",
+                    "rating": 2.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RZNOZRXLPKTSG",
+                    "reviewer_name": "Sambahji Bokan",
+                    "review_title": "Return product",
+                    "review_comment": "ओवरहीटिंग और बैटरी बैकअप की कमी (Overheating & Battery Issue): लैपटॉप चालू करने के 10-15 मिनट के भीतर ही बहुत ज़्यादा गर्म (Overheat) हो रहा है और इसकी बैटरी 1 घंटे भी नहीं टिक पा रही है।",
+                    "rating": 1.0,
+                    "review_date": "2026-10-16",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 9,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RULJ3F3GVROZS",
+                    "reviewer_name": "suresh meena",
+                    "review_title": "Hp",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. The product is excellent. But the delivery agent is very bad and his behavior is not good.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-16",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1RTGZNBJYO2JI",
+                    "reviewer_name": "Professor",
+                    "review_title": "Geniune product information",
+                    "review_comment": "Make sure to check the warranty before getting the order. They're selling outdated product or 1 year old sometime. Pls check once before giving otp.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-15",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1DYL9NQ42Y4RF",
+                    "reviewer_name": "Placeholder",
+                    "review_title": "बोगस डिलिव्हरी आणि बोगस पॅकिंग तसेच ग्राहकाची फसवणूक करणारी कंपनी amazon",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Video Player is loading. Play Current Time 0:00 / Duration 0:38 Loaded : 7.90% 0:00 Stream Type LIVE Seek to live, currently behind live LIVE Remaining Time - 0:38 1x Playback Rate Chapters Chapters Descriptions descriptions off , selected Captions captions settings , opens captions settings dialog captions off , selected Audio Track default , selected Fullscreen Mute This is a modal window. Beginning of dialog window. Escape will cancel and close the window. Text Color White Black Red Green Blue Yellow Magenta Cyan Transparency Opaque Semi-Transparent Background Color Black White Red Green Blue Yellow Magenta Cyan Transparency Opaque Semi-Transparent Transparent Window Color Black White Red Green Blue Yellow Magenta Cyan Transparency Transparent Semi-Transparent Opaque Font Size 50% 75% 100% 125% 150% 175% 200% 300% 400% Text Edge Style None Raised Depressed Uniform Dropshadow Font Family Proportional Sans-Serif Monospace Sans-Serif Proportional Serif Monospace Serif Casual Script Small Caps Reset restore all settings to the default values Done Close Modal Dialog End of dialog window. एवढी बोगस डिलिव्हरी बघितली नाही आजपर्यंत मी... Two wheeler वर लॅपटॉप आणला 70000 रु चा.. आणि तोही व्यवस्थित नाही आणला.. प्रत्येक Box आधीच damage.. एवढी ग्राहकाची फसवणूक करता काय तुम्ही amazon वाले... कुठली वस्तू कशी पोहचवायचे तेवढीही अक्कल नाही का तुम्हा लोकांना...",
+                    "rating": 1.0,
+                    "review_date": "2026-10-15",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 3,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RGHSI5ZUFF31L",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Before delivery",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 5.0,
+                    "review_date": "2026-09-01",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2HB7OBM8AB33Z",
+                    "reviewer_name": "Athul Raj T",
+                    "review_title": "Battery",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Battery backup is not that great",
+                    "rating": 3.0,
+                    "review_date": "2026-09-05",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 5,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "laptop",
+            "normalized": {
+                "processor": "AMD 7520U",
+                "processor_brand": "AMD",
+                "processor_speed": "4.3 GHz",
+                "processor_cores": "4",
+                "ram": "16 GB DDR4",
+                "ram_type": "DDR4",
+                "max_ram": "16 GB",
+                "storage": "512 GB SSD",
+                "storage_type": "SSD",
+                "display": "15.6 inch",
+                "resolution": "1920 x 1080 Pixels",
+                "refresh_rate": null,
+                "touchscreen": null,
+                "graphics": "AMD Radeon Graphics",
+                "graphics_memory": null,
+                "operating_system": "Windows 11 Home",
+                "battery_life": null,
+                "connectivity": "Bluetooth, Wi-Fi",
+                "weight": "1 kg 590 g",
+                "color": "Natural Silver"
+            },
+            "raw": {
+                "Colour": "Natural Silver",
+                "Hard Drive Size": "512 GB",
+                "Operating System": "Windows 11 Home",
+                "Other Special Features of the Product": "Backlit Keyboard",
+                "Graphics Description": "Integrated",
+                "Hard Disk Description": "SSD",
+                "Item Weight": "1 kg 590 g",
+                "Video Processor": "AMD",
+                "Specific Uses For Product": "Business, Student",
+                "Webcam Capability": "Yes",
+                "Form Factor": "Clamshell",
+                "Hard Drive Interface": "Solid State",
+                "Graphics Ram Type": "VRAM",
+                "Compatible Devices": "External displays, mice, keyboards, storage devices, printers, and other accessories that use USB, HDMI, or Bluetooth connectivity.",
+                "Item Dimensions L x W x Thickness": "23.6L x 36W x 1.9Th Centimeters",
+                "Video Output": "HDMI",
+                "Operating System Family": "Windows",
+                "Screen Size": "39.6 Centimetres",
+                "Scanner Resolution": "1080p",
+                "Native Resolution": "1920 x 1080 pixels",
+                "Display Type": "LED",
+                "Maximum Display Resolution": "1920 x 1080 Pixels",
+                "Display Technology": "LED",
+                "Display Maximum Resolution": "1920 x 1080",
+                "RAM Memory Installed": "16 GB",
+                "RAM Memory Technology": "DDR4",
+                "Ram Memory Maximum Size": "16 GB",
+                "Memory Speed": "3200 MHz",
+                "System RAM Type": "DDR4 SDRAM",
+                "RAM Size": "16 GB",
+                "DriveMemory Storage Capacity": "512 GB",
+                "Battery Cell Type": "Lithium Ion",
+                "Lithium Battery Energy Content": "41 Watt Hours",
+                "Human Interface Types": "Keyboard",
+                "Keyboard Description": "Full-size, backlit, soft gray keyboard with numeric keypad",
+                "Processor Type": "AMD Ryzen 5 7520U",
+                "Processor Speed": "4.3 GHz",
+                "Processor Count": "1",
+                "Processor Brand": "AMD",
+                "CPU Model Number": "7520U",
+                "CPU Model Generation": "Ryzen 7000 Series",
+                "CPU Model Speed Maximum": "4.3 GHz",
+                "CPU L3 Cache": "4 MB",
+                "Brand Name": "HP",
+                "Model Name": "HP Laptop",
+                "Country of Origin": "China",
+                "Model Year": "2026",
+                "Model Number": "D47HRPA",
+                "Box Contents": "Laptop, Power Adapter, User manual",
+                "Manufacturer": "HP, HP India Sales Pvt. Ltd.",
+                "Unit Count": "1.0 Count",
+                "UPC": "199896694049",
+                "Number of Items": "1",
+                "Number of Packs": "1",
+                "Importer Contact Information": "HP India Sales Private Limited, No. 24, Kothari Arena, Hosur Main Road, Adugodi, Bangalore, Karnataka, India, 560030",
+                "Item Type Name": "Laptop",
+                "Manufacturer Contact Information": "HP India Sales Pvt. Ltd.",
+                "Packer Contact Information": "HP India Sales Pvt. Ltd.",
+                "Warranty Description": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+                "Manufacturer Part Number": "D47HRPA",
+                "Best Sellers Rank": "#93 in Computers & Accessories ( See Top 100 in Computers & Accessories ) #1 in Traditional Laptops",
+                "ASIN": "B0GTVDH4G2",
+                "Network Connectivity Technology": "Bluetooth, Wi-Fi",
+                "Computer Wireless Type": "Bluetooth",
+                "Bluetooth support?": "Yes",
+                "Total USB Ports": "3",
+                "Number Of Ports": "6",
+                "Speaker Description": "Dual speakers"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:08:32+00:00",
+            "last_updated": "2026-11-12T11:08:32+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 1,
+                "reviews_scraped": 13,
+                "variants_scraped": 7,
+                "specifications_scraped": 68
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0HK3BFFKM",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0HK3BFFKM"
+        },
+        "product_details": {
+            "title": "HP Omnibook 3, Snapdragon X Processor 45 Tops (8GB LPDDR5x,512GB SSD) 2K WUXGA, 14''/35.6cm, Win 11, M365*Office 24,Silver,1.42kg, hz0056QU, Lighter mini Charger, FHD IR Camera, Next Gen AI Laptop",
+            "brand": "HP",
+            "manufacturer": "HP, HP India Sales Pvt. Ltd.",
+            "model": "DX3X0PA",
+            "category": "Computers & Accessories",
+            "subcategory": "Laptops",
+            "description": null,
+            "feature_bullets": [
+                "Processor, Memory & Storage: Advanced ARM‑based Snapdragon X X1‑26‑100, featuring 8 high‑performance cores with speeds up to 2.97 GHz, delivering up to 64% faster multitasking for smoother, more responsive performance.| Memory: Multitask with ease thanks to 8 GB of high-speed LPDDR5x-SDRAM and a 512 GB SSD for rapid boot times and ample storage for your essential files.",
+                "READY FOR PRODUCTIVITY: Comes pre-installed with Windows 11 Home Single Language and MS Office Home 2024, plus a complimentary 1-year subscription to Microsoft 365 Basic to keep your files synced and secure from day one.",
+                "STUNNING VISUALS: Enjoy crisp, clear imagery on the 14\" 2K IPS display with a 1920 x 1200 resolution and 16:10 aspect ratio, designed for increased productivity and immersive viewing.",
+                "ALL-DAY MOBILITY: Stay productive on the go with a lightweight 1.42 kg design and a 60 Wh battery that supports fast charging to reach 50% in just 45 minutes.GaN Charger : 65W USB‑C Mini GaN Charger with a compact, travel‑friendly design that saves space in your bag and works efficiently with limited hotel power sockets.",
+                "SEAMLESS CONNECTIVITY: Work and collaborate without interruption using Wi-Fi 6E, Bluetooth 5.3, and a Full HD infrared camera for secure, high-quality video calls."
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "22.6L x 31.5W x 1.5Th Centimeters",
+            "weight": "1 kg 420 g",
+            "warranty": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+            "country_of_origin": "China",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 70990.0,
+                "original_price": 139545.0,
+                "discount_percentage": 49.0,
+                "price_display": "₹70,990",
+                "original_price_display": "₹1,39,545"
+            },
+            "seller": {
+                "seller_name": "Clicktech Retail Private Ltd",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹2,129.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹2,077.64 EMI interest savings on Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹3,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE delivery Sunday, 15 November. | Or fastest delivery Saturday, 14 November. Order within 4 hrs 6 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "Sunday, 15 November"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Size / Configuration",
+                "variant_name": "8GB/512GB SSD / With HP Care(+2 Years)",
+                "asin": "B0HLLCTFLY",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0HLLCTFLY"
+            },
+            {
+                "variant_type": "Size / Configuration",
+                "variant_name": "16GB/512GB SSD / Without HP Care",
+                "asin": "B0GY8KNSFC",
+                "price": "₹85,499.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GY8KNSFC"
+            },
+            {
+                "variant_type": "Size / Configuration",
+                "variant_name": "8GB/512GB SSD / Without HP Care",
+                "asin": "B0HK3BFFKM",
+                "price": "₹70,990",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0HK3BFFKM"
+            },
+            {
+                "variant_type": "Size / Configuration",
+                "variant_name": "16GB/512GB SSD / With HP Care(+2 Years)",
+                "asin": "B0HLL9BVJ2",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0HLL9BVJ2"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/61JQ+09KcyL._SL1080_.jpg",
+                "https://m.media-amazon.com/images/I/41SLukLSr4L.jpg",
+                "https://m.media-amazon.com/images/I/51CIazx7HrL.jpg",
+                "https://m.media-amazon.com/images/I/51RYJA6YP4L.jpg",
+                "https://m.media-amazon.com/images/I/51IaydB3n8L.jpg",
+                "https://m.media-amazon.com/images/I/51+RWKQMR9L.jpg",
+                "https://m.media-amazon.com/images/I/41vcGybvGML.jpg",
+                "https://m.media-amazon.com/images/I/41MAB2VNQ7L.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/41SLukLSr4L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51CIazx7HrL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51RYJA6YP4L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51IaydB3n8L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51+RWKQMR9L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41vcGybvGML._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41MAB2VNQ7L._SS40_.jpg"
+            ],
+            "videos": []
+        },
+        "customer_feedback": {
+            "overall_rating": 3.7,
+            "total_ratings": 33,
+            "total_reviews": 21,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "47%",
+                "4_star": "17%",
+                "3_star": "13%",
+                "2_star": "7%",
+                "1_star": "16%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R310ZVNUNYULK0",
+                    "reviewer_name": "Amarjit Singh",
+                    "review_title": "You may go for it.",
+                    "review_comment": "It's quite impressive.",
+                    "rating": 4.0,
+                    "review_date": "2026-11-09",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R22XRK6SA39KVN",
+                    "reviewer_name": "Narsimha",
+                    "review_title": "Satisfied",
+                    "review_comment": "No back-lit keyboard....",
+                    "rating": 4.0,
+                    "review_date": "2026-11-09",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2TV06892HOBG0",
+                    "reviewer_name": "ABHIMANYU KUMAR",
+                    "review_title": "Bad impression",
+                    "review_comment": "Not good",
+                    "rating": 1.0,
+                    "review_date": "2026-11-08",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61w3uQNuvSL.jpg",
+                        "https://m.media-amazon.com/images/I/61tvzWl+lQL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1DSXTTQMV24CR",
+                    "reviewer_name": "up ki holi",
+                    "review_title": "Graphic card very low quality",
+                    "review_comment": "Bahut achchha nahi hai kam chalau",
+                    "rating": 3.0,
+                    "review_date": "2026-11-08",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71djIl8lZpL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1EHZI2GFPJPS9",
+                    "reviewer_name": "MARIMUTHU",
+                    "review_title": "Fraud Amazon",
+                    "review_comment": "I received warranty pre activated Laptop.there is no support from amazon.waste of money don't buy valuable products through Amazon platform.amazon doing regularly fraudulent activities like this.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71WeSDSh7NL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R34A5WT5S6Y4ZK",
+                    "reviewer_name": "Nirmaljit Singh",
+                    "review_title": "Display speed",
+                    "review_comment": "great product so far.good display & storage. Wifi good. good to work.office work good to work.for home work also to work.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1J0EFLEBV897",
+                    "reviewer_name": "Shriyash Padvekar",
+                    "review_title": "Excellent",
+                    "review_comment": "Excellent product Ai features provided",
+                    "rating": 5.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1FD4B2LGDGNOG",
+                    "reviewer_name": "San",
+                    "review_title": "Very good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-30",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RI5AJ1Y0P6D1L",
+                    "reviewer_name": "s siva sankara rao",
+                    "review_title": "Not better",
+                    "review_comment": "Not much good",
+                    "rating": 3.0,
+                    "review_date": "2026-10-29",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R5L12CO9W66YD",
+                    "reviewer_name": "Jeffarson Immanuel Nadar",
+                    "review_title": "Average plastic build quality",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. It's a plastic built so laptop quality is little poor. Back panel is very worst. Battery backup best Average usage nice Screen quality ok Keypad is plastic but it's looks some premium compared to other brand plastic build. Acer and asus metal build is available on this price.",
+                    "rating": 2.0,
+                    "review_date": "2026-10-23",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1AGSE50P0L4XM",
+                    "reviewer_name": "Sahil kumar",
+                    "review_title": "Satisfied 😌",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Video Player is loading. Play Current Time 0:00 / Duration 0:11 Loaded : 27.30% 0:00 Stream Type LIVE Seek to live, currently behind live LIVE Remaining Time - 0:11 1x Playback Rate Chapters Chapters Descriptions descriptions off , selected Captions captions settings , opens captions settings dialog captions off , selected en Audio Track default , selected Fullscreen Mute This is a modal window. Beginning of dialog window. Escape will cancel and close the window. Text Color White Black Red Green Blue Yellow Magenta Cyan Transparency Opaque Semi-Transparent Background Color Black White Red Green Blue Yellow Magenta Cyan Transparency Opaque Semi-Transparent Transparent Window Color Black White Red Green Blue Yellow Magenta Cyan Transparency Transparent Semi-Transparent Opaque Font Size 50% 75% 100% 125% 150% 175% 200% 300% 400% Text Edge Style None Raised Depressed Uniform Dropshadow Font Family Proportional Sans-Serif Monospace Sans-Serif Proportional Serif Monospace Serif Casual Script Small Caps Reset restore all settings to the default values Done Close Modal Dialog End of dialog window. I am totally satisfied with this laptop. Laptop is too good in this budget but i deducted one star because of amazon they are showing back-lit keyboard but it hadn't",
+                    "rating": 4.0,
+                    "review_date": "2026-10-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 9,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71tRUgG-Z1L.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2ZPPZYHV0JVU",
+                    "reviewer_name": "Placeholder",
+                    "review_title": "Backlight not in laptop add shows wrong",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Amazon making fool to customer shows backlight but not in laptop",
+                    "rating": 1.0,
+                    "review_date": "2026-10-20",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RRU8FSU74Y87L",
+                    "reviewer_name": "Pritam Ghosh",
+                    "review_title": "Good laptop",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. This is a really good laptop the snapdragon x processor is really good for office work and for students the main highlighted point is the battery, although go with the 16 gb variant as 8 gb variety has some little draw back like no back-lit keyboard premium features like recall is missing, but it is a really nice product specially on battery point of view.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-16",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 6,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2V6P7MELNSS3Q",
+                    "reviewer_name": "suresh kumar",
+                    "review_title": "Bad service by Amazon",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Laptop is good but it does not have back-lit although it is mentioned in product description. Amazon is not listening now as they are saying that you have checked at open box delivery time? How is this possible to check at that time? Very bad experience this time with Amazon.",
+                    "rating": 3.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 2,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1JTA60JIOYBFH",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Good battery backup and light weight",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Awesome laptop",
+                    "rating": 5.0,
+                    "review_date": "2026-10-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2RYUSKH10U71I",
+                    "reviewer_name": "prashant tiwari",
+                    "review_title": "Satisfied",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Fully satisfied",
+                    "rating": 5.0,
+                    "review_date": "2026-10-17",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 2,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/7125-FhU6FL.jpg"
+                    ],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "laptop",
+            "normalized": {
+                "processor": "Qualcomm X1-26-100",
+                "processor_brand": "Qualcomm",
+                "processor_speed": "2.97 GHz",
+                "processor_cores": null,
+                "ram": "8 GB LPDDR5X",
+                "ram_type": "LPDDR5X",
+                "max_ram": "8 GB",
+                "storage": "512 GB SSD",
+                "storage_type": "SSD",
+                "display": "14 inch",
+                "resolution": "1900 x 1200 Pixels",
+                "refresh_rate": null,
+                "touchscreen": null,
+                "graphics": null,
+                "graphics_memory": null,
+                "operating_system": "Windows 11 Home",
+                "battery_life": null,
+                "connectivity": "Bluetooth, Wi-Fi",
+                "weight": "1 kg 420 g",
+                "color": "Glacier Silver"
+            },
+            "raw": {
+                "Colour": "Glacier Silver",
+                "Hard Drive Size": "512 GB",
+                "Operating System": "Windows 11 Home",
+                "Other Special Features of the Product": "Anti Glare Coating",
+                "Graphics Description": "Integrated",
+                "Hard Disk Description": "SSD",
+                "Item Weight": "1 kg 420 g",
+                "Video Processor": "Qualcomm",
+                "Specific Uses For Product": "Business, Entertainment, Student",
+                "Webcam Capability": "Yes",
+                "Form Factor": "Ultrabook",
+                "Graphics Ram Type": "VRAM",
+                "Item Dimensions L x W x Thickness": "22.6L x 31.5W x 1.5Th Centimeters",
+                "Operating System Family": "Windows",
+                "Screen Size": "14 Inches",
+                "Scanner Resolution": "1920 x 1200",
+                "Native Resolution": "1920 x 1200 pixels",
+                "Display Type": "LED",
+                "Maximum Display Resolution": "1900 x 1200 Pixels",
+                "Display Technology": "IPS",
+                "Display Maximum Resolution": "1920 x 1200",
+                "RAM Memory Installed": "8 GB",
+                "RAM Memory Technology": "LPDDR5X",
+                "Ram Memory Maximum Size": "8 GB",
+                "RAM Size": "8 GB",
+                "DriveMemory Storage Capacity": "8 GB",
+                "Battery Cell Type": "Lithium Ion",
+                "Lithium Battery Energy Content": "60 Watt Hours",
+                "Total USB Ports": "4",
+                "Processor Type": "Snapdragon X",
+                "Processor Speed": "2.97 GHz",
+                "Processor Count": "1",
+                "Processor Brand": "Qualcomm",
+                "CPU Model Number": "X1-26-100",
+                "CPU Model Speed Maximum": "2.97 GHz",
+                "Brand Name": "HP",
+                "Model Name": "HP Laptop",
+                "Country of Origin": "China",
+                "Model Year": "2026",
+                "Model Number": "DX3X0PA",
+                "Box Contents": "Laptop, Power Adapter, User manual",
+                "Manufacturer": "HP, HP India Sales Pvt. Ltd.",
+                "Unit Count": "1.0 Count",
+                "UPC": "826581763390",
+                "Number of Items": "1",
+                "Importer Contact Information": "HP India Sales Private Limited, No. 24, Kothari Arena, Hosur Main Road, Adugodi, Bangalore, Karnataka, India, 560030",
+                "Item Type Name": "Laptop",
+                "Manufacturer Contact Information": "HP India Sales Pvt. Ltd.",
+                "Packer Contact Information": "CH39 - Inventec CQ , Inventec (Chongqing) CORP No.66 West district 2nd Rd, Shapingba District, 401331 Chongqing China",
+                "Warranty Description": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+                "Manufacturer Part Number": "DX3X0PA",
+                "Best Sellers Rank": "#2,463 in Computers & Accessories ( See Top 100 in Computers & Accessories ) #63 in Traditional Laptops",
+                "ASIN": "B0HK3BFFKM",
+                "Network Connectivity Technology": "Bluetooth, Wi-Fi",
+                "Computer Wireless Type": "802.11ax",
+                "Bluetooth support?": "Yes"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:09:01+00:00",
+            "last_updated": "2026-11-12T11:09:01+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 8,
+                "videos_scraped": 0,
+                "reviews_scraped": 16,
+                "variants_scraped": 4,
+                "specifications_scraped": 56
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0HHSHYFSJ",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0HHSHYFSJ"
+        },
+        "product_details": {
+            "title": "HP 15 Laptop, 14th Gen Intel Core 5 120U (24GB LPDDR5, 512GB SSD) 15.6\" FHD Display, Backlit Keyboard, Camera, Win 11 Home, M365 Basic(1yr),Office24,N.Silver, 1.59 kg-fd0901TU / FD0262TU",
+            "brand": "HP",
+            "manufacturer": "HP, HP SALES INDIA",
+            "model": "HP 15-FD0901TU",
+            "category": "Computers & Accessories",
+            "subcategory": "Laptops",
+            "description": null,
+            "feature_bullets": [
+                "【Processor, Memory & Storage】: Intel Core 5 120U (up to 5.0 GHz with Intel Turbo Boost Technology, 12 MB L3 cache, 10 cores, 12 threads)| Memory: 24 GB DDR5-5200 MT/s (1 x 8 GB| Storage: 512 GB PCIe NVMe M.2 SSD",
+                "【Operating System & Preinstalled Software】: Windows 11 Home | MS Office Home 2024 + MISC PC Game Pass DA 3M|1 year Microsoft 365 Basic Free|",
+                "【Display & Graphics】: 39.6 cm (15.6\") diagonal, FHD (1920 x 1080), micro-edge, anti-glare, 250nits, 62.5% sRGB| Graphics: Intel Graphics",
+                "【Warranty】 : Post purchase of HP laptop, Register product for warranty as per Customer Invoice and for any other support on Toll free or on HP Support page",
+                "【Ports & Connectivity】: 1 USB Type-C 5Gbps signaling rate (supports data transfer only and does not support charging or external monitors); 2 USB Type-A 5Gbps signaling rate; 1 AC smart pin; 1 HDMI 1.4b; 1 headphone/microphone combo| Connectivity: Realtek Wi-Fi 6 (2x2) and Bluetooth 5.4 wireless card"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "23.6L x 36W x 1.9Th Centimeters",
+            "weight": "1 kg 590 g",
+            "warranty": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+            "country_of_origin": null,
+            "pricing": {
+                "currency": "INR",
+                "current_price": 73999.0,
+                "original_price": 134687.0,
+                "discount_percentage": 45.0,
+                "price_display": "₹73,999",
+                "original_price_display": "₹1,34,687"
+            },
+            "seller": {
+                "seller_name": "Lap Hub",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹2,219.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹2,165.70 EMI interest savings on Amazon Pay ICICI Bank Credit Cards, Bajaj Finserv EMI cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹3,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE delivery Sunday, 15 November. | Or fastest delivery Saturday, 14 November.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "Sunday, 15 November"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Size",
+                "variant_name": "16 GB/ 512 SSD",
+                "asin": "B0HHS9XLTQ",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0HHS9XLTQ"
+            },
+            {
+                "variant_type": "Size",
+                "variant_name": "24 GB/ 512 SSD",
+                "asin": "B0HHSHYFSJ",
+                "price": "₹73,999.00",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0HHSHYFSJ"
+            },
+            {
+                "variant_type": "Size",
+                "variant_name": "8 GB/ 512 SSD",
+                "asin": "B0GF8BZ3G2",
+                "price": "₹62,999.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GF8BZ3G2"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/71A4Ug2PlvL._SL1254_.jpg",
+                "https://m.media-amazon.com/images/I/51-MYKW+SIL.jpg",
+                "https://m.media-amazon.com/images/I/51oKsMaXkcL.jpg",
+                "https://m.media-amazon.com/images/I/41oO31VEAxL.jpg",
+                "https://m.media-amazon.com/images/I/511KzttECqL.jpg",
+                "https://m.media-amazon.com/images/I/41P8-h5jsDL.jpg",
+                "https://m.media-amazon.com/images/I/41grG3p9SUL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/51-MYKW+SIL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51oKsMaXkcL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41oO31VEAxL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/511KzttECqL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41P8-h5jsDL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41grG3p9SUL._SS40_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/96e607fb-66cd-45dd-8376-e7661ecc5b5c/default.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": null,
+            "total_ratings": null,
+            "total_reviews": null,
+            "rating_scale": 5,
+            "rating_distribution": {},
+            "reviews": []
+        },
+        "product_specifications": {
+            "category_profile": "laptop",
+            "normalized": {
+                "processor": "Intel 120U",
+                "processor_brand": "Intel",
+                "processor_speed": "4 GHz",
+                "processor_cores": "10",
+                "ram": "24 GB DDR4",
+                "ram_type": "DDR4",
+                "max_ram": "24 GB",
+                "storage": "512 GB SSD",
+                "storage_type": "SSD",
+                "display": "15.6 inch",
+                "resolution": "1920 x 1080 Pixels",
+                "refresh_rate": null,
+                "touchscreen": null,
+                "graphics": null,
+                "graphics_memory": null,
+                "operating_system": "Windows 11 Home",
+                "battery_life": null,
+                "connectivity": "Bluetooth, Wi-Fi",
+                "weight": "1 kg 590 g",
+                "color": "Natural Silver"
+            },
+            "raw": {
+                "Colour": "Natural Silver",
+                "Hard Drive Size": "512 GB",
+                "Operating System": "Windows 11 Home",
+                "Other Special Features of the Product": "Anti Glare Coating, Backlit Keyboard, Lightweight",
+                "Graphics Description": "Integrated",
+                "Graphics Co Processor": "Intel Iris Xe Graphics",
+                "Hard Disk Description": "SSD",
+                "Item Weight": "1 kg 590 g",
+                "Video Processor": "Intel",
+                "Specific Uses For Product": "Business, Entertainment, Student",
+                "Webcam Capability": "Yes",
+                "Automatic Backup Software Included": "Microsoft Office",
+                "Form Factor": "Laptop",
+                "Hard Drive Interface": "NVMe",
+                "Camera Description": "Front",
+                "Graphics Ram Type": "VRAM",
+                "Compatible Devices": "Webcams, Microphones, Mice, Keyboards, External Storage, Displays, Printers, Wireless Devices via Bluetooth",
+                "Warranty Type": "On Site",
+                "Item Dimensions L x W x Thickness": "23.6L x 36W x 1.9Th Centimeters",
+                "Chipset Type": "Intel integrated SoC",
+                "Video Output": "HDMI",
+                "Antenna Location": "Day-to-day performance, Multi-task with ease",
+                "Operating System Family": "Windows",
+                "Screen Size": "15.6 Inches",
+                "Scanner Resolution": "1080p",
+                "Native Resolution": "1920 x 1080 pixels",
+                "Display Type": "LED",
+                "Maximum Display Resolution": "1920 x 1080 Pixels",
+                "Display Technology": "LED",
+                "Maximum Display Brightness": "250 Nit",
+                "Display Maximum Resolution": "1920 x 1080",
+                "Network Connectivity Technology": "Bluetooth, Wi-Fi",
+                "Computer Wireless Type": "Bluetooth",
+                "Bluetooth support?": "Yes",
+                "Battery Cell Type": "Lithium Ion",
+                "Lithium Battery Energy Content": "41 Watt Hours",
+                "Human Interface Types": "Touch Pad",
+                "Keyboard Description": "Full-size, backlit, soft grey keyboard with numeric keypad",
+                "Processor Type": "Intel Core 5",
+                "Processor Speed": "4 GHz",
+                "Processor Count": "1",
+                "Processor Brand": "Intel",
+                "CPU Model Number": "120U",
+                "CPU Model Generation": "14th Generation",
+                "CPU Model Speed Maximum": "5 GHz",
+                "CPU L3 Cache": "12 MB",
+                "Brand Name": "HP",
+                "Model Name": "HP Laptop",
+                "Model Year": "2026",
+                "Model Number": "HP 15-FD0901TU",
+                "Box Contents": "Laptop, Power Adapter, User manual",
+                "Manufacturer": "HP, HP SALES INDIA",
+                "Unit Count": "1.0 Count",
+                "UPC": "199896333474",
+                "Number of Items": "1",
+                "Number of Packs": "1",
+                "Importer Contact Information": "HP India Sales Private Limited, No. 24, Kothari Arena, Hosur Main Road, Adugodi, Bangalore, Karnataka, India, 560030",
+                "Item Type Name": "Laptop",
+                "Manufacturer Contact Information": "HP SALES INDIA",
+                "Packer Contact Information": "HP India Sales Pvt. Ltd.",
+                "Warranty Description": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+                "Manufacturer Part Number": "D2KR2PA",
+                "Best Sellers Rank": "#3,075 in Computers & Accessories ( See Top 100 in Computers & Accessories ) #81 in Traditional Laptops",
+                "ASIN": "B0HHSHYFSJ",
+                "RAM Memory Installed": "24 GB",
+                "RAM Memory Technology": "DDR4",
+                "Ram Memory Maximum Size": "24 GB",
+                "Memory Speed": "3200 MHz",
+                "System RAM Type": "DDR5 RAM",
+                "RAM Size": "24 GB",
+                "DriveMemory Storage Capacity": "512 GB",
+                "Total USB Ports": "3",
+                "Hardware Interface": "Solid State Drive",
+                "Speaker Description": "Dual Speakers"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": false
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:09:27+00:00",
+            "last_updated": "2026-11-12T11:09:27+00:00",
+            "scraping_status": "partial",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 1,
+                "reviews_scraped": 0,
+                "variants_scraped": 3,
+                "specifications_scraped": 74
+            },
+            "errors": [
+                "missing rating"
+            ]
+        }
+    },
+    {
+        "asin": "B0GWQC4JGJ",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0GWQC4JGJ"
+        },
+        "product_details": {
+            "title": "HP 14 Smartchoice, Intel Core Ultra 5 125H 12 TOPS, 24GB DDR5 (Upgradeable) 1TB SSD, Anti-Glare, FHD, 14''/35.6cm,Win11, M365*Office24, Silver, 1.4kg, ep1180tu, FHD Camera w/Shutter, Backlit AI Laptop",
+            "brand": "HP",
+            "manufacturer": "HP, HP India Sales Pvt. Ltd.",
+            "model": "CJ9D9PA",
+            "category": "Computers & Accessories",
+            "subcategory": "Laptops",
+            "description": null,
+            "feature_bullets": [
+                "Processor, Memory & Storage: Intel Core Ultra 5 125H (up to 4.5 GHz with Intel Turbo Boost Technology, 18 MB L3 cache, 14 cores, 18 threads)| Memory: 24 GB DDR5-5600 MT/s (1 x 24 GB)| Storage: 1 TB PCIe NVMe M.2 SSD",
+                "Operating System & Preinstalled Software: Windows 11 Home | MS Office Home 2024 + MISC PC Game Pass DA 3M| 1 year Microsoft 365 Basic Free",
+                "Display & Graphics: 35.6 cm (14\") diagonal, FHD (1920 x 1080), micro-edge, anti-glare, 250 nits, 62.5% sRGB| Graphics:Intel Arc Graphic",
+                "Ports & Connectivity : 2 USB Type-A 5Gbps signaling rate; 1 AC smart pin; 1 HDMI 1.4b; 1 headphone/microphone combo; 1 USB Type-C 10Gbps signaling rate (USB Power Delivery, DisplayPort 1.4b, HP Sleep and Charge)| Wireless: Realtek Wi-Fi 6 (2x2) and Bluetooth 5.4 wireless card",
+                "Other Features: Camera: HP True Vision 1080p FHD camera with temporal noise reduction and integrated dual array digital microphones| Keyboard: Full-size, backlit, soft grey keyboard with numeric keypad| Audio: Dual speakers|Battery type: 3-cell, 41 Wh Li-ion polymer; Supports battery fast charge: approximately 50% in 45 minutes|Power supply type 65 W AC power adapter"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "21.5L x 32.4W x 3.3Th Centimeters",
+            "weight": "1 kg 400 g",
+            "warranty": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+            "country_of_origin": "China",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 85990.0,
+                "original_price": 139201.0,
+                "discount_percentage": 38.0,
+                "price_display": "₹85,990",
+                "original_price_display": "₹1,39,201"
+            },
+            "seller": {
+                "seller_name": "Clicktech Retail Private Ltd",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹2,579.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹2,516.64 EMI interest savings on Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹875.00 discount on HDFC Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE delivery Sunday, 15 November. | Or fastest delivery Saturday, 14 November.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "Sunday, 15 November"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15 inch / 24GB / 1TB SSD / Without HP Care",
+                "asin": "B0G2BLXG3B",
+                "price": null,
+                "is_selected": false,
+                "is_available": false,
+                "url": "https://www.amazon.in/dp/B0G2BLXG3B"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15 inch / 24GB DDR5/ 1TB SSD / With HP Care (+2 Years)",
+                "asin": "B0H2DDPLWY",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0H2DDPLWY"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15 inch / 24GB DDR5/ 1TB SSD / Without HP Care",
+                "asin": "B0GWQHQB4T",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GWQHQB4T"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15.6 inch / 24GB DDR5/ 1TB SSD / Without HP Care",
+                "asin": "B0HHS5T6F6",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0HHS5T6F6"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "14 inch / 24GB DDR5/ 1TB SSD / Without HP Care",
+                "asin": "B0G2BHDDB8",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0G2BHDDB8"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "14 inch / 24GB DDR5/ 1TB / With HP Care (+2 Years)",
+                "asin": "B0H2D89TQB",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0H2D89TQB"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15.6 inch / 32GB DDR5/ 1TB SSD / Without HP Care",
+                "asin": "B0FDWRR22Y",
+                "price": null,
+                "is_selected": false,
+                "is_available": false,
+                "url": "https://www.amazon.in/dp/B0FDWRR22Y"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "14 inch / 24GB DDR5/ 1TB SSD / With HP Care (+2 Years)",
+                "asin": "B0H2DCSYN7",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0H2DCSYN7"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15.6 inch / 16GB DDR5/ 1TB SSD / Without HP Care",
+                "asin": "B0F5B1N9SJ",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0F5B1N9SJ"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15.6 inch / 16GB DDR5/ 1TB SSD / With HP Care (+2 Years)",
+                "asin": "B0H2DBK8VV",
+                "price": null,
+                "is_selected": false,
+                "is_available": false,
+                "url": "https://www.amazon.in/dp/B0H2DBK8VV"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "14 inch / 24GB DDR5/ 1TB / Without HP Care",
+                "asin": "B0GWQC4JGJ",
+                "price": "₹85,990",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GWQC4JGJ"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15.6 inch / 8GB DDR4/ 512GB SSD / Without HP Care",
+                "asin": "B0BP2M7CCS",
+                "price": null,
+                "is_selected": false,
+                "is_available": false,
+                "url": "https://www.amazon.in/dp/B0BP2M7CCS"
+            },
+            {
+                "variant_type": "Size / Style / Configuration",
+                "variant_name": "15.6 inch / 16GB DDR5/ 512GB SSD / Without HP Care",
+                "asin": "B0F5B2X1SD",
+                "price": null,
+                "is_selected": false,
+                "is_available": false,
+                "url": "https://www.amazon.in/dp/B0F5B2X1SD"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/81XstkrCA8L._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/413wff7q+7L.jpg",
+                "https://m.media-amazon.com/images/I/51ftxGVfOCL.jpg",
+                "https://m.media-amazon.com/images/I/41z6+0BUo+L.jpg",
+                "https://m.media-amazon.com/images/I/51-etm0SCTL.jpg",
+                "https://m.media-amazon.com/images/I/51QewJYE0oL.jpg",
+                "https://m.media-amazon.com/images/I/41js9XHb05L.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/413wff7q+7L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51ftxGVfOCL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41z6+0BUo+L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51-etm0SCTL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51QewJYE0oL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41js9XHb05L._SS40_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/758a5190-e117-4d28-a6f7-e8d55b44a801/default.vertical.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 3.4,
+            "total_ratings": 48,
+            "total_reviews": 24,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "44%",
+                "4_star": "19%",
+                "3_star": "5%",
+                "2_star": "0%",
+                "1_star": "32%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R3EYR0C5IGUZ32",
+                    "reviewer_name": "Boy from Roing",
+                    "review_title": "Happy Buying",
+                    "review_comment": "Good",
+                    "rating": 5.0,
+                    "review_date": "2026-11-04",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R10R9PFU852GUE",
+                    "reviewer_name": "Vijender Kumar",
+                    "review_title": "HP 14 laptop good for daily use but battery back-up avarage.",
+                    "review_comment": "Value for money",
+                    "rating": 4.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R7QNPMU2IYSAS",
+                    "reviewer_name": "KC",
+                    "review_title": "Used Laptop",
+                    "review_comment": "Purchased in Oct 26. Laptop warranty was already activated in Sep 25. Horrible experience.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-29",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RGGVE2KD8PIRP",
+                    "reviewer_name": "Rameshwari",
+                    "review_title": "Poor quality & service",
+                    "review_comment": "Very poor HP service i suggest do not by HP laptop",
+                    "rating": 1.0,
+                    "review_date": "2026-10-23",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RSR9QMNSPC04U",
+                    "reviewer_name": "Marvellous",
+                    "review_title": "Must buy product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good product.Good display quality. Smooth performance.value for money",
+                    "rating": 5.0,
+                    "review_date": "2026-10-23",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61wxycOoyRL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R9TB0QXX4PFQT",
+                    "reviewer_name": "Rajesh kumar",
+                    "review_title": "Laptop Daily Usage Review",
+                    "review_comment": "The laptop is powerful and sufficient for daily usage, Battery backup is bit lower side. Build quality is okay, metal body is expected for this price. Sound quality is worst, external speaker are required.",
+                    "rating": 3.0,
+                    "review_date": "2026-10-20",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 2,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RN9DYH500TYD1",
+                    "reviewer_name": "Rahul",
+                    "review_title": "Beaware of the warranty and delivered product you could be sold a used item",
+                    "review_comment": "Purchased this on 11th Oct 2026 and on checking the warranty details on HP official page it showed the warranty start date as April 10 2026 which is very suprising and dubious to see. Could it be a case of refurbished/used product getting sold as new?",
+                    "rating": 1.0,
+                    "review_date": "2026-10-14",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/51+mPj1SzDL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R27TE15D7S2FEA",
+                    "reviewer_name": "Prasanna",
+                    "review_title": "Dont buys this laptop for this price performance wise ok build quality and display Poor",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Dont buy this laptop the build quality are poor and display type is LED very worst antigalre feature even lights u can able see through the display apart from this performance is good and charge drain very fast if u used before IPS based dispplay laptop u could able identify easily and cant able see more than 30 mins very eye straining my suggestion is always go for IPS based display i forget to look this before buying",
+                    "rating": 1.0,
+                    "review_date": "2026-10-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 3,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/612UFob2wHL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RUB97G4DWGYP3",
+                    "reviewer_name": "zx367",
+                    "review_title": "Display panel Defect, Disappointing Experience",
+                    "review_comment": "Received laptop with a display defect and HP's warranty page also shows incorrect dates, starting before my purchase. Very disappointing experience for this laptop, it shows bright white colour patch on display in Balck screen, build quality is not good, its not worth your time.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-11",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61tWTW4mqKL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1EPV5XDAOXS6C",
+                    "reviewer_name": "SUBRAT",
+                    "review_title": "Poor battery and sound",
+                    "review_comment": "The volume doesn’t work on this laptop. One month after using it, the battery dies quickly.",
+                    "rating": 1.0,
+                    "review_date": "2026-09-23",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RF7QBSO9UOH7P",
+                    "reviewer_name": "subhakNta das",
+                    "review_title": "Light weight",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very light weight, and best performance",
+                    "rating": 5.0,
+                    "review_date": "2026-06-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 6,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1W0FB18LLONNC",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Solutions regarding other feedbacka",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. This message is for those whose have raised few concerns regarding laptop battery, low volume, warranty etc. I have confirmed with HP the laptop is brand new and not refurbished. Regarding the warranty raise a ticket with the support and will get updated in few days. For battery again reach out to support who will install latest drivers for bios and other driver. I had low volume issues too and couple of default settings on windows are causing this support will be able to help",
+                    "rating": 4.0,
+                    "review_date": "2026-08-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 9,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3O7NN3Y9191LD",
+                    "reviewer_name": "Prasanna",
+                    "review_title": "EXCELLENT",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very Good product",
+                    "rating": 5.0,
+                    "review_date": "2026-06-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 2,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RK3ROIPNVXDET",
+                    "reviewer_name": "Nani",
+                    "review_title": "A Complete Waste of Time and Money",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. I purchased this laptop expecting a brand-new unit. The laptop itself worked properly and the hardware appeared to be in good condition, but after checking the product information, I found that the HP factory warranty had already started on 19 September 2025, while I purchased the laptop much later. I also found that Windows had been freshly installed on 8 August 2026. The HP serial number was consistent across the system, and the SSD showed as healthy, but the earlier warranty start date raised concerns about whether this was actually a brand-new unit or a previously sold/open-box/refurbished unit. If a product is listed and sold as new, I expect the warranty to correspond reasonably closely with my purchase, or at least for any previous warranty activation to be clearly disclosed. I have decided to return the laptop because of this uncertainty. Buyers should check the HP warranty status and serial number immediately after receiving the laptop, especially when purchasing an expensive electronic device.",
+                    "rating": 1.0,
+                    "review_date": "2026-08-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 39,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2XO5284D57KSK",
+                    "reviewer_name": "A K Pandey",
+                    "review_title": "Value for money",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very good Laptop.I recommend it to buy.",
+                    "rating": 5.0,
+                    "review_date": "2026-08-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 3,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RWHDKDXM6SLFN",
+                    "reviewer_name": "M Parashar &amp; Co.",
+                    "review_title": "Extremely disappointing Amazon return experience",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Received an HP laptop with a screen defect. I raised the return request four times, but every time Amazon refused to accept the return/pickup. Despite being a Prime subscriber, I received no satisfactory resolution. Finally, Amazon emailed me stating that the product cannot be returned, without providing any proper reason. This is extremely disappointing for such an expensive electronic product. A defective product should not become the customer’s responsibility. Very poor after-sales support and an unacceptable return experience from Amazon.",
+                    "rating": 1.0,
+                    "review_date": "2026-08-12",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 10,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RV3WAB4B64LSK",
+                    "reviewer_name": "Shrinivas Joshi",
+                    "review_title": "Good Buy with this configuration",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Overall it's a good product",
+                    "rating": 4.0,
+                    "review_date": "2026-08-30",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "laptop",
+            "normalized": {
+                "processor": "Intel 125H",
+                "processor_brand": "Intel",
+                "processor_speed": "4.6 GHz",
+                "processor_cores": "14",
+                "ram": "24 GB DDR5",
+                "ram_type": "DDR5",
+                "max_ram": "24 GB",
+                "storage": "1 TB SSD",
+                "storage_type": "SSD",
+                "display": "14 inch",
+                "resolution": "1920 x 1080 Pixels",
+                "refresh_rate": null,
+                "touchscreen": null,
+                "graphics": "Intel Arc",
+                "graphics_memory": null,
+                "operating_system": "Windows 11 Home",
+                "battery_life": null,
+                "connectivity": "Bluetooth, Wi-Fi",
+                "weight": "1 kg 400 g",
+                "color": "Silver"
+            },
+            "raw": {
+                "Colour": "Silver",
+                "Hard Drive Size": "1 TB",
+                "Operating System": "Windows 11 Home",
+                "Other Special Features of the Product": "Anti Glare Coating, Backlit Keyboard",
+                "Graphics Description": "Integrated",
+                "Hard Disk Description": "SSD",
+                "Item Weight": "1 kg 400 g",
+                "Video Processor": "Intel",
+                "Specific Uses For Product": "Business, Student",
+                "Webcam Capability": "Yes",
+                "Form Factor": "Notebook",
+                "Hard Drive Interface": "Solid State",
+                "Graphics Ram Type": "VRAM",
+                "Compatible Devices": "External displays, mice, keyboards, storage devices, printers, and other accessories that use USB, HDMI, or wireless connectivity options.",
+                "Item Dimensions L x W x Thickness": "21.5L x 32.4W x 3.3Th Centimeters",
+                "Video Output": "HDMI, DisplayPort",
+                "Operating System Family": "Windows",
+                "Screen Size": "35.6 Centimetres",
+                "Scanner Resolution": "1080p",
+                "Native Resolution": "1920 x 1080 pixels",
+                "Display Type": "LED",
+                "Maximum Display Resolution": "1920 x 1080 Pixels",
+                "Display Technology": "LED",
+                "Display Maximum Resolution": "1920 x 1080",
+                "RAM Memory Installed": "24 GB",
+                "RAM Memory Technology": "DDR5",
+                "Ram Memory Maximum Size": "24 GB",
+                "Memory Speed": "5600 MHz",
+                "System RAM Type": "DDR5 RAM",
+                "RAM Size": "24 GB",
+                "DriveMemory Storage Capacity": "1 TB",
+                "Total USB Ports": "3",
+                "Number Of Ports": "6",
+                "Speaker Description": "Dual speakers",
+                "Processor Type": "Intel Core Ultra 5",
+                "Processor Speed": "4.6 GHz",
+                "Processor Count": "1",
+                "Processor Brand": "Intel",
+                "CPU Model Number": "125H",
+                "CPU Model Speed Maximum": "4.5 GHz",
+                "Brand Name": "HP",
+                "Model Name": "HP Laptop",
+                "Country of Origin": "China",
+                "Model Year": "2025",
+                "Model Number": "CJ9D9PA",
+                "Box Contents": "Laptop, Power Adapter, User manual",
+                "Manufacturer": "HP, HP India Sales Pvt. Ltd.",
+                "Unit Count": "1.0 Count",
+                "Number of Items": "1",
+                "Number of Packs": "1",
+                "Importer Contact Information": "HP INDIA PVT LTD",
+                "Item Type Name": "Laptop",
+                "Manufacturer Contact Information": "HP India Sales Pvt. Ltd.",
+                "Packer Contact Information": "HP India Sales Pvt. Ltd.",
+                "Warranty Description": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+                "Manufacturer Part Number": "CJ9D9PA",
+                "Best Sellers Rank": "#617 in Computers & Accessories ( See Top 100 in Computers & Accessories ) #7 in Traditional Laptops",
+                "ASIN": "B0GWQC4JGJ",
+                "Network Connectivity Technology": "Bluetooth, Wi-Fi",
+                "Computer Wireless Type": "Bluetooth",
+                "Bluetooth support?": "Yes",
+                "Battery Cell Type": "Lithium Ion",
+                "Lithium Battery Energy Content": "41 Watt Hours",
+                "Human Interface Types": "Touch Pad",
+                "Keyboard Description": "Full-size, backlit, numeric keypad"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:10:01+00:00",
+            "last_updated": "2026-11-12T11:10:01+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 1,
+                "reviews_scraped": 17,
+                "variants_scraped": 13,
+                "specifications_scraped": 65
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0HK3MN1J7",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0HK3MN1J7"
+        },
+        "product_details": {
+            "title": "HP OmniBook 3 Smartchoice● Intel Core 3 304● 15 Tops● 8GB DDR5 (Upgradeable) 512GB SSD● 2K WUXGA●14''/35.6cm● 300nits● Win11● Office24● Silver● 1.4kg● ht0140TU● Lighter mini GaN Charger● AI Laptop",
+            "brand": "HP",
+            "manufacturer": "HP, HP India Sales Pvt. Ltd.",
+            "model": "DW4P7PA",
+            "category": "Computers & Accessories",
+            "subcategory": "Laptops",
+            "description": null,
+            "feature_bullets": [
+                "INTELLIGENT & RESPONSIVE PERFORMANCE: Power through your day with an Intel Core 3 processor and Intel AI Boost NPU for smart multitasking, paired with 8GB of high-speed DDR5 RAM and a 512GB SSD for lightning-fast boot times and seamless app loading.",
+                "READY FOR PRODUCTIVITY: Comes pre-installed with Windows 11 Home Single Language and MS Office Home 2024, plus a complimentary 1-year subscription to Microsoft 365 Basic to keep your files synced and secure from day one.",
+                "STUNNING VISUALS: Enjoy a crisp 14\" 2K IPS display with a 1920 x 1200 resolution and 16:10 aspect ratio, providing more screen real estate and vivid detail for work or entertainment.",
+                "ALL-DAY PORTABILITY: Stay productive on the go with a lightweight 1.4 kg design and a battery providing up to 10.75 h of use, featuring fast charging to reach 50% in 45 minutes",
+                "MODERN CONNECTIVITY: Stay connected with Wi-Fi 6 and Bluetooth 5.4, complemented by a Full HD front camera and a versatile range of ports including USB Type-C with Power Delivery."
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "22.6L x 31.5W x 1.5Th Centimeters",
+            "weight": "1 kg 420 g",
+            "warranty": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+            "country_of_origin": "China",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 76490.0,
+                "original_price": 77192.0,
+                "discount_percentage": 1.0,
+                "price_display": "₹76,490",
+                "original_price_display": "₹77,192"
+            },
+            "seller": {
+                "seller_name": "Clicktech Retail Private Ltd",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹2,294.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹2,238.59 EMI interest savings on Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹3,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE delivery Tomorrow 8 am - 12 pm. Order within 7 hrs 4 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "Tomorrow 8 am - 12 pm"
+            }
+        },
+        "product_variants": [],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/618YirvuGNL._SL1080_.jpg",
+                "https://m.media-amazon.com/images/I/41TUHPMXr6L.jpg",
+                "https://m.media-amazon.com/images/I/516H-aGd1AL.jpg",
+                "https://m.media-amazon.com/images/I/51nM-UeoP5L.jpg",
+                "https://m.media-amazon.com/images/I/51HUCLx0KgL.jpg",
+                "https://m.media-amazon.com/images/I/516Uwupdf0L.jpg",
+                "https://m.media-amazon.com/images/I/41KZgC2Fz9L.jpg",
+                "https://m.media-amazon.com/images/I/41OlI7RI7ZL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/41TUHPMXr6L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/516H-aGd1AL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51nM-UeoP5L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/51HUCLx0KgL._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/516Uwupdf0L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41KZgC2Fz9L._SS40_.jpg",
+                "https://m.media-amazon.com/images/I/41OlI7RI7ZL._SS40_.jpg"
+            ],
+            "videos": []
+        },
+        "customer_feedback": {
+            "overall_rating": 5.0,
+            "total_ratings": 1,
+            "total_reviews": 1,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "100%",
+                "4_star": "0%",
+                "3_star": "0%",
+                "2_star": "0%",
+                "1_star": "0%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R3ADG4YKKONN0B",
+                    "reviewer_name": "Rajeev Kumar",
+                    "review_title": "Very good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very good laptop",
+                    "rating": 5.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "laptop",
+            "normalized": {
+                "processor": "Intel 3 304",
+                "processor_brand": "Intel",
+                "processor_speed": "4.3 GHz",
+                "processor_cores": null,
+                "ram": "8 GB DDR5",
+                "ram_type": "DDR5",
+                "max_ram": "8 GB",
+                "storage": "512 GB SSD",
+                "storage_type": "SSD",
+                "display": "14 inch",
+                "resolution": "1900 x 1200 Pixels",
+                "refresh_rate": null,
+                "touchscreen": null,
+                "graphics": null,
+                "graphics_memory": null,
+                "operating_system": "Windows 11 Home",
+                "battery_life": null,
+                "connectivity": "Bluetooth, Wi-Fi",
+                "weight": "1 kg 420 g",
+                "color": "Glacier Silver"
+            },
+            "raw": {
+                "Colour": "Glacier Silver",
+                "Hard Drive Size": "512 GB",
+                "Operating System": "Windows 11 Home",
+                "Other Special Features of the Product": "Anti Glare Coating",
+                "Graphics Description": "Integrated",
+                "Hard Disk Description": "SSD",
+                "Item Weight": "1 kg 420 g",
+                "Video Processor": "Intel",
+                "Specific Uses For Product": "Business, Entertainment, Student",
+                "Webcam Capability": "Yes",
+                "Form Factor": "Notebook",
+                "Graphics Ram Type": "VRAM",
+                "Item Dimensions L x W x Thickness": "22.6L x 31.5W x 1.5Th Centimeters",
+                "Operating System Family": "Windows",
+                "Screen Size": "14 Inches",
+                "Scanner Resolution": "1920 x 1200",
+                "Native Resolution": "1920 x 1200 pixels",
+                "Display Type": "2K WUXGA",
+                "Maximum Display Resolution": "1900 x 1200 Pixels",
+                "Display Technology": "IPS",
+                "Display Maximum Resolution": "1920 x 1200",
+                "RAM Memory Installed": "8 GB",
+                "RAM Memory Technology": "DDR5",
+                "Ram Memory Maximum Size": "8 GB",
+                "System RAM Type": "DDR5 RAM",
+                "RAM Size": "8 GB",
+                "DriveMemory Storage Capacity": "8 GB",
+                "Battery Cell Type": "Lithium Ion",
+                "Lithium Battery Energy Content": "41 Watt Hours",
+                "Human Interface Types": "Touch Pad",
+                "Processor Type": "Intel Core 3",
+                "Processor Speed": "4.3 GHz",
+                "Processor Count": "1",
+                "Processor Brand": "Intel",
+                "CPU Model Number": "3 304",
+                "CPU Model Speed Maximum": "4.3 GHz",
+                "Brand Name": "HP",
+                "Model Name": "HP Laptop",
+                "Country of Origin": "China",
+                "Model Year": "2026",
+                "Model Number": "DW4P7PA",
+                "Box Contents": "Laptop, Power Adapter, User manual",
+                "Manufacturer": "HP, HP India Sales Pvt. Ltd.",
+                "Unit Count": "1.0 Count",
+                "UPC": "826581713685",
+                "Number of Items": "1",
+                "Importer Contact Information": "HP India Sales Private Limited, No. 24, Kothari Arena, Hosur Main Road, Adugodi, Bangalore, Karnataka, India, 560030",
+                "Item Type Name": "Laptop",
+                "Manufacturer Contact Information": "HP India Sales Pvt. Ltd.",
+                "Packer Contact Information": "CH39 - Inventec CQ , Inventec (Chongqing) CORP No.66 West district 2nd Rd, Shapingba District, 401331 Chongqing China",
+                "Warranty Description": "1 year manufacturer warranty on the device from the date of purchase. In case of any technical/product related queries, please call 1800-258-7170 or 1860-258-3079",
+                "Manufacturer Part Number": "DW4P7PA",
+                "Best Sellers Rank": "#7,938 in Computers & Accessories ( See Top 100 in Computers & Accessories ) #226 in Traditional Laptops",
+                "ASIN": "B0HK3MN1J7",
+                "Network Connectivity Technology": "Bluetooth, Wi-Fi",
+                "Computer Wireless Type": "802.11ax",
+                "Bluetooth support?": "Yes",
+                "Total USB Ports": "4"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:10:26+00:00",
+            "last_updated": "2026-11-12T11:10:26+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 8,
+                "videos_scraped": 0,
+                "reviews_scraped": 1,
+                "variants_scraped": 0,
+                "specifications_scraped": 58
+            },
+            "errors": []
+        }
+    }
+]

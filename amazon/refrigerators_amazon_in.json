@@ -1,0 +1,2096 @@
+[
+    {
+        "asin": "B0GWQ46LC3",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0GWQ46LC3"
+        },
+        "product_details": {
+            "title": "IFB 241L 2 Star 7-in-1 Multi Mode, Advanced Inverter Frost-Free Double Door Refrigerator with 30 Hrs Cooling Retention & 4 Year Super Warranty (2026, IFBFF-291BYBSE, Brush Grey)",
+            "brand": "IFB",
+            "manufacturer": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678",
+            "model": "IFBFF-291BYBSE",
+            "category": "Home & Kitchen",
+            "subcategory": "Refrigerators",
+            "description": "Designed for effortless cooling and everyday convenience, this frost-free refrigerator ensures uniform cooling to keep food fresh for longer without manual defrosting. Its thoughtfully designed interiors offer ample space and smart organization, making it easy to store everything from daily essentials to larger items. With fast ice-making, enhanced freshness features, and quiet, energy-efficient performance, it delivers a seamless blend of cooling, storage, and reliability for modern homes.",
+            "feature_bullets": [
+                "Frost Free Refrigerator : Auto Defrost Technology Prevents Ice Build-Up, while 360° Cooling Circulates Air Evenly to Keep Food Fresh Longer with Zero Hassle.",
+                "Capacity: 241 Liters Suitable for Families with 3 To 4 Members",
+                "Energy Rating: 2 Star Energy Efficiency | Annual Energy Consumption 223* Units Per Year",
+                "IFB Super Warranty : India’s First & Only! Enjoy 4 Years Of Machine Warranty, 10 Years Of Compressor Warranty, And 10 Years Of Spare Parts Support. (T&C Apply)",
+                "30+ Hours* Cooling Retention : Keeps Food Fresh During Power Cuts; Operates without a Stabilizer (100V–300V) and Supports Auto Inverter & Solar Connect.",
+                "Fast Ice & Long-Lasting Freshness: Movable Twist Ice Maker Prepares Ice In Under 60 Minutes, while the Big Quadra Crisper (Up To 22.5L) with Humidity Control Keeps Fruits and Vegetables Fresh for Up To 30 Days; Active Deodorizer Keeps Odours Out and Maintains a Fresh Interior",
+                "Extra Space, Smarter Storage: Spacious 64L Freezer & 177L Fresh Food Capacity Designed to Fit More with Ease; Toughened Glass Shelves in Both Freezer and Refrigerator Sections Support Heavy Loads, while a Dedicated Dairy Zone Keeps Dairy Items Organized; Thoughtfully Designed Door Bins with an Egg Tray Keep Everyday Essentials within Reach, and Dual Bottle Bins Hold 3 × 2.5L + 5 × 1L Bottles for Efficient Storage",
+                "360° Cooling Ensures Uniform Cooling Across All Sections, Including Door Compartments; Bright Led Lighting lets you find Items Easily, Even at Night; Lock & Key Adds Safety and Control; Removable Anti-Bacterial Gasket helps Keep Food Hygienic; Advanced Inverter Technology enables Silent, Disturbance-Free Operation",
+                "Item Dimensions: (W*D*H cms) 59.4*67.0*154.4 cm| Weight: 51 KG",
+                "Included In The Box: 1 Refrigerator Unit, Ice Tray, Egg Tray, Brand Warranty Can Be Availed With Amazon Invoice; User Manual Can Be Accessed From The Brand Website."
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "67D x 59.4W x 154.4H Centimeters",
+            "weight": "51 kg",
+            "warranty": "4 Year Warranty on Product and 10 Years Warranty on Compressor",
+            "country_of_origin": null,
+            "pricing": {
+                "currency": "INR",
+                "current_price": 26290.0,
+                "original_price": 38200.0,
+                "discount_percentage": 31.0,
+                "price_display": "₹26,290",
+                "original_price_display": "₹38,200"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹1,467.88 EMI interest savings on select Credit Cards, Bajaj Finserv EMI cards, Amazon Pay Later"
+                },
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹788.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm. Order within 3 hrs 55 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/511YWfz5tjL._SL1080_.jpg",
+                "https://m.media-amazon.com/images/I/31ff6LAZqrL.jpg",
+                "https://m.media-amazon.com/images/I/41pm+90zQTL.jpg",
+                "https://m.media-amazon.com/images/I/412s+nrybaL.jpg",
+                "https://m.media-amazon.com/images/I/41T5PaOc-6L.jpg",
+                "https://m.media-amazon.com/images/I/41q0OTZqNOL.jpg",
+                "https://m.media-amazon.com/images/I/41UB0sKxFqL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/31ff6LAZqrL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41pm+90zQTL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/412s+nrybaL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41T5PaOc-6L._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41q0OTZqNOL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41UB0sKxFqL._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/ab76c067-a1e9-4d3d-8e8a-4a2fdc722ca6/default.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 4.4,
+            "total_ratings": 58,
+            "total_reviews": 36,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "71%",
+                "4_star": "12%",
+                "3_star": "7%",
+                "2_star": "4%",
+                "1_star": "6%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R3LG2JQ4PJYEHW",
+                    "reviewer_name": "Yogesh 7",
+                    "review_title": "In the name of offer they deliver damaged product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Product is good but received damaged product from seller",
+                    "rating": 3.0,
+                    "review_date": "2026-10-29",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/611c4-L7xkL.jpg",
+                        "https://m.media-amazon.com/images/I/61RT1ePcOwL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3L9MGXVLMV6U7",
+                    "reviewer_name": "harshateja.m",
+                    "review_title": "Happy with the product",
+                    "review_comment": "Got the product at a good deal.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-27",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1LEAHVSG2390N",
+                    "reviewer_name": "rachapwar shivraj",
+                    "review_title": "Good product.",
+                    "review_comment": "Valve for money product. Loved it . Large storage capacity.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R25Q5O0HOGA9FE",
+                    "reviewer_name": "AB Amit",
+                    "review_title": "Look",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Item was good, it would me more lavish and attractive",
+                    "rating": 5.0,
+                    "review_date": "2026-10-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3SYNASYH3ECEQ",
+                    "reviewer_name": "Rajneesh Reddy",
+                    "review_title": "Wasted money",
+                    "review_comment": "It is not freezer to fridge convertible and not mentioned clearly. As of 2026 without convertible option, its not wise purchase",
+                    "rating": 1.0,
+                    "review_date": "2026-10-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RZRR5EEWKBG2O",
+                    "reviewer_name": "Anant Sharma",
+                    "review_title": "Very good size and beautiful appearance.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Amazing product in this price. Has good storage capacity for a small family. Looks good. Prompt services and smooth delivery.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-22",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RYJLV0D1PM1B7",
+                    "reviewer_name": "Augustine M",
+                    "review_title": "Very good fridge.",
+                    "review_comment": "Very good. Taking Very low load. Spacious and good looking. Moderate price.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3CPCHOO0VDNRH",
+                    "reviewer_name": "Adil Iqbal",
+                    "review_title": "Good Quality Product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Great quality product solid build elegant design more than what I expected and value for money featurefull",
+                    "rating": 4.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61qrHNpFhGL.jpg",
+                        "https://m.media-amazon.com/images/I/61i3xufinAL.jpg",
+                        "https://m.media-amazon.com/images/I/61Gxw+8xc7L.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RY0XA06YHFXZI",
+                    "reviewer_name": "Nagaraju Guttula",
+                    "review_title": "Good",
+                    "review_comment": "Very nice",
+                    "rating": 5.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R6OE0JC4IMQET",
+                    "reviewer_name": "Pavan AGrawal",
+                    "review_title": "Product Quality",
+                    "review_comment": "Product is good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1OODNO5KETN9C",
+                    "reviewer_name": null,
+                    "review_title": "Turbo cool",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 5.0,
+                    "review_date": "2026-09-03",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R194RTX0KA2HAM",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "good machine and cooling is also nice",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3NCTVEV27UPI3",
+                    "reviewer_name": "Rishi Shaw",
+                    "review_title": "Satisfaction indeed",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Quality of the product is very good,cooling is top notch,I got it in very good price in great Indian sale,",
+                    "rating": 5.0,
+                    "review_date": "2026-10-15",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 4,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71nrTFLAK9L.jpg",
+                        "https://m.media-amazon.com/images/I/61UabUhXeeL.jpg",
+                        "https://m.media-amazon.com/images/I/71YyG9H+qTL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R398OMTDMY5J93",
+                    "reviewer_name": "Kshitij Mishra",
+                    "review_title": "Good refrigerator",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Nice refrigerato affordable and good cooling",
+                    "rating": 5.0,
+                    "review_date": "2026-10-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RHW841U2RZ10S",
+                    "reviewer_name": "Athar Nawaz Hussain",
+                    "review_title": "You can go for it without any hesitation",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. After using 4 days I am giving review, in short product is really worth it. And amazon packaging and delivered too good. I saw many of the reviews were telling about noise... that isn't so... itna sab me hota hai aur woh kaafi light hi hai.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-17",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61zcalubnIL.jpg",
+                        "https://m.media-amazon.com/images/I/71k5iBJWG9L.jpg"
+                    ],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "refrigerator",
+            "normalized": {
+                "brand": null,
+                "model_number": "IFBFF-291BYBSE",
+                "capacity_litres": 241,
+                "door_type": "Double Door",
+                "energy_rating": "2 Star",
+                "compressor": "Inverter",
+                "defrost_type": "Frost Free",
+                "freezer_capacity_litres": 64,
+                "annual_energy_consumption": "223 Kilowatt Hours Per Year",
+                "convertible": null,
+                "shelf_material": "Toughened Glass",
+                "special_features": null,
+                "color": "Brush Grey-2026"
+            },
+            "raw": {
+                "Configuration": "Freezer-on-Top",
+                "Additional Features": "22.5L Vegetable Box with Humidity Controller (30 Days Fresh), 30+ Hours* Cooling Retention, 360° Cooling, 7 in 1 Multi Modes, Additional Bottle Bin (5 x 1.5L bottles), Adjustable Shelves, XL Bottle Bin (3 x 2.5L bottles)",
+                "Number of Doors": "2",
+                "Defrost System Type": "Frost Free",
+                "Voltage": "220 Volts",
+                "Number Of Shelves": "3",
+                "Door Orientation": "Right",
+                "Installation Type": "Freestanding",
+                "BEE Star Rating": "2 Star",
+                "Colour": "Brush Grey-2026",
+                "Item Dimensions D x W x H": "67D x 59.4W x 154.4H Centimeters",
+                "Capacity": "241 litres",
+                "Freezer Capacity": "64 Litres",
+                "Item Weight": "51 kg",
+                "Annual Energy Consumption": "223 Kilowatt Hours Per Year",
+                "Refrigerator Net Capacity": "241 Liters",
+                "Fresh Food Capacity": "177 litres",
+                "Brand Name": "IFB",
+                "Model Number": "IFBFF-291BYBSE",
+                "Number of Items": "1",
+                "Unit Count": "1.0 Count",
+                "Country of Publication": "India",
+                "Importer Contact Information": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678",
+                "Included Components": "1 Refrigerator, Brand Warranty Can Be Availed With Amazon Invoice, Egg Tray, Ice Tray, User Manual Can Be Accessed From The Brand Website.",
+                "Item Type Name": "REFRIGERATOR",
+                "Manufacturer Contact Information": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678",
+                "Manufacturer": "IFB REFRIGERATION LIMITED, IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678",
+                "Packer Contact Information": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678",
+                "Manufacturer Part Number": "IFBFF-291BYBSE",
+                "Warranty Description": "4 Year Warranty on Product and 10 Years Warranty on Compressor",
+                "Best Sellers Rank": "#8,853 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #47 in Standard Refrigerators",
+                "ASIN": "B0GWQ46LC3"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:15:19+00:00",
+            "last_updated": "2026-11-12T11:15:19+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 1,
+                "reviews_scraped": 15,
+                "variants_scraped": 0,
+                "specifications_scraped": 32
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0GPCZBHPH",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0GPCZBHPH"
+        },
+        "product_details": {
+            "title": "LG 251 L, 1 Star, Frost-Free Smart Inverter Double Door Refrigerator with Smart Mode (GLT2516WWPZ, Shiny Steel, Multi Air Flow Cooling with Max Fresh Zone, 2026 Model)",
+            "brand": "LG",
+            "manufacturer": "LG Electronics India Ltd., 51, Udyog Vihar, Greater Noida (U.P)-201306 | Contact Brand for assistance @ [ Call: 08069379999; WhatsApp: 9711709999 ] | serviceindia@lge.com",
+            "model": "GLT2516WWPZ",
+            "category": "Home & Kitchen",
+            "subcategory": "Refrigerators",
+            "description": "The video showcases the product in use. The video guides you through product setup. The video compares multiple products. The video shows the product being unpacked. Video Player is loading. Click to play video Play Mute Current Time 0:00 / Duration 0:27 Loaded : 11.12% 0:00 Stream Type LIVE Seek to live, currently behind live LIVE Remaining Time - 0:27 1x Playback Rate Chapters Chapters Descriptions descriptions off , selected Captions Captions off , selected Audio Track default , selected Fullscreen This is a modal window. LG 251L FrostFree Inverter DoubleDoor Refrigerator Uniform Cooling in Every Corner Multi Air Flow Strategically placed vents circulate cool air throughout the entire fridge. This technology maintains consistent temperature levels, keeping your groceries fresh and crisp for longer periods. Perfect Cooling for Every Season Smart Mode LG’s Smart Mode intelligently adapts to changing seasonal temperatures to maintain an ideal internal environment, ensuring consistent cooling and long-lasting food freshness year-round. Seamless Power During Outages Auto Smart Connect This technology automatically connects your refrigerator to your home inverter during power cuts. It ensures uninterrupted cooling to keep your food safe without any manual intervention. Fresh Zone The Fresh Zone's spacious 25L compartment provides significantly more room to keep your fruits and vegetables fresh and crisp for longer. Horizontal Pocket Handle Adds elegance to the refrigerator with a sleek, premium design. Perfectly Organized Door Storage Lower Door Basket and 2Ltr. Bottle Storage Maximize your storage capacity effortlessly. This extra-wide door basket easily fits multiple 2L bottles along with rows of cans and small packs. It’s the ultimate solution for those who need quick, easy access to bulkier beverage containers and chilled cans. Quiet, Efficient, & Durable Cooling Smart Inverter Compressor The heart of the refrigerator, this compressor intelligently adjusts cooling power based on internal load. This ensures maximum energy efficiency, silent operation, and long-term durability for your peace of mind.",
+            "feature_bullets": [
+                "Frost-Free Double Door Refrigerator less than 300L: Features advanced auto-defrost technology that automatically prevents ice buildup, ensuring hassle-free maintenance and optimal cooling efficiency",
+                "Capacity 251 L: Suitable for families with 5 or more members I freezer capacity: 59 L, fresh food capacity: 192 L, large appliances; Large size frost free refrigerator",
+                "Energy rating: 1 star - Low Energy Efficiency (higher star ratings lead to lesser electricity consumption lowering bills or potential savings). Annual energy consumption: 268 units per year | BEE label period: 1st Jan 2026 to 31st Dec 2028 [For more details please refer BEE label]. | Auto Smart Connect Technology that helps connect your refrigerator to home inverter",
+                "Manufacturer Warranty: 1 year on product, 10 years on compressor (T&C Apply) | Process to activate and claim warranty: warranty activation (post purchase) – in most cases, the warranty is automatically activated from the date of purchase; Claiming Warranty (if required) – Check warranty coverage, Conditions: physical damage, unauthorized repairs and improper usage may void warranty; Call LG customer care [Contact details available on product page under product specification section], provide purchase invoice, model number and serial number",
+                "Cooling and freshness technology: LG Multi-Air Flow System designed to maintain ideal temperature levels to help keep your food fresher, for longer, cooling retention during power cuts, double door fridge, big refrigerator, most trusted refrigerator brand"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "63.7D x 55.5W x 157.3H Centimeters",
+            "weight": "45 kg",
+            "warranty": "Manufacturer Warranty: 1 year comprehensive warranty, 10 years warranty on compressor (T&C apply) | Contact Brand for queries/assistance @ [Telephone: 08069379999, WhatsApp: 9711709999 & Email: serviceindia@lge.com] and provide product's model name and seller's details mentioned on your invoice. Brand's service center will allot you a convenient slot for the service. For units installed by entities outside of Brand's service network, warranty repairs for defects attributed to installation may be charged by the Brand.",
+            "country_of_origin": null,
+            "pricing": {
+                "currency": "INR",
+                "current_price": 25890.0,
+                "original_price": 36990.0,
+                "discount_percentage": 30.0,
+                "price_display": "₹25,890",
+                "original_price_display": "₹36,990"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹2,234.43 EMI interest savings on select Credit Cards, Bajaj Finserv EMI cards, Amazon Pay Later"
+                },
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹776.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Color",
+                "variant_name": "Ebony Sheen",
+                "asin": "B0GSQQZ8LK",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GSQQZ8LK"
+            },
+            {
+                "variant_type": "Color",
+                "variant_name": "Onyx Black",
+                "asin": "B0GW8PT5TC",
+                "price": "₹30,990.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GW8PT5TC"
+            },
+            {
+                "variant_type": "Color",
+                "variant_name": "Shiny Steel Pz",
+                "asin": "B0BSDQGYNP",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0BSDQGYNP"
+            },
+            {
+                "variant_type": "Color",
+                "variant_name": "Shiny Steel",
+                "asin": "B0GPCZBHPH",
+                "price": "₹25,890.00",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GPCZBHPH"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/61oSpQLs-qL._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/31mKKfZ082L.jpg",
+                "https://m.media-amazon.com/images/I/41Wt9PMgPJL.jpg",
+                "https://m.media-amazon.com/images/I/51MsvQBJ+sL.jpg",
+                "https://m.media-amazon.com/images/I/51EUnMNhloL.jpg",
+                "https://m.media-amazon.com/images/I/51MAtk+xirL.jpg",
+                "https://m.media-amazon.com/images/I/51p++FFdyaL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/31mKKfZ082L._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41Wt9PMgPJL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51MsvQBJ+sL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51EUnMNhloL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51MAtk+xirL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51p++FFdyaL._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/461157d1-5fb0-49bb-bb6f-573797b210e2/default.vertical.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 3.8,
+            "total_ratings": 1192,
+            "total_reviews": 349,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "49%",
+                "4_star": "23%",
+                "3_star": "8%",
+                "2_star": "2%",
+                "1_star": "18%"
+            },
+            "reviews": [
+                {
+                    "review_id": "RX6S3SGXHRXIO",
+                    "reviewer_name": "Harish",
+                    "review_title": "Cooling is superb.",
+                    "review_comment": "Good product. 💯 Worth",
+                    "rating": 4.0,
+                    "review_date": "2026-11-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R30GFLL41VZJDP",
+                    "reviewer_name": "VetriVijay",
+                    "review_title": "All' Delevery Damage pls tell delivery person My Product all so Damaged Today (10/11/26)It's Damaged",
+                    "review_comment": "Product Damage Y All' Delevery Damage pls tell delivery person Load and Delivery Safely Lord of customer telling damage. My product Delivered Today (10/11/26) It's Damaged ..",
+                    "rating": 1.0,
+                    "review_date": "2026-11-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61tu7klur1L.jpg",
+                        "https://m.media-amazon.com/images/I/612V2CCC6AL.jpg",
+                        "https://m.media-amazon.com/images/I/61zsWbcBWpL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RJ6UPC0MEZ1KL",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "LG 276L fridge",
+                    "review_comment": "Fast Delivery and installation completed on time explained in detail about features. Fridge storage and size sufficient. no noise working smoothly,Overall experience is good.",
+                    "rating": 4.0,
+                    "review_date": "2026-11-08",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3SPLMZOKMUD39",
+                    "reviewer_name": "Vamshi pandu",
+                    "review_title": "Good product but light is not present in freezer",
+                    "review_comment": "Good product But light is not present in freezer",
+                    "rating": 4.0,
+                    "review_date": "2026-11-05",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1UWE7G6S14725",
+                    "reviewer_name": "rajesh bhaskaran",
+                    "review_title": "Nice product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Slient operation",
+                    "rating": 5.0,
+                    "review_date": "2026-11-05",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2B34GC5XZZOF8",
+                    "reviewer_name": "Kartikesh Saurkar",
+                    "review_title": "Careful during open box delivery. Check damages & dents",
+                    "review_comment": "About Inspection - Important Note for Black Glass Model Since the refrigerator has a black glossy finish, scratches or dents are very hard to spot, and the protective plastic film makes it even harder to detect damage during open-box delivery. Do not share the otp for delivery until inspection completes and you're satisfied. Please follow this method to check: 1. Always position the fridge so that light falls from the side (left or right) before you start the inspection. Side light makes scratches and dents easily visible. 2. First ask the delivery executive if you are allowed to remove the protective plastic film. 3. After removing, check the surface by looking at your own reflection. Move slowly and see if the reflection moves smoothly. If the reflection suddenly blurs, waves, or glides unevenly, there is a dent/bump there. 4. If you find any damage, record it with a photo and video. Minor scratches and dents on a glossy black surface are very difficult to capture in a photo, so video is better. 5. If you see the scratches or dent, reject the delivery. Product Review 1. No light in the freezer compartment. 2. The freezer door does not close smoothly I will update the review after 2 months of usage",
+                    "rating": 4.0,
+                    "review_date": "2026-11-04",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1NFU9ED4J4VQ1",
+                    "reviewer_name": "ramesh myneni",
+                    "review_title": "Worst",
+                    "review_comment": "Amazon is dropping it's quality and standard. Delivery persons are rude to customers demanding extra money. Order was not delivered for not paying extra money. Afterwards they are not responding. Had to cancel the order entirely. It's better to go for other online apps.",
+                    "rating": 1.0,
+                    "review_date": "2026-11-04",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RT0N8WJN3CN2R",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Very good as per the brand",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very good as per the brand. It's not broad, very slim, and doesn't have much space in terms of liters, but it is quite tall.",
+                    "rating": 5.0,
+                    "review_date": "2026-11-01",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RADS25WT5D6QB",
+                    "reviewer_name": "Abdul L.",
+                    "review_title": "So far doing Good hope it continues to",
+                    "review_comment": "Posting Exactly after 1 year, So far doing Good, hope it continues to Thanks .",
+                    "rating": 4.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2VUQNV9C9POZD",
+                    "reviewer_name": "Sugu",
+                    "review_title": "Very very low space inside dont buy",
+                    "review_comment": "Very very low space inside dont buy lg waste so try othar brand alrady buy waste money pls dont buy im already tell go to othar brand",
+                    "rating": 1.0,
+                    "review_date": "2026-10-30",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/611doccM11L.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RF5SOWVJAB2VY",
+                    "reviewer_name": null,
+                    "review_title": "Low quality product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Refrigerator gasket started powering in 2 years",
+                    "rating": 3.0,
+                    "review_date": "2026-07-02",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1E8HC27SE0LE8",
+                    "reviewer_name": "Suman Das",
+                    "review_title": "Must Buy",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Quality is best, Zero Noise , Overall good condition, Suitable for a family of four to five members, enough space, but It's getting really hot on the right side of the fridge. Hassle-free installation",
+                    "rating": 5.0,
+                    "review_date": "2026-10-23",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 2,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71vhUFZ5AAL.jpg",
+                        "https://m.media-amazon.com/images/I/71-9Ous00fL.jpg",
+                        "https://m.media-amazon.com/images/I/71ufYtV7ZJL.jpg",
+                        "https://m.media-amazon.com/images/I/61d-aMNDUyL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2SST39LH3RYD8",
+                    "reviewer_name": "Amit Sharma",
+                    "review_title": "Fantastic refrigerator but poor after sales service",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. One of the best double door refrigerator by LG. Pros: 1. Cooling is fantastic. In freezer section, I selected knob at MIN, yet the cooling is fantastic. 2. Build Quality is fantastic. The door feels heavy. Gasket also is of good quality. Black colour looks gorgeous. Noise levels are also low. LG inverter Compressors are known for reliability so I am expecting from this as well 3. Racks: Including Fresh Zone (1st one), there are 5 racks for keeping utensils. We could easily place 2 litres Patila. But for very long jars, you might have to remove or adjust 1 rack. Rack Quality is also sturdy. Disclaimer: don't place too hot utensils on glass rack, it will shatter to pieces, which is obvious for all brands. 4. Bottle racks: Only 1 door rack is truly made for bottles. The bottom one is for 300ml bottles. For Large families it might be a con, but having only 1 Bottle rack increases life of door gasket and hinge. Also I could easily 2Ltr cold drink bottle. 5. Package handled well: I was skeptical about delivery handling of fridge after watching negative reviews. But I was happy to say that my refrigerator did not have any body dents or scratches. Cons: 1. Bad LG Service: Very much disappointed. that's why I deducted 1 star. I live in KOLKATA. The LG technician visited 2 hours late, by then I was at office. Then he came at late evening. He had this very bad sarcastic attitude. He even did not follow proper manual rules like checking leveling or adjusting the legs etc. I am unhappy with installation procedure. 2. No light in freezer section.",
+                    "rating": 4.0,
+                    "review_date": "2026-10-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 9,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/7194RmhcGjL.jpg",
+                        "https://m.media-amazon.com/images/I/715WCLZFfEL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R32B4BK8G422YT",
+                    "reviewer_name": "Mahendra",
+                    "review_title": "Buy at your OWN RISK",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Video Player is loading. Play Current Time 0:00 / Duration 0:13 Loaded : 23.10% 0:00 Stream Type LIVE Seek to live, currently behind live LIVE Remaining Time - 0:13 1x Playback Rate Chapters Chapters Descriptions descriptions off , selected Captions captions settings , opens captions settings dialog captions off , selected Audio Track default , selected Fullscreen Mute This is a modal window. Beginning of dialog window. Escape will cancel and close the window. Text Color White Black Red Green Blue Yellow Magenta Cyan Transparency Opaque Semi-Transparent Background Color Black White Red Green Blue Yellow Magenta Cyan Transparency Opaque Semi-Transparent Transparent Window Color Black White Red Green Blue Yellow Magenta Cyan Transparency Transparent Semi-Transparent Opaque Font Size 50% 75% 100% 125% 150% 175% 200% 300% 400% Text Edge Style None Raised Depressed Uniform Dropshadow Font Family Proportional Sans-Serif Monospace Sans-Serif Proportional Serif Monospace Serif Casual Script Small Caps Reset restore all settings to the default values Done Close Modal Dialog End of dialog window. Specification wise it is a good product, value for money product (@24K) I would say but received a damaged product. I requested for replacement and after 3 days of delivery product got picked up and now (6 days after pickup) no one knows where that pickup shipment is. I called amazon customer care number several times and their associates told different answers like many told the pickup shipment is deliverd back to seller and most of them said seller did not received the pickup shipment. To confirm the same I visited amazaon delivery center and they told me that pickup shipment has been despatched from the amazon delivery center on the same night of pickup and they denied to tell me that where that shipment currently is. I am frequently talking about pickup shipment because as per amazon replacement policy, seller will examine the damaged product and then seller will dispatch the replacement product (free from any defect product). Now I am sandwitched between this. unless and untill seller receive defective product I won't be getting replacement (as per amazon customer associates). When I talked about refund they told me to wait for 13 days from pickup date then only refund window will open. I would request other customers too that don't buy any product from this seller. Consider buying large appliance from nearest brand store, shop or you can buy from croma store afterall you are investing heavy money on such appliance. Below are the photos and video of deffective item that I received. UPDATE: I received refund after 35 days. Don't buy from this seller as he delayed my refund to over a month of time. If it has happened with me it can happen with you also.",
+                    "rating": 1.0,
+                    "review_date": "2025-10-12",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 64,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/41pGmo8mUiL.jpg",
+                        "https://m.media-amazon.com/images/I/51h9jtPSzLL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3C9Q9VXSH4Z77",
+                    "reviewer_name": "alisha",
+                    "review_title": "Good product by LG",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. I am writing this review after using the fridge for a month. I bought this fridge around a month back. With the credit card, I was able to get a good deal online on this item. It's my first purchase online for a heavy appliance so was worried about the product quality. We received the fridge within 2 days of placing the order. The delivery agents were helpful. They opened the fridge and allowed us to inspect from top to bottom, inside and outside. Post inspection, the agents placed the fridge and left after receiving the OTP. The fridge itself is in black matte finish. It looks. The storage capacity is quite good for a small family of 4 people. Each of the trays and ice box is removable. you can adjust it accordingly. We have tested Cooling performance and that too is good. The installation agent was very helpful too. Since its a LG brand, the fridge is an absolute deal. It was a very new model. If you get it online at a great price, go for it.",
+                    "rating": 5.0,
+                    "review_date": "2026-07-01",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 28,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R36DXHSTNXBQ0J",
+                    "reviewer_name": "From Chennai",
+                    "review_title": "Refrigerator-Good But I don't recommend buying Online",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. LG 272 L 3 star ref , First I couldn't take clear photo of the scratches because the material is transparent .....LG 272 is good , delivery was good , they told me to check for any damages and didn't ask for OTP until I am fully satisfied which was great right ?.. but seeing few scratches here and there , I thought it would go after cleaning and I didn't want to be rude and return the product for few scratches , which I thought I would do , before their arrival , but at that point , I just said \"its ok\" and gave them the OTP .The scratches didn't go after cleaning and I can feel mild dent when I touch but since it is in the door I don't mind for now but need to check with LG team tomorrow (lol and cry)... They informed me lg installation team will come to home , and yes they called me , they will come tomorrow . I will give 4 STAR for the fridge , I started using it had a talk to the lg team when they called , before turning ON , It cools slowly at start after 3 hours its fine , freezer cools quickly though and really less noise compared to my old refrigerator's I used , so that's really good ... but will definitely not recommend buying online , just go to a shop or if you can just return it do it , but it will be a tough call if your too shy like me .. This was my mistake .. I will give 3 STAR for amazon because at least I had an option to return , but amazon should take little more effort because these scratches or not new , it looks very old so you would have seen it before sending it to me ...Now a days it hurt's a lot when making bad decisions or get cheated (just cry no lol), that's why writing review's.. hope it helps some one ...",
+                    "rating": 3.0,
+                    "review_date": "2023-06-03",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 110,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3EGMHPNME19NS",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. No noise of compressor. Value for money.",
+                    "rating": 4.0,
+                    "review_date": "2026-10-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "refrigerator",
+            "normalized": {
+                "brand": null,
+                "model_number": "GLT2516WWPZ",
+                "capacity_litres": 251,
+                "door_type": "Double Door",
+                "energy_rating": "1 Star",
+                "compressor": "Inverter",
+                "defrost_type": "Frost Free",
+                "freezer_capacity_litres": 59,
+                "annual_energy_consumption": "268 Kilowatt Hours Per Year",
+                "convertible": null,
+                "shelf_material": "Toughened Glass",
+                "special_features": null,
+                "color": "Shiny Steel"
+            },
+            "raw": {
+                "Configuration": "Freezer-on-Top",
+                "Additional Features": "Adjustable Shelves, Frost Free, Inverter Compressor, Separate Freezer, Stabilizer Free Operation",
+                "Number of Doors": "2",
+                "Defrost System Type": "Frost Free",
+                "Voltage": "220 Volts",
+                "Shelf Type": "Toughened Glass",
+                "Form Factor": "Double Door Refrigerator",
+                "Ice Maker Dispensed Type": "Cubed",
+                "Cooling Method": "Compressor",
+                "Inverter Type": "Has Inverter",
+                "Number Of Shelves": "2",
+                "Adjustable Temperature Control": "Yes",
+                "Door Orientation": "Right",
+                "Compressor Type": "Reciprocating",
+                "Has Convertible Freezer": "No",
+                "Is Customisable?": "Yes",
+                "Is Electric": "Yes",
+                "Number of Sections": "2",
+                "Door Shelf Count": "5",
+                "Number of Shelves": "2",
+                "Power Source": "Corded Electric",
+                "Colour": "Shiny Steel",
+                "Pattern": "Solid",
+                "Item Dimensions D x W x H": "63.7D x 55.5W x 157.3H Centimeters",
+                "Capacity": "251 litres",
+                "Freezer Capacity": "59 Litres",
+                "Item Weight": "45 kg",
+                "Annual Energy Consumption": "268 Kilowatt Hours Per Year",
+                "Refrigerator Net Capacity": "251 Liters",
+                "Size": "251 L",
+                "Fresh Food Capacity": "192 litres",
+                "Installation Type": "Freestanding",
+                "Specification Met": "Energy Rating",
+                "BEE Star Rating": "1 Star",
+                "Refrigerant": "R-600A",
+                "Product Finish Type": "Glossy",
+                "Door Material Type": "Stainless Steel",
+                "Brand Name": "LG",
+                "Model Name": "GLT2516WWPZ",
+                "Model Number": "GLT2516WWPZ",
+                "Number of Items": "1",
+                "Unit Count": "1.0 Count",
+                "Specific Uses for Product": "Beverages & Medicines, Food, Cosmetic",
+                "Country of Publication": "India",
+                "Importer Contact Information": "Regd. Office: A-24/6, Mohan Cooperative IND Estate, Mathura Road, New Delhi-110044",
+                "Included Components": "1 Refrigerator Unit & User Manual",
+                "Item Type Name": "Refrigerator",
+                "Manufacturer Contact Information": "LG Electronics India Ltd., 51, Udyog Vihar, Greater Noida (U.P)-201306 | Contact Brand for assistance @ [ Call: 08069379999; WhatsApp: 9711709999 ] | serviceindia@lge.com",
+                "Manufacturer": "LG Electronics India Ltd., LG Electronics India Ltd., 51, Udyog Vihar, Greater Noida (U.P)-201306 | Contact Brand for assistance @ [ Call: 08069379999; WhatsApp: 9711709999 ] | serviceindia@lge.com",
+                "Packer Contact Information": "LG Electronics India Ltd., 51, Udyog Vihar, Greater Noida (U.P)-201306 | Contact Brand for assistance @ [ Call: 08069379999; WhatsApp: 9711709999 ] | serviceindia@lge.com",
+                "Manufacturer Part Number": "6B2HA302",
+                "Warranty Description": "Manufacturer Warranty: 1 year comprehensive warranty, 10 years warranty on compressor (T&C apply) | Contact Brand for queries/assistance @ [Telephone: 08069379999, WhatsApp: 9711709999 & Email: serviceindia@lge.com] and provide product's model name and seller's details mentioned on your invoice. Brand's service center will allot you a convenient slot for the service. For units installed by entities outside of Brand's service network, warranty repairs for defects attributed to installation may be charged by the Brand.",
+                "Best Sellers Rank": "#2,821 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #7 in Standard Refrigerators",
+                "ASIN": "B0GPCZBHPH"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:15:55+00:00",
+            "last_updated": "2026-11-12T11:15:55+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 1,
+                "reviews_scraped": 17,
+                "variants_scraped": 4,
+                "specifications_scraped": 54
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0G8JR8VNZ",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0G8JR8VNZ"
+        },
+        "product_details": {
+            "title": "Samsung 183 L, 4 Star, Digital Inverter, Direct-Cool Single Door Refrigerator (RR20H28249U/NL, Paradise Bloom Blue, Base Stand Drawer, Single Touch Defrost, 2026 Model)",
+            "brand": "Samsung",
+            "manufacturer": "Samsung India Electronics Limited, Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "model": "RR20H28249U/NL",
+            "category": "Home & Kitchen",
+            "subcategory": "Refrigerators",
+            "description": null,
+            "feature_bullets": [
+                "Direct Cool Refrigerator: Stylish Single Door Refrigerator with Modern Paradise Bloom pattern. Enjoy powerful cooling that can last longer",
+                "Capacity 183 liters: Suitable for families with 2 to 3 members",
+                "Energy Rating : 4 Star Energy Efficiency | Annual Energy Consumption : 130 Kilowatt Hours Per Year",
+                "Manufacturer Warranty: 1 Year comprehensive warranty and a 10 years warranty on the digital inverter compressor (Note: Brand Warranty can be availed using seller invoice, 20 Year Digital Inverter Compressor Warranty applicable for purchases done only from 1st Dec 2022 till 31st March'26)",
+                "Digital Inverter Compressor provides higher energy efficiency, less noise and long-lasting performance while consuming 50% less power, backed up by 10 year warranty [20 Year Digital Inverter Compressor Warranty applicable for purchases done only from 1st Dec 2022 till 31st March'26]",
+                "Interior Description : Fresh Food Capacity : 165 Ltr | Freezer Capacity : 18 Ltr | Total no. of compartments : 1 | Shelves : 2 | Vegetable Drawers : 1 | Shelf Type : Toughened Glass Shelves | Anti Bacterial Gasket | Base stand with Drawer for additional space for non-refrigerated food items",
+                "Samsung Exclusive Features : Fresh room | Grande Door Design | Stabilizer Free Operation (100v - 300v) | Smart Connect Inverter (Automatic) | Up to 15 Days of Fresh Food | Bar Handle | Lock & Key",
+                "Additional Features : Easy Clean Back | Veg Box | Big Bottle Guard (Deep Door Guard) | White Led Light | Premium Looking Freezer",
+                "Item Dimensions : (WxHxD)(cm): 55x133x66.5 cm | Net Weight 32 kg",
+                "Included in the box : 1 Refrigerator unit, Egg Tray, Ice Tray (Note: User manual can be accessed from brand website)"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "66.5D x 55W x 133H Centimeters",
+            "weight": "32 kg",
+            "warranty": "Manufacturer warranty: 1 year comprehensive warranty, 10 years warranty on digital inverter compressor (T&C Apply, 20 Year Digital Inverter Compressor Warranty applicable for purchases done only from 1st Dec 2022 till 31st March'26) | Contact Brand for queries/assistance @ [Telephone: (Toll Free): 1800 40 7267864 (1800 40 SAMSUNG), WhatsApp: 1800-57-267864 & Email: support.india@samsung.com] and provide product's model name and seller's details mentioned on your invoice. Brand's service center will allot you a convenient slot for the service.",
+            "country_of_origin": null,
+            "pricing": {
+                "currency": "INR",
+                "current_price": 16790.0,
+                "original_price": 21999.0,
+                "discount_percentage": 24.0,
+                "price_display": "₹16,790",
+                "original_price_display": "₹21,999"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹937.49 EMI interest savings on select Credit Cards, Bajaj Finserv EMI cards, Amazon Pay Later"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹1,679.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹503.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Color",
+                "variant_name": "Paradise Bloom Blue",
+                "asin": "B0G8JR8VNZ",
+                "price": "₹16,790",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0G8JR8VNZ"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/711RiE1lrfL._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/41qK+xKG0kL.jpg",
+                "https://m.media-amazon.com/images/I/51hQXdBkKLL.jpg",
+                "https://m.media-amazon.com/images/I/51PS5j19ZiL.jpg",
+                "https://m.media-amazon.com/images/I/51sID3+ixLL.jpg",
+                "https://m.media-amazon.com/images/I/511oN-BGhOL.jpg",
+                "https://m.media-amazon.com/images/I/51QPXez6WML.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/41qK+xKG0kL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51hQXdBkKLL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51PS5j19ZiL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51sID3+ixLL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/511oN-BGhOL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51QPXez6WML._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/8e2dcb92-7ad0-4404-a190-c97a37a18b72/default.vertical.jobtemplate.hls.m3u8",
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/465d1a9a-4078-4092-ab02-55db3c81f98e/default.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 4.3,
+            "total_ratings": 4658,
+            "total_reviews": 610,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "57%",
+                "4_star": "28%",
+                "3_star": "7%",
+                "2_star": "2%",
+                "1_star": "6%"
+            },
+            "reviews": [
+                {
+                    "review_id": "RI8462WHYQ4WE",
+                    "reviewer_name": "Prashant Atmaranjan Rasaikar",
+                    "review_title": "SUPERB",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Absolutely Fantastic",
+                    "rating": 5.0,
+                    "review_date": "2026-11-08",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R10XORT1LSOYYA",
+                    "reviewer_name": "Rajashekar",
+                    "review_title": "Door problem",
+                    "review_comment": "I brought this item yesterday , But it has 1 problem i.e, Door was broken in down side,, could you resolve this problem??",
+                    "rating": 3.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61PE4yMWiqL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3JCS59V56QY6D",
+                    "reviewer_name": "Sandeep Mishra",
+                    "review_title": "How to exchange",
+                    "review_comment": "I have an Allwyn refrigerator in good working condition, though it has minor body scratches. I want to buy a new one by exchanging it, but the brand Allwyn is not listed in the company options for exchange. How should I proceed with the exchange? Please suggest. Thanks..",
+                    "rating": 5.0,
+                    "review_date": "2026-10-28",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61SfT4lW6OL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3ZN9UEX6SY06",
+                    "reviewer_name": "satyapal singh",
+                    "review_title": "When it is turned on, current is generated.",
+                    "review_comment": "Don't ask for this product because it gives electric shock. I had ordered it and had placed a return request but till now no one has come to take the return.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2A27BU8PPEPFF",
+                    "reviewer_name": "SUMANA",
+                    "review_title": "It's cool fine",
+                    "review_comment": "It's cools fine",
+                    "rating": 4.0,
+                    "review_date": "2026-10-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1URE7X7BBK6K3",
+                    "reviewer_name": "Umesh Kumar",
+                    "review_title": "Nice",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Everyone loved it. Bought this one for my village home",
+                    "rating": 5.0,
+                    "review_date": "2026-10-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2VR38O51W6K1K",
+                    "reviewer_name": "Bullo L Tatung",
+                    "review_title": "Wow",
+                    "review_comment": "Bohut achha HAI ..",
+                    "rating": 5.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2GYXF0VIMVMY8",
+                    "reviewer_name": "Kd",
+                    "review_title": "Heating both side",
+                    "review_comment": "Heating problem both side it is getting heated and no option is coming for replacement or return call to Amazon cs they are saying we need a letter from Samsung visit to Samsung and take letter very pathetic services don’t buy this product",
+                    "rating": 1.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/51RTGsO5FWL.jpg",
+                        "https://m.media-amazon.com/images/I/71E71qCeN+L.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3IJSN49T9JU7K",
+                    "reviewer_name": "Ruma",
+                    "review_title": "Worst delivery partner",
+                    "review_comment": "Refrigerator water leaking issue,and the delivery partner denied of doorstep delivery and asking for 500 rs",
+                    "rating": 1.0,
+                    "review_date": "2026-10-20",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 4,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3PUUO7D66JH7J",
+                    "reviewer_name": "prasad",
+                    "review_title": "Warranty card",
+                    "review_comment": "Warranty card is not available with product",
+                    "rating": 4.0,
+                    "review_date": "2026-10-20",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1LIJSX6NM07R5",
+                    "reviewer_name": null,
+                    "review_title": "Good performance",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. I used this refrigerator from 22 months. It does not required any maintenance till now. It's cooling effect is good and no any extra sound. It's appearance is also nice. It is value of money. I bought from Amazon great Indian festival at Rs 13510.00",
+                    "rating": 4.0,
+                    "review_date": "2024-08-29",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RWKSRV8NJGM45",
+                    "reviewer_name": "Ashok Kumar Bhilwaria",
+                    "review_title": "Excellent performance",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Purchased this product last April'26. Since then nicely working. Cooling is excellent. The defrost feature is also good, just push of a button. Product is energy efficient. Happy to purchase it and recommends to other also.",
+                    "rating": 5.0,
+                    "review_date": "2026-08-12",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 5,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2BBKZIMOJCZQD",
+                    "reviewer_name": "SUKA",
+                    "review_title": "Good for 4 members family.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. We bought this refrigerator for ₹15,500. It makes absolutely no noise and operates very quietly. The storage capacity is sufficient for a small family of four. It cools quickly. The defrost feature is also good; just push of a button. It has been just a month since we bought it, and the electricity bill has gone up by ₹700. It is a good product; you can buy it.",
+                    "rating": 4.0,
+                    "review_date": "2026-06-16",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 15,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R174TBZ0Z0AR1S",
+                    "reviewer_name": "Chandan mitra",
+                    "review_title": "Nice Fridge.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very nice Fridge withen this price.I had make exchange to my Old Godrej fridge.It is Value for money product.Exchange process also smooth.Thanks to Samsung and Amajan for good service.",
+                    "rating": 4.0,
+                    "review_date": "2026-08-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3C5PJGXMKUZA8",
+                    "reviewer_name": "Mohd istkhar",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-07",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R9J6J9PBCC5OU",
+                    "reviewer_name": "SATISH KUMAR",
+                    "review_title": "To good.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Over hitt problem.",
+                    "rating": 3.0,
+                    "review_date": "2026-06-11",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3L7B03AYE2144",
+                    "reviewer_name": "Manish kumar",
+                    "review_title": "Nyc product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Cooling good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-18",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "refrigerator",
+            "normalized": {
+                "brand": null,
+                "model_number": "RR20H28249U/NL",
+                "capacity_litres": 183,
+                "door_type": "Single Door",
+                "energy_rating": "4 Star",
+                "compressor": "Inverter",
+                "defrost_type": "Direct Cool",
+                "freezer_capacity_litres": 18,
+                "annual_energy_consumption": "130 Kilowatt Hours Per Year",
+                "convertible": null,
+                "shelf_material": "Toughened Glass",
+                "special_features": null,
+                "color": "Paradise Bloom Blue"
+            },
+            "raw": {
+                "Configuration": "Freezer-on-Top",
+                "Additional Features": "Adjustable Shelves, Base Drawer, Door Lock, Energy Efficient, Inverter Compressor",
+                "Number of Doors": "1",
+                "Defrost System Type": "Semi-Automatic",
+                "Voltage": "230 Volts",
+                "Shelf Type": "Toughened Glass",
+                "Ice Maker Dispensed Type": "Cubed",
+                "Cooling Method": "Compressor",
+                "Inverter Type": "Has Inverter",
+                "Number Of Shelves": "2",
+                "Adjustable Temperature Control": "Yes",
+                "Power Plug Type": "Type D",
+                "Door Orientation": "Left",
+                "Compressor Type": "Reciprocating",
+                "Has Convertible Freezer": "No",
+                "Is Customisable?": "No",
+                "Is Electric": "Yes",
+                "Number Of Racks": "2",
+                "Number of Sections": "1",
+                "Door Shelf Count": "5",
+                "Number of Shelves": "2",
+                "Power Source": "Corded Electric",
+                "Colour": "Paradise Bloom Blue",
+                "Pattern": "Floral",
+                "Item Dimensions D x W x H": "66.5D x 55W x 133H Centimeters",
+                "Capacity": "183 litres",
+                "Freezer Capacity": "18 Litres",
+                "Item Weight": "32 kg",
+                "Annual Energy Consumption": "130 Kilowatt Hours Per Year",
+                "Refrigerator Net Capacity": "183 Liters",
+                "Size": "Small",
+                "Fresh Food Capacity": "165 litres",
+                "Installation Type": "Freestanding",
+                "Specification Met": "Energy Rating, Energy Star",
+                "BEE Star Rating": "4 Star",
+                "Refrigerant": "R-600A",
+                "Product Finish Type": "Glossy",
+                "Door Material Type": "Stainless Steel",
+                "Brand Name": "Samsung",
+                "Model Name": "RD",
+                "Model Number": "RR20H28249U/NL",
+                "Number of Items": "1",
+                "Number of Packs": "1",
+                "Unit Count": "1.0 Count",
+                "Specific Uses for Product": "Beverages, Food",
+                "Country of Publication": "India",
+                "Importer Contact Information": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+                "Included Components": "1 Refrigerator Unit",
+                "Item Type Name": "Refrigerator",
+                "Manufacturer Contact Information": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+                "Manufacturer": "Samsung India Electronics Limited, Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+                "Packer Contact Information": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+                "Manufacturer Part Number": "RR20H28249U/NL",
+                "Warranty Description": "Manufacturer warranty: 1 year comprehensive warranty, 10 years warranty on digital inverter compressor (T&C Apply, 20 Year Digital Inverter Compressor Warranty applicable for purchases done only from 1st Dec 2022 till 31st March'26) | Contact Brand for queries/assistance @ [Telephone: (Toll Free): 1800 40 7267864 (1800 40 SAMSUNG), WhatsApp: 1800-57-267864 & Email: support.india@samsung.com] and provide product's model name and seller's details mentioned on your invoice. Brand's service center will allot you a convenient slot for the service.",
+                "Best Sellers Rank": "#885 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #1 in Standard Refrigerators",
+                "ASIN": "B0G8JR8VNZ"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": false
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:16:27+00:00",
+            "last_updated": "2026-11-12T11:16:27+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 2,
+                "reviews_scraped": 17,
+                "variants_scraped": 1,
+                "specifications_scraped": 56
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0G8JRG8LT",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0G8JRG8LT"
+        },
+        "product_details": {
+            "title": "Samsung 236 L, 3 Star, Convertible, Digital Inverter Frost Free Double Door Refrigerator (RT40H28U3THL, Silver, Refined Inox, 2026 Model)",
+            "brand": "Samsung",
+            "manufacturer": "Samsung India Electronics Limited, Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "model": "RT40H28U3THL",
+            "category": "Home & Kitchen",
+            "subcategory": "Refrigerators",
+            "description": null,
+            "feature_bullets": [
+                "Frost Free Refrigerator: Auto Defrost with powerful cooling and long lasting freshness",
+                "Capacity 236 liters: Suitable for families with 2 to 3 members",
+                "Energy Rating : 3 Star Energy Efficiency | Annual Energy Consumption : 200 Kilowatt Hours Per Year",
+                "Manufacturer Warranty: 1 Year comprehensive warranty and a 10 years warranty on the digital inverter compressor (Note: Brand Warranty can be availed using seller invoice, 20 Year Digital Inverter Compressor Warranty applicable for purchases done only from 1st Dec 2022 till 31st March'26)",
+                "Digital Inverter Compressor provides higher energy efficiency, less noise and long-lasting performance while consuming 50% less power, backed up by 10 year warranty [20 Year Digital Inverter Compressor Warranty applicable for purchases done only from 1st Dec 2022 till 31st March'26]",
+                "Interior Description : Fresh Food Capacity : 183 Ltr | Freezer Capacity : 53 Ltr | Total no. of compartments : 2 | Shelves : 4 | Vegetable Drawers : 1 | Shelf Type : Toughened Glass Shelves | Anti Bacterial Gasket | Temperature Control : Internal",
+                "Samsung Exclusive Features : Convertible | Digital Display | Easy Slide Shelf | All Round Cooling",
+                "Additional Features : Stabilizer Free Operation (100v - 300v) | Multi Flow | Up to 15 Days of Fresh Food | Recess Handle | Veg Box | Big Bottle Guard (Deep Door Guard) | LED Light",
+                "Item Dimensions : (WxHxD)(cm): 55.5 x 154.5 x 65.7 cm | Net Weight 51 kg",
+                "Included in the box : 1 Refrigerator unit, Egg Tray, Movable Ice Maker (Note: User manual can be accessed from brand website)"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "65.7D x 55.5W x 154.5H Centimeters",
+            "weight": "51 kg",
+            "warranty": "Manufacturer warranty: 1 year comprehensive warranty, 10 years warranty on digital inverter compressor (T&C Apply, 20 Year Digital Inverter Compressor Warranty applicable for purchases done only from 1st Dec 2022 till 31st March'26) | Contact Brand for queries/assistance @ [Telephone: (Toll Free): 1800 40 7267864 (1800 40 SAMSUNG), WhatsApp: 1800-57-267864 & Email: support.india@samsung.com] and provide product's model name and seller's details mentioned on your invoice. Brand's service center will allot you a convenient slot for the service.",
+            "country_of_origin": null,
+            "pricing": {
+                "currency": "INR",
+                "current_price": 27990.0,
+                "original_price": 35999.0,
+                "discount_percentage": 22.0,
+                "price_display": "₹27,990",
+                "original_price_display": "₹35,999"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹1,562.82 EMI interest savings on select Credit Cards, Bajaj Finserv EMI cards, Amazon Pay Later"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹839.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm. Order within 3 hrs 53 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Color",
+                "variant_name": "New Blue",
+                "asin": "B0G8JMCN15",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0G8JMCN15"
+            },
+            {
+                "variant_type": "Color",
+                "variant_name": "Black DOI",
+                "asin": "B0G8JYQ9GY",
+                "price": "₹28,490.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0G8JYQ9GY"
+            },
+            {
+                "variant_type": "Color",
+                "variant_name": "Refined Inox",
+                "asin": "B0G8JRG8LT",
+                "price": "₹27,990.00",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0G8JRG8LT"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/61DK5dhMhEL._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/31l8d9pX4KL.jpg",
+                "https://m.media-amazon.com/images/I/51sLGfoffGL.jpg",
+                "https://m.media-amazon.com/images/I/518-0mLXXEL.jpg",
+                "https://m.media-amazon.com/images/I/51cP3fyTq5L.jpg",
+                "https://m.media-amazon.com/images/I/51moXskANgL.jpg",
+                "https://m.media-amazon.com/images/I/51CFLkNlj3L.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/31l8d9pX4KL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51sLGfoffGL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/518-0mLXXEL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51cP3fyTq5L._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51moXskANgL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51CFLkNlj3L._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/7cd792cb-9395-4598-90c6-ee3c4a9b3b84/default.vertical.jobtemplate.hls.m3u8",
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/1c46ae9e-e9e5-40e3-af21-5490af193ea7/default.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 4.0,
+            "total_ratings": 1385,
+            "total_reviews": 428,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "59%",
+                "4_star": "18%",
+                "3_star": "6%",
+                "2_star": "1%",
+                "1_star": "16%"
+            },
+            "reviews": [
+                {
+                    "review_id": "RVLXJ0EAMEI93",
+                    "reviewer_name": "Gayatri kolambkar",
+                    "review_title": "The upper section (deep freezer) has plenty of space but there is no light inside it",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. The refrigerator fits perfectly in my kitchen. The upper section (deep freezer) has plenty of space, but unfortunately, there is no light inside it. The lower section (regular fridge) has good storage capacity, with enough space for bottles, vegetables, and other food items. One thing I really love is the light in the lower section. It looks very stylish, premium, and luxurious. I also received a product manufactured in the same year, which is a big plus. The convertible mode is especially useful and makes the refrigerator more convenient to use. Overall, I am happy with my purchase and satisfied with the product!",
+                    "rating": 5.0,
+                    "review_date": "2026-11-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61QAtdDMYcL.jpg",
+                        "https://m.media-amazon.com/images/I/71nNs5JdF0L.jpg",
+                        "https://m.media-amazon.com/images/I/61lEaTcQPxL.jpg",
+                        "https://m.media-amazon.com/images/I/71P0-2-xjdL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3FZO81HDXBC2D",
+                    "reviewer_name": "Niranjan R",
+                    "review_title": "Very good refrigerator. With ample storage for 2-3 people. Good cooling.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very good refrigerator. With ample storage for 2-3 people. Good cooling. Easy to move. Well delivered. Good quick installation service",
+                    "rating": 5.0,
+                    "review_date": "2026-11-08",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61Se3fQZt5L.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R35HL2QF5ZP1CI",
+                    "reviewer_name": "hs lal",
+                    "review_title": "Good deal",
+                    "review_comment": "Excellent product.",
+                    "rating": 5.0,
+                    "review_date": "2026-11-07",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RV300ZII1B53P",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "We have been waiting since 7 atill now .More than 26 hours",
+                    "review_comment": "Poor cooling",
+                    "rating": 1.0,
+                    "review_date": "2026-11-07",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2AKICF8DNK38I",
+                    "reviewer_name": "Mayuresh Patil",
+                    "review_title": "Damage order",
+                    "review_comment": "Why is my pickup of Damage fridge pending from last 10 days",
+                    "rating": 1.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/710a5oIheJL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3FLDYAUI6C8JZ",
+                    "reviewer_name": "SURENDRAN",
+                    "review_title": "Nice product at reasonable price",
+                    "review_comment": "Nice product at reasonable price",
+                    "rating": 5.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R7IJK5DOJC3B9",
+                    "reviewer_name": "Anand K.",
+                    "review_title": "Received damaged product",
+                    "review_comment": "I received severely damaged product. I replacing this item and hoping to to receive the best one",
+                    "rating": 1.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61yAh4fbX1L.jpg",
+                        "https://m.media-amazon.com/images/I/71i0aT2zr6L.jpg",
+                        "https://m.media-amazon.com/images/I/61jDIw0tCYL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3JGAYS6FUSFBX",
+                    "reviewer_name": "PRASHANT PATEL",
+                    "review_title": "Defective piece",
+                    "review_comment": "Product was defective, we have not accepted product. Scrach and back side grill was open. Defective piece sent by seller.",
+                    "rating": 1.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RHCP786RE9W16",
+                    "reviewer_name": "Irfan Mondal",
+                    "review_title": "I love this Product Very happy to purchase samsung brand Refrigerator",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. I love this Product Very happy to purchase samsung brand Refrigerator",
+                    "rating": 5.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RGL99KB9OZDKH",
+                    "reviewer_name": "Rohit",
+                    "review_title": "Good",
+                    "review_comment": "Good product",
+                    "rating": 5.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3KX7V9FVMUFN9",
+                    "reviewer_name": null,
+                    "review_title": "Good product ❤️✅",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content.",
+                    "rating": 4.0,
+                    "review_date": "2026-10-18",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R25C06D7KBXRR1",
+                    "reviewer_name": "RUHUL AMIN MONDAL",
+                    "review_title": "Excellent Refrigerator with Stylish Design!",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. I am very happy with my purchase of the Samsung 236-litre convertible refrigerator from Amazon. The black matte finish looks premium, elegant, and modern, making it a great addition to my kitchen. The design is beautiful, and the refrigerator has a good amount of storage space for everyday family needs. The convertible feature is very useful, allowing flexibility in using the refrigerator and freezer space according to our requirements. The cooling performance is impressive, and the overall design and build quality are excellent. The shelves and compartments are well-organized, making it easy to store food items. Overall, I am satisfied with this purchase. It offers a great combination of stylish looks, useful features, and practical storage capacity. I would definitely recommend this Samsung refrigerator to anyone looking for a modern and reliable refrigerator for their home. ENERGY EFFICIENCY 3 Stars bee Certificate with annually electricity consumption only 203 unit. Brand installation was very smooth, After delivery within 24 hours brand authorised technician came and install with demo the product. It is value for this price point under 26k Verdict: A great purchase! Highly recommended.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-23",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 3,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61lcDsii9eL.jpg",
+                        "https://m.media-amazon.com/images/I/71NCp4cyogL.jpg",
+                        "https://m.media-amazon.com/images/I/61MOhLJkqKL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3Y0F44FAMYOU",
+                    "reviewer_name": "Riyas Ahammed P",
+                    "review_title": "Good look",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Product is good and looking glassy and there is no compressor sound or noise came while running, cooling is good and sufficient space for keeping all items inside the refrigerator. Easy to convert from freezer to fridge mode. Only thing is we have to handle the glass plates (racks) carefully while changing their location. Worth for money",
+                    "rating": 4.0,
+                    "review_date": "2026-11-01",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61MRKs-5qZL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1BU1YWHMH0VZB",
+                    "reviewer_name": "saurabh",
+                    "review_title": "Not a good Experience now a days with Amazon",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. I've got good product, bad packing, bad delivery experience, first guy completed - installation and demo, but after two days received call again for demo and now here it says service was cancelled, I don't know about warranty status now.",
+                    "rating": 1.0,
+                    "review_date": "2026-11-01",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2L7Z0X3GYSCNN",
+                    "reviewer_name": "Jagadeesh j",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. ⭐⭐⭐⭐⭐ The product quality is very good, and it works as expected. The design is nice, and the product is easy to use. I am satisfied with the purchase and would recommend it to others. Good value for money!",
+                    "rating": 5.0,
+                    "review_date": "2026-10-14",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 4,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RNWHLAPHXDQOU",
+                    "reviewer_name": "Keerthi Prakash Chandra",
+                    "review_title": "Bad design",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Not as good as the older models. The door does not close properly, in the older models with just a slight push, the door would close but with this one it doesn't close all the way. Sometimes it makes a weird humming noise and if I open and shut the door the noise goes away. Worst part is the light design, it turns on so slowly, it's so annoying...",
+                    "rating": 3.0,
+                    "review_date": "2026-07-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "refrigerator",
+            "normalized": {
+                "brand": null,
+                "model_number": "RT40H28U3THL",
+                "capacity_litres": 236,
+                "door_type": "Double Door",
+                "energy_rating": "3 Star",
+                "compressor": "Inverter",
+                "defrost_type": "Frost Free",
+                "freezer_capacity_litres": 53,
+                "annual_energy_consumption": "200 Kilowatt Hours Per Year",
+                "convertible": true,
+                "shelf_material": "Toughened Glass",
+                "special_features": null,
+                "color": "Refined Inox"
+            },
+            "raw": {
+                "Configuration": "Freezer-on-Top",
+                "Additional Features": "Adjustable Shelves, Automatic Defrost, Energy Efficient, Frost Free, Inverter Compressor",
+                "Number of Doors": "2",
+                "Defrost System Type": "Frost Free",
+                "Voltage": "230 Volts",
+                "Shelf Type": "Toughened Glass",
+                "Form Factor": "Convertible",
+                "Ice Maker Dispensed Type": "Cubed",
+                "Cooling Method": "Compressor",
+                "Inverter Type": "Has Inverter",
+                "Number Of Shelves": "4",
+                "Adjustable Temperature Control": "Yes",
+                "Power Plug Type": "Type D",
+                "Door Orientation": "Left",
+                "Compressor Type": "Reciprocating",
+                "Has Convertible Freezer": "Yes",
+                "Is Customisable?": "No",
+                "Is Electric": "Yes",
+                "Number Of Racks": "4",
+                "Number of Sections": "2",
+                "Door Shelf Count": "4",
+                "Number of Shelves": "4",
+                "Power Source": "Corded Electric",
+                "Colour": "Refined Inox",
+                "Pattern": "Solid",
+                "Item Dimensions D x W x H": "65.7D x 55.5W x 154.5H Centimeters",
+                "Capacity": "236 litres",
+                "Freezer Capacity": "53 Litres",
+                "Item Weight": "51 kg",
+                "Annual Energy Consumption": "200 Kilowatt Hours Per Year",
+                "Refrigerator Net Capacity": "236 Liters",
+                "Size": "Medium",
+                "Fresh Food Capacity": "183 litres",
+                "Installation Type": "Freestanding",
+                "Specification Met": "Energy Rating, Energy Star",
+                "BEE Star Rating": "3 Star",
+                "Refrigerant": "R-600A",
+                "Product Finish Type": "Glossy",
+                "Door Material Type": "Stainless Steel",
+                "Brand Name": "Samsung",
+                "Model Name": "RD",
+                "Model Number": "RT40H28U3THL",
+                "Number of Items": "1",
+                "Unit Count": "1.0 Count",
+                "Specific Uses for Product": "Beverages, Food",
+                "Country of Publication": "India",
+                "Importer Contact Information": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+                "Included Components": "1 Refrigerator Unit",
+                "Item Type Name": "Refrigerator",
+                "Manufacturer Contact Information": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+                "Manufacturer": "Samsung India Electronics Limited, Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+                "Packer Contact Information": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+                "Manufacturer Part Number": "RT40H28U3THL",
+                "Warranty Description": "Manufacturer warranty: 1 year comprehensive warranty, 10 years warranty on digital inverter compressor (T&C Apply, 20 Year Digital Inverter Compressor Warranty applicable for purchases done only from 1st Dec 2022 till 31st March'26) | Contact Brand for queries/assistance @ [Telephone: (Toll Free): 1800 40 7267864 (1800 40 SAMSUNG), WhatsApp: 1800-57-267864 & Email: support.india@samsung.com] and provide product's model name and seller's details mentioned on your invoice. Brand's service center will allot you a convenient slot for the service.",
+                "Best Sellers Rank": "#1,368 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #3 in Standard Refrigerators",
+                "ASIN": "B0G8JRG8LT"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": false
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:16:58+00:00",
+            "last_updated": "2026-11-12T11:16:58+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 2,
+                "reviews_scraped": 16,
+                "variants_scraped": 3,
+                "specifications_scraped": 56
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0GYFSC34X",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0GYFSC34X"
+        },
+        "product_details": {
+            "title": "IFB 285L 3 Star 10 in 1 Convertible, Advanced Inverter Frost-Free Double Door Refrigerator with 30 Hrs Cooling Retention, Freezer LED & 4 Year Super Warranty (2026, IFBFF-336CYKSETM, Metal Black)",
+            "brand": "IFB",
+            "manufacturer": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678, IFB",
+            "model": "IFBFF-336CYKSETM",
+            "category": "Home & Kitchen",
+            "subcategory": "Refrigerators",
+            "description": "Everything in your refrigerator should stay fresh and well preserved — not wilted, spoiled, or crammed into corners. Drinks should be perfectly chilled. Ice cream, always soft and creamy. With advanced technologies for versatile cooling, generous space, and dependable performance, IFB Convertible Double Door Refrigerators deliver chilled perfection and peak freshness.",
+            "feature_bullets": [
+                "Frost Free Refrigerator : Auto Defrost Technology Prevents Ice Build-Up, while 360° Cooling Circulates Air Evenly to Keep Food Fresh Longer with Zero Hassle.",
+                "Capacity: 285 Liters Suitable for Families with 4 To 5 Members",
+                "Energy Rating 3 Star Best In Class Energy Efficiency (Higher Star Ratings Lead To Lesser Electricity Consumption Lowering Bills) | Annual Energy Consumption 205* Units Per Year",
+                "IFB Super Warranty : India’s First & Only! Enjoy 4 Years Of Machine Warranty, 10 Years Of Compressor Warranty, And 10 Years Of Spare Parts Support. (T&C Apply)",
+                "30+ Hours* Cooling Retention : Keeps Food Fresh During Power Cuts; Operates without a Stabilizer (100V–300V) and Supports Auto Inverter & Solar Connect.",
+                "Fast Ice & Long-Lasting Freshness: Movable Twist Ice Maker Prepares Ice In Under 60 Minutes, while the Big Quadra Crisper (Up To 22.5L) with Humidity Control Keeps Fruits and Vegetables Fresh for Up To 30 Days; Active Deodorizer Keeps Odours Out and Maintains a Fresh Interior.",
+                "Extra Space, Smarter Storage: Spacious 64L Freezer & 221L Fresh Food Capacity Designed to Fit More with Ease; Toughened Glass Shelves in Both Freezer and Refrigerator Sections Support Heavy Loads, while a Dedicated Dairy Zone Keeps Dairy Items Organized; Thoughtfully Designed Door Bins with an Egg Tray Keep Everyday Essentials within Reach, and Dual Bottle Bins Hold 3 × 2.5L + 5 × 1L Bottles for Efficient Storage.",
+                "10 In 1 Convertible Freezer And Fridge: Choose From 10 Convertible Modes In The Fridge And The Freezer To Adjust The Temperature To Your Needs. Modes: Normal | Turbo Freeze | Turbo Cool | Ice Cream | Power Saver | Mild Freeze | Beverage+ | Fridge+ | Marinade+ | Dairy+",
+                "Item Dimensions: (W*D*H cms) 59.4*69.0*173.8 cm| Weight: 57 KG",
+                "Included In The Box: 1 Refrigerator Unit, Ice Tray, Egg Tray, Brand Warranty Can Be Availed With Amazon Invoice; User Manual Can Be Accessed From The Brand Website."
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "69D x 59.4W x 173.8H Centimeters",
+            "weight": "57 kg",
+            "warranty": "4 Year Warranty on Product and 10 Years Warranty on Compressor",
+            "country_of_origin": null,
+            "pricing": {
+                "currency": "INR",
+                "current_price": 31990.0,
+                "original_price": 57600.0,
+                "discount_percentage": 44.0,
+                "price_display": "₹31,990",
+                "original_price_display": "₹57,600"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹1,786.14 EMI interest savings on select Credit Cards, Bajaj Finserv EMI cards, Amazon Pay Later"
+                },
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹959.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/71EQnNb5WcL._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/41VMjkTr12L.jpg",
+                "https://m.media-amazon.com/images/I/41qCytNeMrL.jpg",
+                "https://m.media-amazon.com/images/I/41HwOEVhVsL.jpg",
+                "https://m.media-amazon.com/images/I/51eR1hkDz+L.jpg",
+                "https://m.media-amazon.com/images/I/41lXb8DVO2L.jpg",
+                "https://m.media-amazon.com/images/I/51rzmVCq1ZL.jpg",
+                "https://m.media-amazon.com/images/I/411B6ZWCc-L.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/41VMjkTr12L._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41qCytNeMrL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41HwOEVhVsL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51eR1hkDz+L._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41lXb8DVO2L._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51rzmVCq1ZL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/411B6ZWCc-L._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": []
+        },
+        "customer_feedback": {
+            "overall_rating": 4.1,
+            "total_ratings": 29,
+            "total_reviews": 19,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "66%",
+                "4_star": "11%",
+                "3_star": "5%",
+                "2_star": "0%",
+                "1_star": "18%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R1F9J0CDNSXBFR",
+                    "reviewer_name": "Magesh M",
+                    "review_title": "Review",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. I am highly satisfied with this refrigerator. The build quality feels premium and durable.",
+                    "rating": 5.0,
+                    "review_date": "2026-11-03",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3T7YB3NNEUHA3",
+                    "reviewer_name": "Irfan Ahmad",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-28",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61kW4DE+VYL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1EUF0438V89DW",
+                    "reviewer_name": "Amar",
+                    "review_title": "Product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good product",
+                    "rating": 5.0,
+                    "review_date": "2026-10-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2SECAE2JNGXVR",
+                    "reviewer_name": "Rathish",
+                    "review_title": "Not happy received product with damaged parts",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Not happy received with broken vegetable crisper, left side body small scratches and dents",
+                    "rating": 1.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R39BLTH6XTR58S",
+                    "reviewer_name": "Ahir",
+                    "review_title": "Service problem",
+                    "review_comment": "Don't buy this fridge. This company is currently unable to provide service, so I advise everyone not to purchase this product—in fact, one shouldn't buy any products from IFB at all.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-17",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71kHGHIGtqL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2ZCVI5X85FE3K",
+                    "reviewer_name": "P.Selvaraj",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-16",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RXHPF7R1YEUX9",
+                    "reviewer_name": "Sitaram",
+                    "review_title": "Build quality and features",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Build quality - 0 out of 5 Convertability- modes 0 out of 5 Future- 0 out of 5 1) Delivery exp is worst,entrie packaging is torned 2) shelf quality is so chep 3) feture not frendly for Indian user,while switching modes need to turnoff fridge 4) no tier to move and stand quality is worst 5) no frezer ice holder Recommend lg and samsung over this product, i wasted my 25k on this.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-15",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2NL8IUAQYO570",
+                    "reviewer_name": "CH.VISWANADH",
+                    "review_title": "Good",
+                    "review_comment": "Good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-14",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2ZKZXQ1PRNFLP",
+                    "reviewer_name": "Manohar",
+                    "review_title": "Okay",
+                    "review_comment": "Working noise come, and all so heat come feel high nearby",
+                    "rating": 3.0,
+                    "review_date": "2026-10-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RSXKJBE54W27J",
+                    "reviewer_name": "Rakesh Bhunia",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good product",
+                    "rating": 5.0,
+                    "review_date": "2026-10-13",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1ZINYUI40TJM9",
+                    "reviewer_name": "Keerthana T.",
+                    "review_title": "Refrigerator",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. No damage. The product is good.",
+                    "rating": 4.0,
+                    "review_date": "2026-10-04",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "refrigerator",
+            "normalized": {
+                "brand": null,
+                "model_number": "IFBFF-336CYKSETM",
+                "capacity_litres": 285,
+                "door_type": "Double Door",
+                "energy_rating": "3 Star",
+                "compressor": "Inverter",
+                "defrost_type": "Frost Free",
+                "freezer_capacity_litres": 64,
+                "annual_energy_consumption": "205 Kilowatt Hours Per Year",
+                "convertible": true,
+                "shelf_material": "Toughened Glass",
+                "special_features": null,
+                "color": "Metal Black"
+            },
+            "raw": {
+                "Configuration": "Freezer-on-Top",
+                "Additional Features": "Adjustable Shelves, Humidity Control, Inverter Compressor",
+                "Number of Doors": "2",
+                "Defrost System Type": "Frost Free",
+                "Voltage": "220 Volts",
+                "Form Factor": "Convertible",
+                "Cooling Method": "Compressor",
+                "Number Of Shelves": "4",
+                "Adjustable Temperature Control": "Yes",
+                "Door Orientation": "Right",
+                "Has Convertible Freezer": "Yes",
+                "Is Electric": "Yes",
+                "Brand Name": "IFB",
+                "Model Name": "RD",
+                "Model Number": "IFBFF-336CYKSETM",
+                "Number of Items": "1",
+                "Unit Count": "1.0 Count",
+                "Country of Publication": "India",
+                "Importer Contact Information": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678",
+                "Included Components": "1 Refrigerator, Brand warranty can be availed with Amazon invoice, User manual can be accessed from the brand website, Egg Tray, Movable Ice Tray, User Manual",
+                "Item Type Name": "Frost Free Refrigerator",
+                "Manufacturer Contact Information": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678",
+                "Manufacturer": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678, IFB, IFB REFRIGERATION LIMITED",
+                "Packer Contact Information": "IFB REFRIGERATION LIMITED, PLOT NO A-1 KAREGAON RANJANGAON MIDC, PHASE 3 Shirur, Maharashtra, 412220 India. Email: customerservice@ifbglobal.com, Contact: 080 695 45678",
+                "Manufacturer Part Number": "IFBFF-336CYKSETM",
+                "Warranty Description": "4 Year Warranty on Product and 10 Years Warranty on Compressor",
+                "Best Sellers Rank": "#29,536 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #99 in Standard Refrigerators",
+                "ASIN": "B0GYFSC34X",
+                "Item Dimensions D x W x H": "69D x 59.4W x 173.8H Centimeters",
+                "Capacity": "285 litres",
+                "Freezer Capacity": "64 Litres",
+                "Item Weight": "57 kg",
+                "Annual Energy Consumption": "205 Kilowatt Hours Per Year",
+                "Refrigerator Net Capacity": "10.04 Cubic Feet",
+                "Size": "285 L - Metal Black",
+                "Fresh Food Capacity": "221 litres",
+                "Installation Type": "Freestanding",
+                "Specification Met": "Energy Rating",
+                "BEE Star Rating": "3 Star",
+                "Colour": "Metal Black"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:17:25+00:00",
+            "last_updated": "2026-11-12T11:17:25+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 8,
+                "videos_scraped": 0,
+                "reviews_scraped": 11,
+                "variants_scraped": 0,
+                "specifications_scraped": 40
+            },
+            "errors": []
+        }
+    }
+]

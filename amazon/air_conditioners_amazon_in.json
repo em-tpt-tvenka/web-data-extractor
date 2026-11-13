@@ -1,0 +1,2059 @@
+[
+    {
+        "asin": "B0HK4FNQ7P",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0HK4FNQ7P"
+        },
+        "product_details": {
+            "title": "Voltas Smart Choice 1.42 ton 3 star, New star rated, Inverter Split AC(Copper, Convertible 5in1 Cooling Mode, 2-Way AirSwing, Anti Microbial Coating, 183INV CAV-1,2026 Model,White)",
+            "brand": "Voltas",
+            "manufacturer": "Voltas, Voltas Limited",
+            "model": "4504209",
+            "category": "Home & Kitchen",
+            "subcategory": "Air Conditioners",
+            "description": "The Voltas 183INV CAV-1 is a 1.5 Ton 3 Star inverter split AC with a rated cooling capacity of 5000 W and an ISEER of 4.30. The copper condenser coil ensures better cooling, low maintenance, and durability. It offers 5 step adjustable mode, an anti dust filter with anti microbial coating, auto clean, sleep mode, a 24 hour timer, memory restart and a hidden display, and works in ambient temperatures up to 52 degree Celsius. The AC uses eco-friendly R32 refrigerant gas and comes with a 1-year comprehensive warranty and a 10-year warranty on the inverter compressor.",
+            "feature_bullets": [
+                "Split AC with inverter compressor: Variable speed compressor which adjusts power depending on heat load. Convertible / adjustable with 5 cooling modes through remote control to operate in different tonnages for different cooling needs (20% to 120% capacity).",
+                "Energy Rating: 3 Star energy efficiency, Cooling Capacity (100%) - 5000W, Annual Energy Consumption: 900.94 kWh/year, ISEER Value: 4.30 Wh. BEE Label Validity Period: 1st Jan 2026 - 31st Dec 2027.",
+                "Manufacturer Warranty : 1 year warranty on product, 10 years warranty on Inverter Compressor with gas charging, 5 Years on PCB",
+                "Copper Condenser : The copper condenser ensures superior heat transfer while minimizing maintenance needs. Its rust- and corrosion-resistant properties enhance durability, providing uninterrupted cooling."
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "24D x 92.5W x 32H Centimeters",
+            "weight": "10 kg 500 g",
+            "warranty": "1 year warranty on product, 10 years warranty on Inverter Compressor",
+            "country_of_origin": "India",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 33244.0,
+                "original_price": 60990.0,
+                "discount_percentage": 45.0,
+                "price_display": "₹33,244",
+                "original_price_display": "₹60,990"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹997.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹972.95 EMI interest savings on Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm. Order within 3 hrs 58 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Set",
+                "variant_name": "183INV CAV-1",
+                "asin": "B0HK4FNQ7P",
+                "price": "₹33,244.00",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0HK4FNQ7P"
+            },
+            {
+                "variant_type": "Set",
+                "variant_name": "183INV CAV",
+                "asin": "B0GSZRBDND",
+                "price": "₹29,490.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GSZRBDND"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/51lWamSgBhL._SL1200_.jpg",
+                "https://m.media-amazon.com/images/I/41TTX9GFXcL.jpg",
+                "https://m.media-amazon.com/images/I/416BLjO95IL.jpg",
+                "https://m.media-amazon.com/images/I/61QpOc6UMCL.jpg",
+                "https://m.media-amazon.com/images/I/41w2FgmIBvL.jpg",
+                "https://m.media-amazon.com/images/I/51nxGgvzOcL.jpg",
+                "https://m.media-amazon.com/images/I/51412i+gJtL.jpg",
+                "https://m.media-amazon.com/images/I/511HmTJu0xL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/41TTX9GFXcL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/416BLjO95IL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/61QpOc6UMCL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41w2FgmIBvL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51nxGgvzOcL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51412i+gJtL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/511HmTJu0xL._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": []
+        },
+        "customer_feedback": {
+            "overall_rating": 3.5,
+            "total_ratings": 344,
+            "total_reviews": 133,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "45%",
+                "4_star": "20%",
+                "3_star": "5%",
+                "2_star": "5%",
+                "1_star": "25%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R4OYMCX7LYOX5",
+                    "reviewer_name": "Prashant gobbi",
+                    "review_title": "Not cooling well, lack of features, blower sound is high",
+                    "review_comment": "Not cooling well, lack of features, blower sound is high",
+                    "rating": 1.0,
+                    "review_date": "2026-11-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3DWAIPTYXXMMT",
+                    "reviewer_name": "prateek mittal",
+                    "review_title": "Best in pricing",
+                    "review_comment": "Perfect product, Installation is on time and value for money pricing is low as compared to market.",
+                    "rating": 4.0,
+                    "review_date": "2026-11-09",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/51N1huEO2wL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R23FHQSDBFFB7X",
+                    "reviewer_name": "Jvs",
+                    "review_title": "Damage in outer unit",
+                    "review_comment": "When Opened and checked a damage was found , new piece",
+                    "rating": 1.0,
+                    "review_date": "2026-11-08",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71ir3Rf7vgL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3KY6ESPAHZWG",
+                    "reviewer_name": "Jehangir.R",
+                    "review_title": "Bad Service by Amazon, problems been facing since 2nd day only but no response from amazon",
+                    "review_comment": "The video showcases the product in use. The video guides you through product setup. The video compares multiple products. The video shows the product being unpacked. Video Player is loading. Click to play video Play Mute Current Time 0:00 / Duration 0:25 Loaded : 12.01% 0:00 Stream Type LIVE Seek to live, currently behind live LIVE Remaining Time - 0:25 1x Playback Rate Chapters Chapters Descriptions descriptions off , selected Captions Captions off , selected English (Automated) Audio Track default , selected Fullscreen This is a modal window. Pathetic Product ,Nosupport from Amazon for Replacing the product",
+                    "rating": 1.0,
+                    "review_date": "2026-11-07",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": [
+                        "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/f9370506-11ff-40f4-9bde-968b137c93d2/default.vertical.jobtemplate.hls.m3u8"
+                    ]
+                },
+                {
+                    "review_id": "R1A656KK7L0PR9",
+                    "reviewer_name": "BALABHARGAVA",
+                    "review_title": "Supurb cooling with low noise, Value for money",
+                    "review_comment": "Supurb cooling with low noise, Value for money",
+                    "rating": 5.0,
+                    "review_date": "2026-11-05",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1NESBNFBB1WEK",
+                    "reviewer_name": "Talib",
+                    "review_title": "Ac is very good but please get it installed from voltas only",
+                    "review_comment": "The video showcases the product in use. The video guides you through product setup. The video compares multiple products. The video shows the product being unpacked. Video Player is loading. Click to play video Play Mute Current Time 0:00 / Duration 0:07 Loaded : 42.90% 0:00 Stream Type LIVE Seek to live, currently behind live LIVE Remaining Time - 0:07 1x Playback Rate Chapters Chapters Descriptions descriptions off , selected Captions Captions off , selected English (Automated) Audio Track default , selected Fullscreen This is a modal window. Ac is very good but please get it installed from voltas only I got it installed from Amazon but it was not proper water leakage is from indoor unit it's been 15 days yet the Problem is not resolved despite complaining several times to amazon",
+                    "rating": 1.0,
+                    "review_date": "2026-11-05",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": [
+                        "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/bfa2699a-2f21-465d-b8d8-d3f130fe972e/default.vertical.jobtemplate.hls.m3u8"
+                    ]
+                },
+                {
+                    "review_id": "R93FYR44JZY6C",
+                    "reviewer_name": "Nice product, but hanging sometimes",
+                    "review_title": "AC working fine but 5 in 1 convertible is not",
+                    "review_comment": "AC working fine. But unable to utilize 5 in 1 convertible option. Pls support",
+                    "rating": 2.0,
+                    "review_date": "2026-11-02",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RUC1L9TE3ON4X",
+                    "reviewer_name": "Rohit Jha",
+                    "review_title": "Damaged product received",
+                    "review_comment": "Product is damage",
+                    "rating": 1.0,
+                    "review_date": "2026-11-02",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61R6TOL4k0L.jpg",
+                        "https://m.media-amazon.com/images/I/61RZo7gx-yL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2D90D23U1L1UI",
+                    "reviewer_name": "Aasri Vungarala",
+                    "review_title": "Worst experience",
+                    "review_comment": "Stopped working",
+                    "rating": 1.0,
+                    "review_date": "2026-11-01",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R37TEBD6LXDQLW",
+                    "reviewer_name": "krish",
+                    "review_title": "It is good . Thanks for this product",
+                    "review_comment": "One ac is working fine but another one is not cooling . Voltas has arrived and open compressor. Joined a plug and started working fine now. I am happy now",
+                    "rating": 5.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2XFUDBA2RH9SQ",
+                    "reviewer_name": null,
+                    "review_title": "Good product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good product TATA Product",
+                    "rating": 4.0,
+                    "review_date": "2026-06-27",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RYSVO8I0F6XE7",
+                    "reviewer_name": "Amlan",
+                    "review_title": "Satisfied with the product and installation service.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Purchased Voltas 1.5 ton 3 star 2026 model AC on Prime Day Sale 2026. Got a very favorable deal with exchange of my 10 years old Hitachi 1 ton AC (working condition). Delivery by Amazon was on the day (Sunday), as I had selected. Delivery and acceptance (pick up) of my old AC by Amazon was very smooth. After delivery within 2 hours received call from Technician for installation on Sunday itself. Technicians came on time and completed installation within 2 hours. Technicians were very thorough on the job. Installation charges taken from me Rs.1650/-, though on Amazon it was declared as Rs.1399/-. Technicians told that Rs.1650/- is the standard installation charges for all split ACs. During installation, technicians has shown the Copper wires inside Compressor (Outdoor) unit and Air filters in Indoor unit. Not expected such prompt and good service in a city like Jammu. Using the AC since last 3 days and felt comfortable. Noise level not at all noticeable. Airflow is fair enough to cool down my 160 Sqft room in 10 minutes. Fully satisfied with product. It is a budget friendly AC. Must be recommended to others.",
+                    "rating": 5.0,
+                    "review_date": "2026-07-15",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 18,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71H+VokKC4L.jpg",
+                        "https://m.media-amazon.com/images/I/6106SjvhKSL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1DOPMXV9DBM2Z",
+                    "reviewer_name": "Amarjith",
+                    "review_title": "Strong Unpleasant Smell from Brand-New AC – Request for Replacement",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. The brand-new AC started producing a strong and unpleasant smell after running continuously for about two hours. Since the AC was brand new and the issue persisted, I requested a replacement. However, the Voltas service team replaced the coil, but the problem still has not been resolved. The AC continues to produce a very bad smell even after the coil replacement. I again requested a replacement, but Voltas refused to replace the product and offered only a refund. What is even more disappointing is that Voltas has not agreed to refund the installation charges. We spent money on installation and also put in considerable effort to clean and prepare the room for installing a brand-new AC. Due to the product issue and the poor service experience, all of this effort and expense has gone to waste. Voltas has completely failed to provide a proper solution or satisfactory resolution to the customer. After multiple attempts to resolve the issue, the only option being offered is a refund, without adequately considering the inconvenience, time, effort, and additional expenses caused to the customer. Based on my experience, I strongly recommend that customers think twice before purchasing this product. A brand-new AC should not have such a serious issue, and the service team should provide a proper replacement or effective resolution instead of leaving the customer to deal with repeated problems. This has been a very disappointing experience with both the product quality and Voltas customer service. The company has completely failed to provide a satisfactory resolution, and the customer is left bearing the inconvenience and installation-related expenses despite the product being defective.",
+                    "rating": 1.0,
+                    "review_date": "2026-09-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 12,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2PO1XW51B11BE",
+                    "reviewer_name": "sany",
+                    "review_title": "Very good performance",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Perfect AC at this price, 5in1 mode and cooling is excellent. Delivered in 1 day and next day installation.",
+                    "rating": 4.0,
+                    "review_date": "2026-05-19",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71eqc5Y3TUL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2C6VBM47UCLJ4",
+                    "reviewer_name": "sumit",
+                    "review_title": "Nice cooling",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Best ac No issue till one month use",
+                    "rating": 5.0,
+                    "review_date": "2026-06-09",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1H0B98XFVNO2J",
+                    "reviewer_name": "Saurabh Devidas Bhor",
+                    "review_title": "Overall good experience in voltas",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good cooling",
+                    "rating": 5.0,
+                    "review_date": "2026-05-19",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RWRVO7M4X5NW2",
+                    "reviewer_name": "omprakash deshmukh",
+                    "review_title": "Not working well",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. It's a pathetic product. Yesterday I received the ac. I already have 3 voltas same configuration ac at home. They all are working well including 7 yr old ac purchased from Amazon only. But this product is not cooling the room properly. The room is not more than 140-150 sqft still this 1.5 ton is not working right from the day of installation. No water drainage from outdoor pipe. Huge noise. Lower the room temp only by 2 to 3 degree inspite of running as guided by installation member for 2 hrs. Called voltas customer care, technician is saying to call the installation guy and installation guy is saying that let technician come first. Technician given me the time which already has passed but no one visit until now. The room is packed properly. Small exhaust window is also closed from outside. Still no use. I want refund asap.",
+                    "rating": 1.0,
+                    "review_date": "2026-05-15",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 34,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/51aM736OZOL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R27N04IRPVEL6Q",
+                    "reviewer_name": "Darshan S.",
+                    "review_title": "Voltas best AC, but looks are basic.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Using it for more than month, its works flawlessly, good cooling. installation was quick. Interior unit design can improve to look more pleasant.",
+                    "rating": 4.0,
+                    "review_date": "2026-08-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 5,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3VEXPB0XAXI4Y",
+                    "reviewer_name": "ashish chauhan",
+                    "review_title": "Cooling is very fast.voltas is good product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good product",
+                    "rating": 5.0,
+                    "review_date": "2026-06-14",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61NlrcI+XLL.jpg"
+                    ],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "air_conditioner",
+            "normalized": {
+                "brand": null,
+                "model_number": "4504209",
+                "tonnage": 1.42,
+                "ac_type": "Split",
+                "energy_rating": "3 Star",
+                "inverter": true,
+                "cooling_capacity": "5000 W",
+                "iseer": 4.3,
+                "annual_energy_consumption": "900.94 Kilowatt Hours",
+                "condenser_coil": "Copper",
+                "refrigerant": "R-32",
+                "noise_level": "46 Decibels",
+                "special_features": "Auto Clean, Dust Filter, Inverter Compressor, Remote Controlled, Sleep Mode",
+                "power_consumption": "5250 Watts",
+                "voltage": "230 Volts",
+                "color": "White"
+            },
+            "raw": {
+                "Cooling Power": "5.25 Kilowatts",
+                "Special Features": "Auto Clean, Dust Filter, Inverter Compressor, Remote Controlled, Sleep Mode",
+                "Colour": "White",
+                "Noise Level": "46 Decibels",
+                "Refrigerant": "R-32",
+                "Inverter Type": "Has Inverter",
+                "Installation Type": "Split System",
+                "Is Outdoor Unit Required": "Yes",
+                "Air Conditioner Application": "Residential",
+                "Voltage": "230 Volts",
+                "Power Source": "Corded Electric",
+                "Wattage": "5250 Watts",
+                "Item Dimensions D x W x H": "24D x 92.5W x 32H Centimeters",
+                "Item Weight": "10 kg 500 g",
+                "Control Method": "Remote",
+                "Controller Type": "Remote Control",
+                "Operating Mode": "Cooling",
+                "BEE Star Rating": "3 Star",
+                "Brand Name": "Voltas",
+                "Model Name": "183INV CAV-1",
+                "Model Number": "4504209",
+                "Unit Count": "1.0 Count",
+                "Included Components": "Installation Kit, Remote",
+                "Manufacturer": "Voltas, Voltas Limited",
+                "Country Of Origin": "India",
+                "Item Type Name": "Split AC",
+                "Manufacturer Contact Information": "Voltas Limited",
+                "Packer Contact Information": "Voltas Limited",
+                "Warranty Description": "1 year warranty on product, 10 years warranty on Inverter Compressor",
+                "Best Sellers Rank": "#5,988 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #9 in Split-System Air Conditioners",
+                "ASIN": "B0HK4FNQ7P",
+                "Seasonal Energy Efficiency Ratio (SEER)": "4.3",
+                "Annual Energy Consumption": "900.94 Kilowatt Hours",
+                "Capacity": "1.42 Tons",
+                "Form Factor": "Split AC"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:11:35+00:00",
+            "last_updated": "2026-11-12T11:11:35+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 8,
+                "videos_scraped": 0,
+                "reviews_scraped": 19,
+                "variants_scraped": 2,
+                "specifications_scraped": 35
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0GMD5NPX6",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0GMD5NPX6"
+        },
+        "product_details": {
+            "title": "Godrej 1.5 Ton 3 Star| Inverter Split AC | 5-in-1 Convertible Cooling | 5 Year Comprehensive Warranty| AI Powered| Heavy Duty Cooling at 52°C| (AC 1.5T EC HIC 18Q3TH WA,Ideal upto 180 sq ft)",
+            "brand": "Godrej",
+            "manufacturer": "Godrej & Boyce Mfg. Co. Ltd, Godrej & Boyce Mfg. Co. Ltd., Pirojshanagar, Vikhroli (W), Mumbai - 400 079 Contact: Telephone: 080-67436743, WhatsApp: ‘Hi’ to 9321665511 & Email: smartcare@godrej.com, Godrej & Boyce Mgf. Co. Ltd.",
+            "model": "AC 1.5T EC HIC 18Q3TH WA",
+            "category": "Home & Kitchen",
+            "subcategory": "Air Conditioners",
+            "description": null,
+            "feature_bullets": [
+                "AI Powered Cooling: Advanced AI in this Godrej air conditioner delivers intelligent and efficient cooling for superior comfort in your AC for home.",
+                "5-in-1 Convertible: This split AC offers flexible cooling modes from 40% to 110%, ensuring customized performance and energy savings.",
+                "Heavy Duty Cooling at 52°C: Experience powerful cooling even in extreme summers with this Godrej inverter AC designed for Indian weather conditions.",
+                "5 YEARS COMPREHENSIVE WARRANTY : This Godrej air conditioner comes with 5 year comprehensive warranty with no hidden cost. It covers gas refill charges, technician visit charges and remote replacement cost",
+                "i-Sense Technology : Intelligent sensors in this Godrej AC detect room temperature and adjust airflow for precise cooling comfort.",
+                "Blue Fin Anti-Corrosive Coating: Protective Blue Fin coating enhances durability and improves the lifespan of your split air conditioner",
+                "Self Clean Technology: This Godrej split AC prevents moisture buildup and supports hygienic airflow for healthier and long-lasting cooling performance",
+                "3 Star AC: The 3 Star inverter AC with ISEER 4.39 ensures optimized cooling while reducing electricity consumption",
+                "Pure Air Filter: The built-in AC with air filter removes dust and odours, delivering cleaner and fresher indoor air every day",
+                "Silent Cooling Performance: Enjoy peaceful operation with the low-noise compressor design in this advanced inverter split AC"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "24D x 92W x 32H Centimeters",
+            "weight": "11 kg 200 g",
+            "warranty": "Limited",
+            "country_of_origin": "India",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 31990.0,
+                "original_price": 45300.0,
+                "discount_percentage": 29.0,
+                "price_display": "₹31,990",
+                "original_price_display": "₹45,300"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹959.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹1,786.14 EMI interest savings on select Credit Cards, Amazon Pay Later"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm. Order within 3 hrs 58 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Size",
+                "variant_name": "1.5 Ton 5 Star 2025",
+                "asin": "B0DSVRQJHY",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0DSVRQJHY"
+            },
+            {
+                "variant_type": "Size",
+                "variant_name": "1.5 Ton 5 Star 2026",
+                "asin": "B0GMDDY284",
+                "price": "₹39,990.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GMDDY284"
+            },
+            {
+                "variant_type": "Size",
+                "variant_name": "1.5 Ton 3 Star New Rating",
+                "asin": "B0GMD5NPX6",
+                "price": "₹31,990.00",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GMD5NPX6"
+            },
+            {
+                "variant_type": "Size",
+                "variant_name": "1.5 Ton 3 Star Wi-Fi",
+                "asin": "B0GSZ9RBWZ",
+                "price": "₹34,490.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GSZ9RBWZ"
+            },
+            {
+                "variant_type": "Size",
+                "variant_name": "1.4 Ton 5 Star Old Rating",
+                "asin": "B0D5LMFVG2",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0D5LMFVG2"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/51HhURIjjjL._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/31R8xvuF5FL.jpg",
+                "https://m.media-amazon.com/images/I/41rbrg9JMnL.jpg",
+                "https://m.media-amazon.com/images/I/41acMTKh4ML.jpg",
+                "https://m.media-amazon.com/images/I/41HkjsNGDFL.jpg",
+                "https://m.media-amazon.com/images/I/41tTbObASEL.jpg",
+                "https://m.media-amazon.com/images/I/414NKENd8zL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/31R8xvuF5FL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41rbrg9JMnL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41acMTKh4ML._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41HkjsNGDFL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41tTbObASEL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/414NKENd8zL._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/3bdccd24-b312-46c5-9bbf-5745b446b348/default.vertical.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 3.4,
+            "total_ratings": 221,
+            "total_reviews": 112,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "41%",
+                "4_star": "22%",
+                "3_star": "6%",
+                "2_star": "3%",
+                "1_star": "28%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R2VPX28WHXV5F2",
+                    "reviewer_name": "Ashok Kumar Bhandari",
+                    "review_title": "Very good product",
+                    "review_comment": "Very good product. I am 😊 happy. Practically no noise and efficient instalation.",
+                    "rating": 5.0,
+                    "review_date": "2026-11-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1RAKTS6H3GQ2E",
+                    "reviewer_name": "Syed zaheer zaheer",
+                    "review_title": "Good product but they didn't provide ac fitting bracket",
+                    "review_comment": "Good product but they didn't provide ac fitting bracket we need to buy bracket separately.",
+                    "rating": 4.0,
+                    "review_date": "2026-11-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R22YD8O4C4087G",
+                    "reviewer_name": "Bhushan",
+                    "review_title": "Received a brand-new AC with no gas but it was not cooling from day one",
+                    "review_comment": "Received a brand-new AC with no gas, and it was not cooling from day one. Despite repeated complaints and daily follow-ups, it took almost a week to resolve. The seller only arranged a gas refill instead of replacing the defective product. Very disappointing experience. I expected a replacement, not a repair for a brand-new AC. Would not recommend this seller.",
+                    "rating": 1.0,
+                    "review_date": "2026-11-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3PSVI0R8ECJ72",
+                    "reviewer_name": "Satvinder Singh",
+                    "review_title": "Product is good but Company's after sales service is poor",
+                    "review_comment": "Product is good but Company's after sales service is poor",
+                    "rating": 3.0,
+                    "review_date": "2026-11-07",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RFL2SM96TEN04",
+                    "reviewer_name": "M.hanif Sherasia",
+                    "review_title": "Neither the indoor nor the outdoor unit functioned properly",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. This product is of very poor quality. Neither the indoor nor the outdoor unit functioned properly. The unit would vibrate and failed to provide any cooling. The fan speed kept fluctuating constantly. No one paid any attention to my complaints. Amazon did not replace the item; instead, they issued a refund. No refund was provided for the installation and uninstallation costs. I have lodged multiple complaints regarding this with Amazon Customer Care, but the issue remains unresolved.",
+                    "rating": 1.0,
+                    "review_date": "2026-11-07",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1B4EZB7T5PHRV",
+                    "reviewer_name": "Nitin Kumar Yadav",
+                    "review_title": "Don’t buy this product",
+                    "review_comment": "No insulation pipe is included. After market it will cost 4000. What’s the point. Don’t buy this product",
+                    "rating": 1.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RXWLOFA0YTQB4",
+                    "reviewer_name": "Mohit sah",
+                    "review_title": "Not worth buying. No after sale service support.",
+                    "review_comment": "Started leaking water just after installation. No service support provided and technician visit canceled after asking to pay even within warranty period.",
+                    "rating": 1.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R6ZA1R31R1V99",
+                    "reviewer_name": "P CHAITANYA KUMAR",
+                    "review_title": "Noise level is very high",
+                    "review_comment": "Ac is ok, cooling performance is also ok, but Noise level is very high",
+                    "rating": 3.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RGJFBAFNJB97V",
+                    "reviewer_name": "Balasaheb J.",
+                    "review_title": "Product is good but service from Goodrej company not satisfied",
+                    "review_comment": "Product is good but service from Goodrej company not satisfied they send unauthorised person for installation and lot of Issues no proper communication from service provider",
+                    "rating": 1.0,
+                    "review_date": "2026-11-03",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2OTWEH0ZAEPJ6",
+                    "reviewer_name": "Sandeep chitra",
+                    "review_title": "Nice product",
+                    "review_comment": "Nice",
+                    "rating": 5.0,
+                    "review_date": "2026-11-01",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R230GZCZW1AEVC",
+                    "reviewer_name": null,
+                    "review_title": "Best one, bought it for 28.5K",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Go for it, This is my second 1.5ton ac akd previous one I bought last year. Works great and simple. Installation is simple in my location, they just came the next day after I recieved the product. Don't wait for Amazon to register for installation, just call the Godrej toll free number and book your installation request. Paid 1650 for installation, 350 for thermal tape and 1000 for stand.",
+                    "rating": 5.0,
+                    "review_date": "2026-06-16",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RP36SD0APW9DL",
+                    "reviewer_name": "SK",
+                    "review_title": "Worst, no cooling 🙏🙏🙏",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Worst, no cooling, don't buy wast of money, service was not good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-16",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 2,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61AA44dPi9L.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RHU6PNDDDWERM",
+                    "reviewer_name": "ALPESH YADAV",
+                    "review_title": "1.3/4 ton copper pipe missing",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Not a 1.5 ton this is only 1.4 ton B coz cooling capacity is only 4800watt But cooling is best",
+                    "rating": 4.0,
+                    "review_date": "2026-06-20",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 2,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R319GLQ3MBG8SP",
+                    "reviewer_name": "Saiyed Mohammed Ahad",
+                    "review_title": "Value for money product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Value for money product",
+                    "rating": 5.0,
+                    "review_date": "2026-06-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RO5RLSD7LNCL",
+                    "reviewer_name": "vishal j.",
+                    "review_title": "Don’t buy this product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Don’t by this product. Not cooling at all. I am using this product since 1 month and in this technician comes three times but the AC did not work at all. Worst product!",
+                    "rating": 1.0,
+                    "review_date": "2026-07-02",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3V36UXXB7LUZA",
+                    "reviewer_name": "Kiran",
+                    "review_title": "Improve service",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Awesome product But poor service",
+                    "rating": 5.0,
+                    "review_date": "2026-07-09",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3DHYQL8G4SPQ3",
+                    "reviewer_name": "sandeep c.",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 4.0,
+                    "review_date": "2026-06-12",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3AU0DUZ4J0ENR",
+                    "reviewer_name": "yasmin",
+                    "review_title": "Feedback….. total costing is 30500+500+1750+800",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Its is good but i have already taken installation package but this installation person has charged me 800 extra i.e total 1750+800 excluding bracket……..",
+                    "rating": 3.0,
+                    "review_date": "2026-10-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/6131fV9aG0L.jpg"
+                    ],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "air_conditioner",
+            "normalized": {
+                "brand": null,
+                "model_number": "AC 1.5T EC HIC 18Q3TH WA",
+                "tonnage": 1.5,
+                "ac_type": "Split",
+                "energy_rating": "3 Star",
+                "inverter": true,
+                "cooling_capacity": "4.8 Kilowatts",
+                "iseer": 4.39,
+                "annual_energy_consumption": "846.37 Kilowatt Hours Per Year",
+                "condenser_coil": null,
+                "refrigerant": "R-32",
+                "noise_level": "36 Decibels",
+                "special_features": "5-in-1 convertible, Blue fin anti-corrosive coating, Heavy Duty Cooling at 52 degree, Pure air filter, Self clean technology, i-sense technology",
+                "power_consumption": "1380 Watts",
+                "voltage": "230 Volts",
+                "color": "White"
+            },
+            "raw": {
+                "Cooling Power": "4.8 Kilowatts",
+                "Special Features": "5-in-1 convertible, Blue fin anti-corrosive coating, Heavy Duty Cooling at 52 degree, Pure air filter, Self clean technology, i-sense technology",
+                "Colour": "White",
+                "Noise Level": "36 Decibels",
+                "Refrigerant": "R-32",
+                "Filter Type": "Pure air filter",
+                "Inverter Type": "Has Inverter",
+                "Installation Type": "Split System",
+                "Compressor Type": "Rotary",
+                "Is Outdoor Unit Required": "Yes",
+                "Air Conditioner Application": "Residential",
+                "Voltage": "230 Volts",
+                "Power Source": "Corded Electric",
+                "Wattage": "1380 Watts",
+                "Item Dimensions D x W x H": "24D x 92W x 32H Centimeters",
+                "Item Weight": "11 kg 200 g",
+                "Window Opening Maximum Width": "85 Centimetres",
+                "Window Opening Minimum Height": "55.9 Centimetres",
+                "Window Opening Minimum Width": "85 Centimetres",
+                "Capacity": "1.5 Tons",
+                "Floor Area": "150 Square Feet",
+                "Room Type": "Bedroom/Living Room",
+                "Form Factor": "split ac",
+                "Brand Name": "Godrej",
+                "Start Year": "2026",
+                "Model Name": "AC 1.5T EC HIC 18Q3TH WA",
+                "Model Number": "AC 1.5T EC HIC 18Q3TH WA",
+                "Unit Count": "1.0 Count",
+                "Included Components": "1 IDU, 1 ODU, User Guide, Remote Control, Connecting Cable, 2 Connecting Pipes",
+                "Manufacturer": "Godrej & Boyce Mfg. Co. Ltd, Godrej & Boyce Mfg. Co. Ltd., Pirojshanagar, Vikhroli (W), Mumbai - 400 079 Contact: Telephone: 080-67436743, WhatsApp: ‘Hi’ to 9321665511 & Email: smartcare@godrej.com, Godrej & Boyce Mgf. Co. Ltd., Godrej & Boyce Mfg. Co. Ltd.",
+                "Country Of Origin": "India",
+                "Importer Contact Information": "Godrej & Boyce Mfg. Co. Ltd, Godrej & Boyce Mfg. Co. Ltd., Pirojshanagar, Vikhroli (W), Mumbai - 400 079 Contact: Telephone: 080-67436743, WhatsApp: ‘Hi’ to 9321665511 & Email: smartcare@godrej.com, Godrej & Boyce Mgf. Co. Ltd.",
+                "Item Type Name": "Split system air conditioner",
+                "Manufacturer Contact Information": "Godrej & Boyce Mfg. Co. Ltd, Godrej & Boyce Mfg. Co. Ltd., Pirojshanagar, Vikhroli (W), Mumbai - 400 079 Contact: Telephone: 080-67436743, WhatsApp: ‘Hi’ to 9321665511 & Email: smartcare@godrej.com, Godrej & Boyce Mgf. Co. Ltd.",
+                "Packer Contact Information": "Godrej & Boyce Mfg. Co. Ltd, Godrej & Boyce Mfg. Co. Ltd., Pirojshanagar, Vikhroli (W), Mumbai - 400 079 Contact: Telephone: 080-67436743, WhatsApp: ‘Hi’ to 9321665511 & Email: smartcare@godrej.com, Godrej & Boyce Mgf. Co. Ltd.",
+                "Warranty Description": "5 years comprehensive warranty on product and 10 years warranty on inverter compressor (T&C Apply). Applicable on purchase from 1st September 2024 (until withdrawn at the sole discretion of the Company) for individual and retail customers only. Warranty can be availed after registering on Brand website within 30 days from the date of invoice or installation done by company ASP. Contact Brand for queries/assistance @ [Telephone: 080-67436743, WhatsApp: ‘Hi’ to 9321665511 & Email: smartcare@godrej.com]",
+                "Best Sellers Rank": "#4,254 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #4 in Split-System Air Conditioners",
+                "ASIN": "B0GMD5NPX6",
+                "Seasonal Energy Efficiency Ratio (SEER)": "4.39",
+                "Annual Energy Consumption": "846.37 Kilowatt Hours Per Year",
+                "Control Method": "Remote",
+                "Controller Type": "Remote Control",
+                "Operating Mode": "Cooling",
+                "Warranty": "Limited",
+                "BEE Star Rating": "3 Star"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:12:10+00:00",
+            "last_updated": "2026-11-12T11:12:10+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 1,
+                "reviews_scraped": 18,
+                "variants_scraped": 5,
+                "specifications_scraped": 45
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0H4H59Q78",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0H4H59Q78"
+        },
+        "product_details": {
+            "title": "LG 5800W Max Cooling Capacity, 5 Star, 100% Copper Tubes, 1.42 Ton Inverter Split AC (AI Convertible 6-in-1, Energy Saving & Faster Cooling at 55℃, 4 Way Swing, Allergen Protection, AS-Q19YNZE2,White)",
+            "brand": "LG",
+            "manufacturer": "LG Electronics Ind. Ltd., 51, Udyog Vihar, Gr. Noida (UP) – 201306 | Telephone - 08069379999, WhatsApp - 9711709999| Email - serviceindia@lge.com",
+            "model": "AS-Q19YNZE2",
+            "category": "Home & Kitchen",
+            "subcategory": "Air Conditioners",
+            "description": "LG Split AC: New 2026 BEE Standards for Ultra-Cooling & Bigger Savings! Stay perfectly chilled and save on bills with cooling built for extreme climate. Cools at 55°C Even at a blistering 55°C, LG Split Air Conditioners flip the script. Built for India’s harshest summers, LG delivers effortless cooling while ordinary ACs struggle to keep up with the heat. 100% Hi-Grooved Copper Pipes Hi-Grooved Copper pipes serve dual benefits of better heat dissipation of refrigerant & increasing the durability of pipe. Viraat Mode Boosts cooling up to 124% for instant relief on the hottest days. *Actual power consumption may vary based on room size and local climate conditions compared to standard test results. AI Convertible: Smart cooling tailored to your comfort and savings. Durable design meets high-performance engineering for lasting reliability. Low Gas Detection New Low Gas Detection automatically detects, notifies and switches off AC for safety. ADC Sensors Integrated safety sensors and parameter checks ensure robust, secure operation. This design ensure high durability and stable performance at every step, keeping your AC safe and reliable. Gold Fin+ A corrosion resistant coating for increased durability of your LG Air Conditioner. #Tested by TUV Rheinland. GoldFin+ comes with outdoor unit of 2024 onwards series of Split AC’s. Ocean Black Protection LG’s Ocean Black Protection ensures the Split Air Conditioner is protected against all-weather conditions. Stabilizer Free Plus Compressor is the most important component of an Air Conditioner. LG’s enhanced stabilizer-free plus operation prevents voltage fluctuations without compromising on the safety, savings and comfort. Intuitively designed for seamless operation and ultimate convenience. Diet Mode+ Diet Mode+ uses Smart Inverter tech to slash power by 75% while boosting airflow. This one-touch setting optimizes efficiency and comfort, making it easy to manage costs without losing cooling. Mute Function Tired of loud AC beeps? With LG, a 3-second long press of the Diet button silences all alerts. Experience quiet, peaceful cooling and uninterrupted sleep at the touch of a button. Instant AC troubleshooting via phone Smart Diagnosis Via Smartphone Change the way you think, get smart things done when you have the ThinQ App around. Conveniently check and troubleshoot Air Conditioner related problems directly from your smartphone. Advanced air purification meets high-performance cooling for a healthier home. Auto Clean Eliminates bacteria through constantly drying up the heat exchanger, that also helps keep off bad odor. Refrigerant R32 LG’s Air Conditioner uses Refrigerant R32 which has zero ODP & lower GWP compared to other refrigerants. HimClean Keeps your indoor environment healthier with automated freezing technology that thoroughly cleans the evaporator and drainage system for fresher air. HD Filter with Anti-Virus Protection Filters and eliminates harmful airborne viruses, bacteria, dust, pollen, and allergens, ensuring a clean, healthy indoor environment. Monsoon Comfort Monsoon Comfort Technology for comfortable cooling and greater power savings even in humid conditions.",
+            "feature_bullets": [
+                "LG Split AC with Smart inverter compressor: Experience powerful cooling with LG Split AC, featuring an energy-efficient inverter compressor for optimal performance and long-lasting durability",
+                "Capacity: 1.5 T Split AC - Suitable for medium sized rooms (111 to 150 sq.ft); Air Circulation: 653/1236 (In/Out) CFM, Rated Cooling Capacity 5000 W & Ambient Temperature: 55℃ with 4 way air swing",
+                "Energy Rating: 5 Star Split AC - High energy efficiency | Annual Energy Consumption: 671.15 units. ISEER Value: 5.77 (Please Refer Energy Label on Product Page or Contact Brand for More Details); ac 1.5 ton 5 star inverter split; ac 1.5 ton 5 star",
+                "Manufacturer Warranty: 1 Year Comprehensive on Product, 5 Year on PCB and Motor & 10 Year on Compressor (*Free Gas charging during comprehensive period only | T&C Apply)",
+                "Long-Lasting Durability with 100% Copper & Ocean Black Protection: Engineered for longevity, the 100% Copper tubes are reinforced with a specialized Ocean Black coating. This anti-corrosive shield prevents rust and damage from salt, smoke, and pollutants, ensuring consistent, uninterrupted cooling for years",
+                "Key Features: Smart Inverter Compressor; AI Convertible 6-in-1; 4 Way Air Swing; VIRAAT Mode; HD Filter with Anti-Virus Protection; ADC Sensor; Cools at 55⁰ C; Stabilizer free operation within 120V-290V voltage range, Temperature Display type – Magic Display (LED) for temperature and timer modes, Noise Level: IDU - 31 (db) & ODU – 56 (db); split ac; 1.5 ton ac 5 star",
+                "Special Features: Gold Fin+ - Increase durability, Ocean black protection, Ez Clean Filter; Low Gas Detection; 100% Copper Condenser; Hi Grooved Copper; Split AC with Smart Diagnosis System; Comfort Air; Monsoon Comfort; Self Diagnosis; Auto Clean; On/Off Timer; Sleep Mode 12 Hr; Diet Mode Plus; Fan Speed Steps: 6; Auto Restart (Memory); On/Off Indicator; Dehumidifier; Frost Wash/HimClean; Child Lock Feature Remote",
+                "Refrigerant gas: R32 - Environment-Friendly - Zero Ozone Depletion (ODP) & Lower Global Warming Potential (GWP)",
+                "Item Dimensions & Weight: Indoor Unit dimension IDU (W x H x D cms) (99.8 x 34.5 x 21); Outdoor Unit dimension ODU (W x H x D cms) (77 x 54.5 x 28.8) & IDU Weight 11 Kg and ODU Weight 26 Kg",
+                "Included In The Box: 1 Indoor Unit, 1 Outdoor Unit, 3 M (9.84 Feet) Length Inter Connecting Copper Pipe, 1 Remote, 1 Manual, 1 Warranty Card | Note: Brand Warranty can be availed using amazon invoice and User manual can be accessed from brand website"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "21D x 99.8W x 34.5H Centimeters",
+            "weight": "37 kg",
+            "warranty": "Limited",
+            "country_of_origin": "India",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 45990.0,
+                "original_price": 90790.0,
+                "discount_percentage": 49.0,
+                "price_display": "₹45,990",
+                "original_price_display": "₹90,790"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹3,095.34 EMI interest savings on select Credit Cards, Amazon Pay Later"
+                },
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹1,379.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm. Order within 3 hrs 57 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Set",
+                "variant_name": "2026 Model",
+                "asin": "B0GWMMD2DT",
+                "price": "₹48,950.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GWMMD2DT"
+            },
+            {
+                "variant_type": "Set",
+                "variant_name": "2025 Model",
+                "asin": "B0DRG7M72Z",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0DRG7M72Z"
+            },
+            {
+                "variant_type": "Set",
+                "variant_name": "2026 Model_New",
+                "asin": "B0H4H59Q78",
+                "price": "₹45,990.00",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0H4H59Q78"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/615zMPEz6JL._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/41u13nztTjL.jpg",
+                "https://m.media-amazon.com/images/I/51DJJgbiiLL.jpg",
+                "https://m.media-amazon.com/images/I/510265Cf-QL.jpg",
+                "https://m.media-amazon.com/images/I/41lxMXD-dzL.jpg",
+                "https://m.media-amazon.com/images/I/51fzCuKk6RL.jpg",
+                "https://m.media-amazon.com/images/I/41H8hkZuoQL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/41u13nztTjL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51DJJgbiiLL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/510265Cf-QL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41lxMXD-dzL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51fzCuKk6RL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41H8hkZuoQL._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/c8d106a1-467f-4274-ba0d-cea688196f4b/default.jobtemplate.hls.m3u8",
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/d2bc71f9-275a-4808-84d9-8dcf4884389e/default.vertical.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 4.0,
+            "total_ratings": 924,
+            "total_reviews": 296,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "61%",
+                "4_star": "15%",
+                "3_star": "4%",
+                "2_star": "2%",
+                "1_star": "18%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R1ZT6FFQ6NIE77",
+                    "reviewer_name": "Uma",
+                    "review_title": "Don't Buy LG❌",
+                    "review_comment": "I purchased this LG AC on 28 September 2026, expecting good quality based on my previous positive experience with LG products. Unfortunately, the AC developed compressor problems and abnormal indoor-unit noise from the very first day of installation. Despite four technician visits, the issues remain unresolved. I am now being told that the compressor is defective and needs replacement. Very disappointing experience with both the product and after-sales service. I bought a brand-new AC, not a product that requires major repairs immediately after installation. My advice to prospective buyers: Please consider other brands as well before choosing an LG AC.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1UDG0H892OBXY",
+                    "reviewer_name": "Chica88",
+                    "review_title": "So far so good",
+                    "review_comment": "Product was delivered yesterday and installed today. Installation guys were very hard working and knowledgeable lads. Gave us a very good hand over of how to safely operate machine and make it last. The AC appears to cool really well, remote functions well and the noise from AC is minimal so runs very quiet even on highest setting. Fingers crossed it lasts a long time.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-28",
+                    "review_country": "India",
+                    "verified_purchase": false,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2J3I070VJE26B",
+                    "reviewer_name": "Anurag Mishra",
+                    "review_title": "Water Leakage after 3 days of Installation",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. This AC I received is a defective piece. I got it installed by LG company, and after 3 days it started leaking water from the front. When I call LG customer care, they tell me to talk to Amazon. When I contact Amazon, they tell me to talk to LG. Neither of them is resolving the issue.Please don’t buy from lg company",
+                    "rating": 1.0,
+                    "review_date": "2026-10-28",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1KD2CBC4M43L",
+                    "reviewer_name": "Rams",
+                    "review_title": "Lg airconditioner indoor unit package thermocol box was both sides damaged",
+                    "review_comment": "My order lg airconditioner not provided open box delivery air conditioner Indore box both side thermocol box was damaged",
+                    "rating": 1.0,
+                    "review_date": "2026-10-26",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1C8H8XOAFNZJF",
+                    "reviewer_name": "shivaramakriskna",
+                    "review_title": "Calling is best",
+                    "review_comment": "Number on product",
+                    "rating": 5.0,
+                    "review_date": "2026-10-22",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71yIKMprXIL.jpg",
+                        "https://m.media-amazon.com/images/I/71QT0te25JL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R21EOZYQAOLIDQ",
+                    "reviewer_name": "Jayprakash Patel",
+                    "review_title": "Quick cooling",
+                    "review_comment": "Value for Money..Good in performance ..",
+                    "rating": 5.0,
+                    "review_date": "2026-10-22",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3CHUJK9UCX84C",
+                    "reviewer_name": "Bharat Makwana",
+                    "review_title": "Excellent AC!",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Excellent AC! Very happy with my new LG AC. Excellent cooling, premium design, and smooth operation. Really happy with the purchase. Great value for money! Highly recommended. 👍 Excellent AC Installation! My LG AC was installed today. The installation was very neat, clean, and professional. The technician did a great job. Very satisfied with the service. Highly recommended!",
+                    "rating": 5.0,
+                    "review_date": "2026-10-21",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 4,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/61-k9GLoGrL.jpg",
+                        "https://m.media-amazon.com/images/I/51RcWbUQyLL.jpg",
+                        "https://m.media-amazon.com/images/I/71VwaXhRU3L.jpg",
+                        "https://m.media-amazon.com/images/I/71GHraqzIsL.jpg",
+                        "https://m.media-amazon.com/images/I/81uv+ZeRvZL.jpg",
+                        "https://m.media-amazon.com/images/I/71s1+miA-mL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R24P9EJMD4C45Z",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Do not buy",
+                    "review_comment": "Ineffective cooling. High noise. Not worth",
+                    "rating": 2.0,
+                    "review_date": "2026-10-19",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2KULLQO8DBUVF",
+                    "reviewer_name": "Rahul",
+                    "review_title": "Broken ac",
+                    "review_comment": "Broken piece received and till the time not pick up.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-17",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1R6310QLRHYS7",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Defective product withDefective Product with Inadequate Support",
+                    "review_comment": "The video showcases the product in use. The video guides you through product setup. The video compares multiple products. The video shows the product being unpacked. Video Player is loading. Click to play video Play Mute Current Time 0:00 / Duration 0:08 Loaded : 37.54% 0:00 Stream Type LIVE Seek to live, currently behind live LIVE Remaining Time - 0:08 1x Playback Rate Chapters Chapters Descriptions descriptions off , selected Captions Captions off , selected English (Automated) Audio Track default , selected Fullscreen This is a modal window. The AC arrived with the copper pipe missing, and Amazon provided no proper assistance in resolving the issue. Additionally, the AC appears to be defective, with heavy water leakage from the indoor unit. This has been a very disappointing experience, both with the product quality and customer support. I expected better service from Amazon and LG.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-17",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": [
+                        "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/198aa99e-f6df-4cbe-807c-20848699b55d/default.vertical.jobtemplate.hls.m3u8"
+                    ]
+                },
+                {
+                    "review_id": "RSTK668OJ9MIW",
+                    "reviewer_name": "Jagdish dandge",
+                    "review_title": "nice",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. nice",
+                    "rating": 5.0,
+                    "review_date": "2026-04-14",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3MUR5YIVK2HOV",
+                    "reviewer_name": "Vinod kumar",
+                    "review_title": "⭐ Very Disappointing Experience with LG – Poor Customer Service and Installation Issues",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. I am extremely disappointed with LG's service and the overall experience of purchasing my new LG air conditioner. I purchased an LG AC under an exchange offer by replacing my existing 1.5-ton Daikin AC, which had a gas leakage issue. Although my old AC had a gas leakage problem, it was still powering on, and the outdoor unit was functioning. At the time of delivery, the delivery person told me that my old AC would be scrapped because of the gas leakage issue. He asked me to pay ₹4,000 and said that ₹5,500 would be considered for my old AC. I want new AC so i paid 4000 Rs to delivey person and taken New LG AC. The installation experience was even worse. I received a call from LG regarding installation, and the technician confirmed that he would visit my home at 1:30 PM. He asked about the floor on which the AC needed to be installed. However, the technician never arrived and did not answer my phone calls. When I repeatedly contacted the service centre, they eventually informed me that the technician was demanding an additional ₹1,500 for installing the AC on the second floor, over and above the base installation charge of approximately ₹1,100 plus GST.I am staying in a society where a hydraulic ladder is provided by the maintenance team and support for installation of the ladder. I immediately emailed LG customer care to explain the situation and request a resolution. However, I still have not received a satisfactory response or a clear solution to get my AC installed.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-09",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 13,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/71eTbvNe68L.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RG68S8H74OV3Y",
+                    "reviewer_name": "Dasari Suresh",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 4.0,
+                    "review_date": "2026-08-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RKBHQ4NVK1ERQ",
+                    "reviewer_name": "Anand kumar Saini",
+                    "review_title": "Brand name trust",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Energy efficient",
+                    "rating": 5.0,
+                    "review_date": "2026-05-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R38RY94TERJBY4",
+                    "reviewer_name": "Ranjith",
+                    "review_title": "Good to buy this AC",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Product is very good working as expected",
+                    "rating": 5.0,
+                    "review_date": "2026-05-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RY6JFA47LH8P7",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Totally worth it",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Excellent",
+                    "rating": 5.0,
+                    "review_date": "2026-10-15",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 1,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "air_conditioner",
+            "normalized": {
+                "brand": null,
+                "model_number": "AS-Q19YNZE2",
+                "tonnage": 1.5,
+                "ac_type": "Split",
+                "energy_rating": "5 Star",
+                "inverter": true,
+                "cooling_capacity": "5800 W",
+                "iseer": 5.77,
+                "annual_energy_consumption": "671.15 Kilowatt Hours Per Year",
+                "condenser_coil": "Copper",
+                "refrigerant": "R-32",
+                "noise_level": "31 Decibels",
+                "special_features": "4 Way Swing, Auto Clean, Fast Cooling, Inverter Compressor, Remote Controlled",
+                "power_consumption": "1180 Watts",
+                "voltage": "230 Volts",
+                "color": "white"
+            },
+            "raw": {
+                "Cooling Power": "5 Kilowatts",
+                "Special Features": "4 Way Swing, Auto Clean, Fast Cooling, Inverter Compressor, Remote Controlled",
+                "Colour": "white",
+                "Noise Level": "31 Decibels",
+                "Refrigerant": "R-32",
+                "Filter Type": "Silver Ion Filter",
+                "Inverter Type": "Has Inverter",
+                "Installation Type": "Split System",
+                "Compressor Type": "Single Rotary",
+                "Is Outdoor Unit Required": "Yes",
+                "Air Conditioner Application": "Residential",
+                "Core Material": "Copper",
+                "Voltage": "230 Volts",
+                "Power Source": "Corded Electric",
+                "Wattage": "1180 Watts",
+                "Item Dimensions D x W x H": "21D x 99.8W x 34.5H Centimeters",
+                "Item Weight": "37 kg",
+                "Control Method": "App, Remote",
+                "Controller Type": "App Control, Remote Control",
+                "Operating Mode": "Cooling",
+                "Warranty": "Limited",
+                "BEE Star Rating": "5 Star",
+                "Brand Name": "LG",
+                "Start Year": "2026",
+                "Model Name": "1.5 Ton 3 Star split AC",
+                "Model Number": "AS-Q19YNZE2",
+                "Unit Count": "1.0 Set",
+                "Included Components": "1 Indoor Unit, 1 Outdoor Unit, Inter Connecting Copper Pipe of 3 meters length, Remote Control, 2 Batteries, User manual, Note – Brand warranty can be availed using amazon invoice and user manual can be accessed from brand website",
+                "Manufacturer": "LG Electronics Ind. Ltd., LG Electronics Ind. Ltd., 51, Udyog Vihar, Gr. Noida (UP) – 201306 | Telephone - 08069379999, WhatsApp - 9711709999| Email - serviceindia@lge.com",
+                "Country Of Origin": "India",
+                "Importer Contact Information": "A-24/6, Mohan Co-operative Industrial Estate, Mathura Road, New Delhi - 110044",
+                "Item Type Name": "Split Air conditioner",
+                "Manufacturer Contact Information": "LG Electronics Ind. Ltd., 51, Udyog Vihar, Gr. Noida (UP) – 201306 | Telephone - 08069379999, WhatsApp - 9711709999| Email - serviceindia@lge.com",
+                "Packer Contact Information": "LG Electronics Ind. Ltd., 51, Udyog Vihar, Gr. Noida (UP) – 201306 | Telephone - 08069379999, WhatsApp - 9711709999| Email - serviceindia@lge.com, LG Electronics India Ltd.",
+                "Warranty Description": "1 Year Comprehensive on Product, 5 Year on PCB and Motor & 10 Year on Compressor (*Free Gas charging during comprehensive period only | T&C Apply) | Contact Brand for queries/assistance @ [Telephone: 08069379999, WhatsApp: 9711709999 & Email: serviceindia@lge.com] and provide product's model name and seller's details mentioned on your invoice. Brand's service center will allot you a convenient slot for the service. For units installed by entities outside of Brand's service network, warranty repairs for defects attributed to installation may be charged by the Brand.",
+                "Best Sellers Rank": "#6,074 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #6 in Split-System Air Conditioners",
+                "ASIN": "B0H4H59Q78",
+                "Seasonal Energy Efficiency Ratio (SEER)": "5.77",
+                "Annual Energy Consumption": "671.15 Kilowatt Hours Per Year",
+                "Capacity": "1.5 Tons",
+                "Floor Area": "150 Square Feet",
+                "Room Type": "Bedroom, Compact Home Offices, Living Room, Rooms/Nurseries, Study Rooms",
+                "Form Factor": "split ac"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": false
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:12:47+00:00",
+            "last_updated": "2026-11-12T11:12:47+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 2,
+                "reviews_scraped": 16,
+                "variants_scraped": 3,
+                "specifications_scraped": 43
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0HBQWS61N",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0HBQWS61N"
+        },
+        "product_details": {
+            "title": "LG 1.5 Ton 3 Star, 5500W Max Cooling Capacity, Smart Inverter Split AC (Copper, AI Convertible 6-in-1, Energy Saving & Faster Cooling at 55℃, Allergen Protection, Monsoon Comfort, AS-Q19HNXE, White)",
+            "brand": "LG",
+            "manufacturer": "LG Electronics India Ltd, LG Electronics India Ltd., 51, Udyog Vihar, Greater Noida (U.P)-201306 | Contact Brand for assistance @ [ Call: 08069379999; WhatsApp: 9711709999 ] | serviceindia@lge.com",
+            "model": "AS-Q19HNXE",
+            "category": "Home & Kitchen",
+            "subcategory": "Air Conditioners",
+            "description": "LG Split AC: New 2026 BEE Standards for Ultra-Cooling & Bigger Savings! Stay perfectly chilled and save on bills with cooling built for extreme climate. Cools at 55°C Even at a blistering 55°C, LG Split Air Conditioners flip the script. Built for India’s harshest summers, LG delivers effortless cooling while ordinary ACs struggle to keep up with the heat. 100% Hi-Grooved Copper Pipes Hi-Grooved Copper pipes serve dual benefits of better heat dissipation of refrigerant & increasing the durability of pipe. Viraat Mode Boosts cooling up to 124% for instant relief on the hottest days. *Actual power consumption may vary based on room size and local climate conditions compared to standard test results. AI Convertible: Smart cooling tailored to your comfort and savings. Durable design meets high-performance engineering for lasting reliability. Low Gas Detection New Low Gas Detection automatically detects, notifies and switches off AC for safety. ADC Sensors Integrated safety sensors and parameter checks ensure robust, secure operation. This design ensure high durability and stable performance at every step, keeping your AC safe and reliable. Gold Fin+ A corrosion resistant coating for increased durability of your LG Air Conditioner. #Tested by TUV Rheinland. GoldFin+ comes with outdoor unit of 2024 onwards series of Split AC’s. Ocean Black Protection LG’s Ocean Black Protection ensures the Split Air Conditioner is protected against all-weather conditions. Stabilizer Free Plus Compressor is the most important component of an Air Conditioner. LG’s enhanced stabilizer-free plus operation prevents voltage fluctuations without compromising on the safety, savings and comfort. Intuitively designed for seamless operation and ultimate convenience. Diet Mode+ Diet Mode+ uses Smart Inverter tech to slash power by 75% while boosting airflow. This one-touch setting optimizes efficiency and comfort, making it easy to manage costs without losing cooling. Mute Function Tired of loud AC beeps? With LG, a 3-second long press of the Diet button silences all alerts. Experience quiet, peaceful cooling and uninterrupted sleep at the touch of a button. Instant AC troubleshooting via phone Smart Diagnosis Via Smartphone Change the way you think, get smart things done when you have the ThinQ App around. Conveniently check and troubleshoot Air Conditioner related problems directly from your smartphone. Advanced air purification meets high-performance cooling for a healthier home. Auto Clean Eliminates bacteria through constantly drying up the heat exchanger, that also helps keep off bad odor. Refrigerant R32 LG’s Air Conditioner uses Refrigerant R32 which has zero ODP & lower GWP compared to other refrigerants. HimClean Keeps your indoor environment healthier with automated freezing technology that thoroughly cleans the evaporator and drainage system for fresher air. HD Filter with Anti-Virus Protection Filters and eliminates harmful airborne viruses, bacteria, dust, pollen, and allergens, ensuring a clean, healthy indoor environment. Monsoon Comfort Monsoon Comfort Technology for comfortable cooling and greater power savings even in humid conditions.",
+            "feature_bullets": [
+                "LG Split AC with Smart inverter compressor: Experience powerful cooling with LG Split AC, featuring an energy-efficient inverter compressor for optimal performance and long-lasting durability",
+                "Capacity: 1.5 Ton Split AC - Suitable for medium sized rooms (111 to 150 sq.ft); Air Circulation: 653/1080 (In/Out) CFM, Rated Cooling Capacity 5000 W | Maximum Cooling Capacity 5500 W & Ambient Temperature: 55℃ with 2 way air swing",
+                "Energy Rating: 3 Star Split AC - Energy efficiency | Annual Energy Consumption: 874.37 units. ISEER Value: 4.43 (Please Refer Energy Label on Product Page or Contact Brand for More Details); ac 1.5 ton 3 star inverter split; ac 1.5 ton 3 star",
+                "Manufacturer Warranty: 1 Year Comprehensive on Product, 5 Year on PCB and Motor & 10 Year on Compressor (*Free Gas charging during comprehensive period only | T&C Apply)",
+                "Long-Lasting Durability with 100% Copper & Ocean Black Protection: Engineered for longevity, the 100% Copper tubes are reinforced with a specialized Ocean Black coating. This anti-corrosive shield prevents rust and damage from salt, smoke, and pollutants, ensuring consistent, uninterrupted cooling for years",
+                "Key Features: Smart Inverter Compressor; AI Convertible 6-in-1; VIRAAT Mode; HD Filter with Anti-Virus Protection; ADC Sensor; Cools at 55⁰ C; Stabilizer free operation within 120V-290V voltage range, Temperature Display type – Magic Display (LED) for temperature and timer modes, Noise Level: IDU - 31 (db) & ODU – 56 (db); split ac; 1.5 ton ac 3 star",
+                "Special Features: Gold Fin+ - Increase durability, Ez Clean Filter; Low Gas Detection; 100% Copper Condenser; Hi Grooved Copper; Split AC with Smart Diagnosis System; Comfort Air; Monsoon Comfort; Self Diagnosis; Auto Clean; On/Off Timer; Sleep Mode 12 Hr; Diet Mode Plus; Fan Speed Steps: 6; Auto Restart (Memory); On/Off Indicator; Dehumidifier; Frost Wash/HimClean; Child Lock Feature Remote",
+                "Refrigerant gas: R32 - Environment-Friendly - Zero Ozone Depletion (ODP) & Lower Global Warming Potential (GWP)",
+                "Item Dimensions & Weight: Indoor Unit dimension IDU (W x H x D cms) (99.8 x 34.5 x 21); Outdoor Unit dimension ODU (W x H x D cms) (71.7 x 49.5 x 23) & IDU Weight 11 Kg and ODU Weight 23.5 Kg",
+                "Included In The Box: 1 Indoor Unit, 1 Outdoor Unit, 3 M (9.84 Feet) Length Inter Connecting Copper Pipe, 1 Remote, 1 Manual, 1 Warranty Card | Note: Brand Warranty can be availed using amazon invoice and User manual can be accessed from brand website"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "21D x 99.8W x 34.5H Centimeters",
+            "weight": "34 kg 500 g",
+            "warranty": "Limited",
+            "country_of_origin": "India",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 38990.0,
+                "original_price": 80490.0,
+                "discount_percentage": 52.0,
+                "price_display": "₹38,990",
+                "original_price_display": "₹80,490"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹1,169.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹2,624.23 EMI interest savings on select Credit Cards, Bajaj Finserv EMI cards, Amazon Pay Later"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm. Order within 3 hrs 57 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/61n6p-K4R+L._SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/31mLlweicLL.jpg",
+                "https://m.media-amazon.com/images/I/51-XcXENVGL.jpg",
+                "https://m.media-amazon.com/images/I/51jbikJkoVL.jpg",
+                "https://m.media-amazon.com/images/I/41h3uqc455L.jpg",
+                "https://m.media-amazon.com/images/I/51or2eNZpuL.jpg",
+                "https://m.media-amazon.com/images/I/41H8hkZuoQL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/31mLlweicLL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51-XcXENVGL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51jbikJkoVL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41h3uqc455L._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/51or2eNZpuL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41H8hkZuoQL._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/c8d106a1-467f-4274-ba0d-cea688196f4b/default.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 3.0,
+            "total_ratings": 7,
+            "total_reviews": 4,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "42%",
+                "4_star": "0%",
+                "3_star": "17%",
+                "2_star": "0%",
+                "1_star": "41%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R3FVDBDYL3T855",
+                    "reviewer_name": "Saif sultan",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Goof",
+                    "rating": 5.0,
+                    "review_date": "2026-11-08",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R28WSTF3P29LNS",
+                    "reviewer_name": "hari",
+                    "review_title": "Good",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 3.0,
+                    "review_date": "2026-10-30",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RI1RN9YKFS0S",
+                    "reviewer_name": "Don't buy it's california almonds not Irani mamra almond",
+                    "review_title": "Leakage pipe ko sudhar nahi kiya gaya",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Very bad installation services don’t buy this product service is very poor",
+                    "rating": 1.0,
+                    "review_date": "2026-10-25",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/516ScRObtHL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2B6JUDKBBX8HX",
+                    "reviewer_name": "lovlesh",
+                    "review_title": "Model looks older one",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Not good",
+                    "rating": 1.0,
+                    "review_date": "2026-10-12",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 3,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "air_conditioner",
+            "normalized": {
+                "brand": null,
+                "model_number": "AS-Q19HNXE",
+                "tonnage": 1.5,
+                "ac_type": "Split",
+                "energy_rating": "3 Star",
+                "inverter": true,
+                "cooling_capacity": "5500 W",
+                "iseer": 4.43,
+                "annual_energy_consumption": "874.37 Kilowatt Hours Per Year",
+                "condenser_coil": "Copper",
+                "refrigerant": "R-32",
+                "noise_level": "31 Decibels",
+                "special_features": "Auto Clean; AI Convertible 6-in-1 Cooling AC, Fast Cooling, Inverter Compressor, Remote Controlled, Sleep Mode; Viraat Mode",
+                "power_consumption": "1515 Watts",
+                "voltage": "230 Volts",
+                "color": "White"
+            },
+            "raw": {
+                "Cooling Power": "5 Kilowatts",
+                "Special Features": "Auto Clean; AI Convertible 6-in-1 Cooling AC, Fast Cooling, Inverter Compressor, Remote Controlled, Sleep Mode; Viraat Mode",
+                "Colour": "White",
+                "Noise Level": "31 Decibels",
+                "Refrigerant": "R-32",
+                "Filter Type": "Silver Ion Filter",
+                "Inverter Type": "Has Inverter",
+                "Installation Type": "Split System",
+                "Compressor Type": "Single Rotary",
+                "Outdoor Unit Compatibility": "Requires New Outdoor Unit",
+                "Is Outdoor Unit Required": "Yes",
+                "Air Conditioner Application": "Residential",
+                "Core Material": "Copper",
+                "Voltage": "230 Volts",
+                "Power Source": "Corded Electric",
+                "Wattage": "1515 Watts",
+                "Item Dimensions D x W x H": "21D x 99.8W x 34.5H Centimeters",
+                "Item Weight": "34 kg 500 g",
+                "Control Method": "Remote",
+                "Controller Type": "Remote Control",
+                "Operating Mode": "Cooling",
+                "Warranty": "Limited",
+                "BEE Star Rating": "3 Star",
+                "Brand Name": "LG",
+                "Start Year": "2026",
+                "Model Name": "AS-Q19HNXE",
+                "Model Number": "AS-Q19HNXE",
+                "Unit Count": "1.0 Set",
+                "Included Components": "1 Indoor Unit, 1 Outdoor Unit, Inter Connecting Copper Pipe of 3 meters length, Remote Control, 2 Batteries, User manual, Note – Brand warranty can be availed using amazon invoice and user manual can be accessed from brand website",
+                "Manufacturer": "LG Electronics India Ltd, LG Electronics India Ltd., 51, Udyog Vihar, Greater Noida (U.P)-201306 | Contact Brand for assistance @ [ Call: 08069379999; WhatsApp: 9711709999 ] | serviceindia@lge.com",
+                "Country Of Origin": "India",
+                "Importer Contact Information": "A-24/6, Mohan Co-operative Industrial Estate, Mathura Road, New Delhi - 110044",
+                "Item Type Name": "Split Air conditioner",
+                "Manufacturer Contact Information": "LG Electronics India Ltd., 51, Udyog Vihar, Greater Noida (U.P)-201306 | Contact Brand for assistance @ [ Call: 08069379999; WhatsApp: 9711709999 ] | serviceindia@lge.com",
+                "Packer Contact Information": "LG Electronics Ind. Ltd., 51, Udyog Vihar, Gr. Noida (UP) – 201306 | Telephone - 08069379999, WhatsApp - 9711709999| Email - serviceindia@lge.com, LG Electronics India Ltd.",
+                "Warranty Description": "1 Year Comprehensive on Product, 5 Year on PCB and Motor & 10 Year on Compressor (*Free Gas charging during comprehensive period only | T&C Apply) | Contact Brand for queries/assistance @ [Telephone: 08069379999, WhatsApp: 9711709999 & Email: serviceindia@lge.com] and provide product's model name and seller's details mentioned on your invoice. Brand's service center will allot you a convenient slot for the service. For units installed by entities outside of Brand's service network, warranty repairs for defects attributed to installation may be charged by the Brand.",
+                "Best Sellers Rank": "#26,741 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #45 in Split-System Air Conditioners",
+                "ASIN": "B0HBQWS61N",
+                "Seasonal Energy Efficiency Ratio (SEER)": "4.43",
+                "Annual Energy Consumption": "874.37 Kilowatt Hours Per Year",
+                "Capacity": "1.5 Tons",
+                "Floor Area": "150 Square Feet",
+                "Room Type": "Bedroom, Compact Home Offices, Living Room, Rooms/Nurseries, Study Rooms",
+                "Form Factor": "Split ac"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": false
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:13:27+00:00",
+            "last_updated": "2026-11-12T11:13:27+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 1,
+                "reviews_scraped": 4,
+                "variants_scraped": 0,
+                "specifications_scraped": 44
+            },
+            "errors": []
+        }
+    },
+    {
+        "asin": "B0GKMP6VYS",
+        "schema_version": 1,
+        "source": {
+            "platform": "Amazon",
+            "marketplace": "Amazon India",
+            "country": "India",
+            "domain": "amazon.in",
+            "product_url": "https://www.amazon.in/dp/B0GKMP6VYS"
+        },
+        "product_details": {
+            "title": "Lloyd 1.5 Ton 5 Star Inverter Split AC, 2026 Model, Ideal for Room Size Upto 160 sq. ft. (6 in 1 Convertible, Cools Upto 54°C, DG Mode, Ice Clean, 4 Way Swing, Installation Check, White, GLS18I5AGGGW)",
+            "brand": "Lloyd",
+            "manufacturer": "Havells India, Registered Office: 904, Surya Kiran Building, K.G. Marg, New Delhi - 110001 (INDIA), LLOYD",
+            "model": "GLS18I5AGGGW",
+            "category": "Home & Kitchen",
+            "subcategory": "Air Conditioners",
+            "description": null,
+            "feature_bullets": [
+                "Lloyd Split AC with Inverter Compressor: AC with variable speed compressor which automatically adjusts power depending on desired room temperature & heat load. Convertible / adjustable with 6 cooling modes through remote control to operate in different tonnage for different cooling needs (30% to 110% capacity)",
+                "Capacity: 1.5 ton suitable for medium size room up to 160 sq. ft.",
+                "Energy Rating: 5 Star, Annual Energy Consumption: 646.32 kWh, ISEER Value: 5.75, please refer to energy label on the product page",
+                "Manufacturer Warranty: 1 Year on the product, 5 Years on PCB and 10 Years on Compressor, please refer to company website for further details",
+                "Golden Fins Evaporator Copper Coils: Corrosion Resistance Coated Golden Fins Evaporator Copper Coils ensures better cooling performance, requires low maintenance and enhances durability of the product",
+                "Key Features: Cools even at ambient temperature of 54°C, Stabilizer Free Operation 100 V - 300 V voltage range; Hidden LED Display; Noise Level: IDU - 37 dB",
+                "Special Features: 6 in 1 Convertible AC that cools even at 54°C ambient temperature, Ice Clean, DG Mode, Clean Air Filter, 10 m Long Air Throw, Turbo Cool, Low Gas Detection, Clean Filter Indication, Installation Check",
+                "Refrigerant: R32 Refrigerant has been used which is environment friendly and has No Ozone Depletion Potential and Low Global Warming Potential",
+                "Item Dimensions & Weight: Indoor Unit dimension IDU (L x B x H) cm (98.2 x 22.0 x 32.0) cm; Outdoor Unit dimension ODU (L x B x H) cm (87.0 x 36.5 x 56.0) cm & IDU Weight 11.5 kg and ODU Weight 27.5 kg",
+                "Included in the Box: 1 Indoor Unit, Remote with Batteries, User Manual, Installation Accessory Kit, 3 metre Connecting Wire (Indoor to Outdoor), 1 Warranty Card and 1 Outdoor Unit with Installation Pipe"
+            ],
+            "condition": "New",
+            "availability": "In stock",
+            "dimensions": "22D x 98W x 32H Centimeters",
+            "weight": "39 kg",
+            "warranty": "Limited",
+            "country_of_origin": "India",
+            "pricing": {
+                "currency": "INR",
+                "current_price": 42990.0,
+                "original_price": 66990.0,
+                "discount_percentage": 36.0,
+                "price_display": "₹42,990",
+                "original_price_display": "₹66,990"
+            },
+            "seller": {
+                "seller_name": "DAWNTECH ELECTRONICS PRIVATE LIMITED",
+                "fulfilled_by": "Amazon"
+            },
+            "offers": [
+                {
+                    "offer_type": "No Cost EMI",
+                    "offer_details": "Upto ₹2,893.40 EMI interest savings on select Credit Cards"
+                },
+                {
+                    "offer_type": "Cashback",
+                    "offer_details": "Upto ₹1,289.00 cashback as Amazon Pay Balance when you pay with Amazon Pay ICICI Bank Credit Cards"
+                },
+                {
+                    "offer_type": "Bank Offer",
+                    "offer_details": "Upto ₹2,000.00 discount on select Credit Cards"
+                },
+                {
+                    "offer_type": "Partner Offers",
+                    "offer_details": "Get GST invoice and save up to 18% on business purchases. Sign up for free"
+                }
+            ],
+            "shipping": {
+                "delivery_information": "FREE scheduled delivery as soon as Saturday, 14 November, 7 am - 9 pm. Order within 3 hrs 56 mins.",
+                "shipping_cost": 0.0,
+                "estimated_delivery": "as soon as Saturday, 14 November, 7 am - 9 pm"
+            }
+        },
+        "product_variants": [
+            {
+                "variant_type": "Size",
+                "variant_name": "Old Star Rated (5 IN 1 Convertible)",
+                "asin": "B0F4KK6N7C",
+                "price": "₹52,900.00",
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0F4KK6N7C"
+            },
+            {
+                "variant_type": "Size",
+                "variant_name": "New Star Rated (6 IN 1 Convertible)",
+                "asin": "B0GKMP6VYS",
+                "price": "₹42,990.00",
+                "is_selected": true,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0GKMP6VYS"
+            },
+            {
+                "variant_type": "Size",
+                "variant_name": "Old Star Rated (5 IN 1 Inverter )",
+                "asin": "B0CZXB4P83",
+                "price": null,
+                "is_selected": false,
+                "is_available": true,
+                "url": "https://www.amazon.in/dp/B0CZXB4P83"
+            }
+        ],
+        "product_media": {
+            "images": [
+                "https://m.media-amazon.com/images/I/41MYuvgX0vL._SL1000_.jpg",
+                "https://m.media-amazon.com/images/I/313TAG5gNeL.jpg",
+                "https://m.media-amazon.com/images/I/41DOQM9WuTL.jpg",
+                "https://m.media-amazon.com/images/I/31G8+2ZwluL.jpg",
+                "https://m.media-amazon.com/images/I/41G1iBiUR6L.jpg",
+                "https://m.media-amazon.com/images/I/41T9Kr85hVL.jpg",
+                "https://m.media-amazon.com/images/I/41P1fRod4gL.jpg"
+            ],
+            "thumbnails": [
+                "https://m.media-amazon.com/images/I/313TAG5gNeL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41DOQM9WuTL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/31G8+2ZwluL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41G1iBiUR6L._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41T9Kr85hVL._SX38_SY50_CR,0,0,38,50_.jpg",
+                "https://m.media-amazon.com/images/I/41P1fRod4gL._SX38_SY50_CR,0,0,38,50_.jpg"
+            ],
+            "videos": [
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/f8581f23-6676-4e83-a812-f96c1a3783e2/default.jobtemplate.hls.m3u8",
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/10698d7d-0cb7-4ba3-804d-1bd234633559/default.jobtemplate.hls.m3u8",
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/d8fb7853-c28b-491a-b097-0c47849a990f/default.vertical.jobtemplate.hls.m3u8",
+                "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/bc1bc0c8-0a09-4a5d-ab01-e20c3babafef/default.jobtemplate.hls.m3u8"
+            ]
+        },
+        "customer_feedback": {
+            "overall_rating": 3.9,
+            "total_ratings": 123,
+            "total_reviews": 59,
+            "rating_scale": 5,
+            "rating_distribution": {
+                "5_star": "52%",
+                "4_star": "22%",
+                "3_star": "5%",
+                "2_star": "5%",
+                "1_star": "16%"
+            },
+            "reviews": [
+                {
+                    "review_id": "R2HXWXGFWMV4HW",
+                    "reviewer_name": "SINGH RAJ",
+                    "review_title": "Please faster return",
+                    "review_comment": "Use product delivered",
+                    "rating": 1.0,
+                    "review_date": "2026-11-10",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [
+                        "https://m.media-amazon.com/images/I/712p-vdHqGL.jpg",
+                        "https://m.media-amazon.com/images/I/71Vw9T93FyL.jpg"
+                    ],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2TYKXMQAG0F7S",
+                    "reviewer_name": "srinu posam",
+                    "review_title": "Value for money",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Nice product",
+                    "rating": 4.0,
+                    "review_date": "2026-11-09",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3IBCETGX8B9EZ",
+                    "reviewer_name": "hemalatha durai",
+                    "review_title": "Product was not good, don't buy in online",
+                    "review_comment": "Product was not good, don't buy in online",
+                    "rating": 1.0,
+                    "review_date": "2026-11-07",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2TVQPBC1QH6NE",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Good as per the budget and quality",
+                    "review_comment": "Good as per the budget and quality",
+                    "rating": 4.0,
+                    "review_date": "2026-11-06",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R2Y3BTO7M0VDZN",
+                    "reviewer_name": "Anil",
+                    "review_title": "Excellent product bought from amazon",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Excellent product bought from amazon",
+                    "rating": 5.0,
+                    "review_date": "2026-11-05",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1JP7SKG10U7M7",
+                    "reviewer_name": "Musebkhan Pathan",
+                    "review_title": "Dont buy from Amazon",
+                    "review_comment": "Never buy from Amazon, after selling they are not support, I have purchased AC and paid for 120000 for installation still AC is not working and Amazon not take responsibility. Never buy from Amazon",
+                    "rating": 1.0,
+                    "review_date": "2026-11-04",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RMJ6E6KNIDUZ8",
+                    "reviewer_name": "Ajmal Basha A",
+                    "review_title": "Affordable AC which cools nicely.",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Lloyd AC is working in good condition. The cooling is also good.",
+                    "rating": 5.0,
+                    "review_date": "2026-10-31",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R3O4OG5B4DD1KG",
+                    "reviewer_name": "Budha Srinivas",
+                    "review_title": "Leakage issue , cooling performance is low",
+                    "review_comment": "Leakage issue , cooling performance is low",
+                    "rating": 3.0,
+                    "review_date": "2026-10-30",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1VTBX7NX7EIAK",
+                    "reviewer_name": "Neeraj Wadhwani",
+                    "review_title": "LLyod AC",
+                    "review_comment": "Incomplete Item send due to which the item has to return.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-30",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RG1WNVKHTGMUT",
+                    "reviewer_name": "Deepak Shinde",
+                    "review_title": "Very good cooling",
+                    "review_comment": "Very good product.. Heavy cooking on 24°... Lovely .",
+                    "rating": 5.0,
+                    "review_date": "2026-10-28",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RYF76M16CPYZE",
+                    "reviewer_name": "Hitesh gamare",
+                    "review_title": "Pathetic service from both brands",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Video Player is loading. Play Current Time 0:00 / Duration 0:11 Loaded : 27.30% 0:00 Stream Type LIVE Seek to live, currently behind live LIVE Remaining Time - 0:11 1x Playback Rate Chapters Chapters Descriptions descriptions off , selected Captions captions settings , opens captions settings dialog captions off , selected Audio Track default , selected Fullscreen Mute This is a modal window. Beginning of dialog window. Escape will cancel and close the window. Text Color White Black Red Green Blue Yellow Magenta Cyan Transparency Opaque Semi-Transparent Background Color Black White Red Green Blue Yellow Magenta Cyan Transparency Opaque Semi-Transparent Transparent Window Color Black White Red Green Blue Yellow Magenta Cyan Transparency Transparent Semi-Transparent Opaque Font Size 50% 75% 100% 125% 150% 175% 200% 300% 400% Text Edge Style None Raised Depressed Uniform Dropshadow Font Family Proportional Sans-Serif Monospace Sans-Serif Proportional Serif Monospace Serif Casual Script Small Caps Reset restore all settings to the default values Done Close Modal Dialog End of dialog window. Very pathetic service by both lloyd. Yesterday I received my AC today after calling them so many times they came. Charged me more money then promised on the brochure given by them. After installing right in front of Executive who installed water started leaking from front. Executive said it will stop within few hours. Convinced we let him go. Later evem after few hours its still pouring water. Upon calling the Executive he says its not his problem. We should contact with lloyd for this. Now im left with no working AC. Lloyd isnt giving any reassurance about replacement and just asking to wait for another Executive to come and inspect the same issue. I wouldn't recommend at all buying this. Pathetic service. I'll be writing to consumer forum for this.",
+                    "rating": 1.0,
+                    "review_date": "2026-10-17",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": 4,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R36AQYB0KOICRV",
+                    "reviewer_name": "Sarat P R",
+                    "review_title": "Nice product from Havells",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good cooling effect and low noise levels (Both Indoor and outdoor)",
+                    "rating": 5.0,
+                    "review_date": "2026-09-24",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R246F1YZTVFYUG",
+                    "reviewer_name": "Amazon Customer",
+                    "review_title": "Good product",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Good",
+                    "rating": 5.0,
+                    "review_date": "2026-09-17",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "R1468SB374FFKV",
+                    "reviewer_name": "Tejas suvarna",
+                    "review_title": "value for money",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. i think it's is waste to put mor money on brands like lg daikin I just took risk to buy lyodd it as all the feature which the premium model gives till now its working good",
+                    "rating": 5.0,
+                    "review_date": "2026-10-23",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                },
+                {
+                    "review_id": "RURKMZWDQS68U",
+                    "reviewer_name": "Placeholder",
+                    "review_title": "Nice",
+                    "review_comment": "Brief content visible, double tap to read full content. Full content visible, double tap to read brief content. Nice",
+                    "rating": 4.0,
+                    "review_date": "2026-10-16",
+                    "review_country": "India",
+                    "verified_purchase": true,
+                    "helpful_votes": null,
+                    "review_images": [],
+                    "review_videos": []
+                }
+            ]
+        },
+        "product_specifications": {
+            "category_profile": "air_conditioner",
+            "normalized": {
+                "brand": null,
+                "model_number": "GLS18I5AGGGW",
+                "tonnage": 1.5,
+                "ac_type": "Split",
+                "energy_rating": "5 Star",
+                "inverter": true,
+                "cooling_capacity": "4.8 Kilowatts",
+                "iseer": 5.75,
+                "annual_energy_consumption": "646.32 Kilowatt Hours",
+                "condenser_coil": "Copper",
+                "refrigerant": "R-32",
+                "noise_level": "37 Decibels",
+                "special_features": "6 in 1 Convertible; Cools Even @ 54 ˚C, Golden Fin Evaporator; Anti-Viral Filter, Installation Check; Stabilizer Free Operation; Hidden LED Display, Low Gas Detection; Clean Filter Indication, Smart 4 Way Swing; Turbo Cool; 100% Copper",
+                "power_consumption": "1065 Watts",
+                "voltage": "230 Volts",
+                "color": "White"
+            },
+            "raw": {
+                "Cooling Power": "4.8 Kilowatts",
+                "Special Features": "6 in 1 Convertible; Cools Even @ 54 ˚C, Golden Fin Evaporator; Anti-Viral Filter, Installation Check; Stabilizer Free Operation; Hidden LED Display, Low Gas Detection; Clean Filter Indication, Smart 4 Way Swing; Turbo Cool; 100% Copper",
+                "Colour": "White",
+                "Noise Level": "37 Decibels",
+                "Refrigerant": "R-32",
+                "Filter Type": "Anti-Viral Dust Filter, PM 2.5 Filter",
+                "Inverter Type": "Has Inverter",
+                "Installation Type": "Split System",
+                "Compressor Type": "Rotary",
+                "Outdoor Unit Compatibility": "Requires New Outdoor Unit",
+                "Is Outdoor Unit Required": "Yes",
+                "Air Conditioner Application": "Residential",
+                "Voltage": "230 Volts",
+                "Power Source": "Corded Electric",
+                "Wattage": "1065 Watts",
+                "Item Dimensions D x W x H": "22D x 98W x 32H Centimeters",
+                "Item Weight": "39 kg",
+                "Control Method": "Remote",
+                "Controller Type": "Remote Control",
+                "Operating Mode": "Cooling",
+                "Warranty": "Limited",
+                "BEE Star Rating": "5 Star",
+                "Brand Name": "Lloyd",
+                "Start Year": "2026",
+                "Model Name": "AC",
+                "Model Number": "GLS18I5AGGGW",
+                "Unit Count": "1.0 Count",
+                "Included Components": "IDU - Indoor Unit, Remote & Batteries, User Manual, Drain Pipe, Installation Accessory Kit, 3m Connecting Wire and ODU - Outdoor Unit, Installation Pipe",
+                "Manufacturer": "Havells India, Registered Office: 904, Surya Kiran Building, K.G. Marg, New Delhi - 110001 (INDIA), LLOYD",
+                "Country Of Origin": "India",
+                "Item Type Name": "Air Conditioner",
+                "Manufacturer Contact Information": "Havells India, Registered Office: 904, Surya Kiran Building, K.G. Marg, New Delhi - 110001 (INDIA)",
+                "Packer Contact Information": "Havells India, Registered Office: 904, Surya Kiran Building, K.G. Marg, New Delhi - 110001 (INDIA)",
+                "Warranty Description": "Manufacturer warranty: 1 year on product, 5 years on PCB and 10 years on compressor (T&C Apply) | Contact Brand for queries/assistance @ [Telephone: *08045775666* , WhatsApp: *9711773333* & Email: CUSTOMERCARE@HAVELLS.COM] Brand's service center will allot you a convenient slot for the service.“For units installed by entities outside of Brand's service network, warranty repairs for defects attributed to installation may be charged by the Brand",
+                "Best Sellers Rank": "#9,784 in Home & Kitchen ( See Top 100 in Home & Kitchen ) #16 in Split-System Air Conditioners",
+                "ASIN": "B0GKMP6VYS",
+                "Seasonal Energy Efficiency Ratio (SEER)": "5.75",
+                "Annual Energy Consumption": "646.32 Kilowatt Hours",
+                "Capacity": "1.5 Tons",
+                "Floor Area": "160 Square Feet",
+                "Room Type": "Living Room, Bedroom, Home Office",
+                "Form Factor": "Mini-Split"
+            }
+        },
+        "platform_specific": {
+            "is_sponsored_listing": true
+        },
+        "scraping_metadata": {
+            "scraped_at": "2026-11-12T11:14:15+00:00",
+            "last_updated": "2026-11-12T11:14:15+00:00",
+            "scraping_status": "success",
+            "data_summary": {
+                "images_scraped": 7,
+                "videos_scraped": 4,
+                "reviews_scraped": 15,
+                "variants_scraped": 3,
+                "specifications_scraped": 42
+            },
+            "errors": []
+        }
+    }
+]
