@@ -1,0 +1,8 @@
+.idea/
+bestbuy_chrome_profile/
+bestbuy_output/
+canonical_output/
+__pycache__/
+*.pyc
+.env
+.venv/
