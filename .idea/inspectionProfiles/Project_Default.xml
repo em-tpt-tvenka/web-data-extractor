@@ -1,0 +1,35 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyInterpreterInspection" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="fastapi" />
+          <option value="uvicorn" />
+          <option value="jinja2" />
+          <option value="python-dotenv" />
+          <option value="bcrypt" />
+          <option value="passlib" />
+          <option value="python-jose" />
+          <option value="pycryptodome" />
+          <option value="PyJWT" />
+          <option value="sqlalchemy" />
+          <option value="psycopg2-binary" />
+          <option value="greenlet" />
+          <option value="pydantic" />
+          <option value="pydantic-settings" />
+          <option value="annotated-types" />
+          <option value="boto3" />
+          <option value="aio-pika" />
+          <option value="aiormq" />
+          <option value="pamqp" />
+          <option value="websockets" />
+          <option value="structlog" />
+          <option value="asyncpg" />
+          <option value="orjson" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

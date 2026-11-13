@@ -1,0 +1,3148 @@
+[
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 03:13:13 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "NP940XJG-KG5",
+        "parent_product_id": null,
+        "sku": "NP940XJG-KG5",
+        "upc_ean": null,
+        "model_number": "NP940XJG-KG5",
+        "product_url": "https://www.samsung.com/in/computers/galaxy-book/galaxy-book6-pro-ultra-7-32gb-1tb-np940xjg-kg5in/"
+      },
+      "core": {
+        "title": "Galaxy Book6 Pro, 35.56 cm, Ultra 7, 32 GB, Copilot+ PC",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "PC",
+          "Galaxy Book"
+        ],
+        "condition": "new",
+        "introduced_date": "March 4, 2026"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": null,
+        "current_price": null,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": false,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Buy Galaxy Book6 Pro, 35.56 cm, Ultra 7, 32 GB, Copilot+ PC. Enhanced with NPU capable of up to 47 TOPS, handles workloads, and everyday multitasking with ease.",
+        "bullet_features": [
+          "English",
+          "German",
+          "French",
+          "Spanish",
+          "Portuguese",
+          "Italian",
+          "Korean",
+          "Chinese",
+          "Japanese",
+          "Arabic"
+        ],
+        "specifications": {
+          "Processor / Chipset": {
+            "CPU": "Intel® Core™ Ultra 7 processor 356H",
+            "GPU": "Intel® Graphics",
+            "GPU Type": "Shared",
+            "NPU": "Intel® NPU"
+          },
+          "Display": {
+            "Size": "35.56 cm",
+            "Resolution": "2880 x 1800 (WQXGA+)",
+            "Type": "Dynamic AMOLED 2X, Anti-Reflective",
+            "Touch Screen": "Yes"
+          },
+          "Storage/Memory": {
+            "Memory Capacity": "32 GB",
+            "Memory Type": "LPDDR5X (On Board)",
+            "Storage Capacity": "1 TB",
+            "Storage Type": "NVMe SSD",
+            "Number of Storage Slots": "1"
+          },
+          "General Information": {
+            "Colour": "Gray",
+            "Form Factor": "Laptop"
+          },
+          "Multimedia": {
+            "Speaker": "Stereo Speakers",
+            "Smart Amp": "Yes",
+            "Sound Effect": "Dolby Atmos®",
+            "Mic": "Dual Array Digital Mic",
+            "Camera": "2.0 MP"
+          },
+          "Network": {
+            "Wi-Fi": "Wi-Fi 7, 802.11 a/b/g/n/ac/ax/be 2.4GHz+5GHz+6GHz, MIMO, EHT320, 4096-QAM",
+            "Bluetooth Version": "Bluetooth v5.4"
+          },
+          "Ports": {
+            "HDMI": "1 HDMI 2.1 (Supports 8K@60Hz, 5K@120Hz)",
+            "USB": "2 Thunderbolt™ 4, 1 USB3.2",
+            "Earjack": "1 Headphone out/Mic-in Combo"
+          },
+          "Input": {
+            "Keyboard": "Pro keyboard",
+            "Keyboard Backlit": "Yes",
+            "Touchpad": "Haptic Touchpad"
+          },
+          "Security": {
+            "TPM": "Yes",
+            "FingerPrint Reader": "Yes"
+          },
+          "Battery": {
+            "Battery Chemistry": "Lithium-Ion",
+            "Battery Capacity (Typical)(Wh)": "67.18"
+          },
+          "Power": {
+            "Adapter": "65W USB Type-C Adapter",
+            "USB PD Support": "Yes",
+            "Power Required for Charging (Min/Max)(W)": "60 | 65"
+          },
+          "Physical specification": {
+            "Dimension (WxDxH)": "31.42 cm x 22.06 cm x 1.16 cm",
+            "Weight": "1.24 kg"
+          },
+          "Services and Applications": {
+            "SmartThings Support": "Yes"
+          },
+          "Certification": {
+            "TCO Certified": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung Electronics Vietnam Co., Ltd. Yen Phong 1 Industrial Zone, Yen Trung Commune, Bac Ninh Province, Vietnam",
+            "Country of Origin": "Vietnam",
+            "Imported by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Launch date": "March 27 th , 2026"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/np940xjg-kg5in/gallery/in-galaxy-book-np940xjg-kg5in-galaxy-book--pro--------cm--ultra-------gb--copilot--pc-gray-thumb-551799475",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book6-pro-14-inch-np940xjge-583459-552506790",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book6-pro-14-inch-np940xjge-583459-552506793",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054808/in-feature-galaxy-book-551799452",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054808/in-feature-galaxy-book-551799453",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054807/in-feature-galaxy-book-551799450",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054807/in-feature-galaxy-book-551799451",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054805/in-feature-galaxy-book-551799446",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054805/in-feature-galaxy-book-551799447",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054804/in-feature-galaxy-book-551799444",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054804/in-feature-galaxy-book-551799445",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054803/in-feature-galaxy-book-551799442",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054803/in-feature-galaxy-book-551799443",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054806/in-feature-galaxy-book-551799448",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054806/in-feature-galaxy-book-551799449",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054795/in-feature-galaxy-book-551799429",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054795/in-feature-galaxy-book-551799430",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054778/in-feature-galaxy-book-551799396",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054778/in-feature-galaxy-book-551799397",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054777/in-feature-galaxy-book-551799392",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054777/in-feature-galaxy-book-551799393",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054813/in-feature-galaxy-book-551799468",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054813/in-feature-galaxy-book-551799469",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054782/in-feature-galaxy-book-551799402",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/167054782/in-feature-galaxy-book-551799403",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/167054795/in-feature-galaxy-book-551799428.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_002",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/167054793/in-feature-galaxy-book-551799420.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 03:06:49 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "NP750XGJ-LG2",
+        "parent_product_id": null,
+        "sku": "NP750XGJ-LG2",
+        "upc_ean": null,
+        "model_number": "NP750XGJ-LG2",
+        "product_url": "https://www.samsung.com/in/computers/galaxy-book/galaxy-book4-15-6-inch--n-1--i5-16gb-512gb-np750xgj-lg2in/"
+      },
+      "core": {
+        "title": "Galaxy Book4, 39.62 cm, i5, 16 GB",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "PC",
+          "Galaxy Book"
+        ],
+        "condition": "new",
+        "introduced_date": "May 10, 2024"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": null,
+        "current_price": null,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": false,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "The new Samsung Galaxy Book4 39.62 cm Display Core™ i5 16GB Memory, 512GB storage, FingerPrint Reader & many more features. To know more visit Samsung India.",
+        "bullet_features": [],
+        "specifications": {
+          "Processor / Chipset": {
+            "CPU": "Intel® Core™ i5-1335U Processor(1.3 GHz up to 4.6 GHz 12 MB L3 Cache)",
+            "GPU": "Intel® Iris® Xe Graphics",
+            "GPU Type": "Shared"
+          },
+          "Display": {
+            "Size": "39.62 cm",
+            "Resolution": "1920 x 1080 (FHD)",
+            "Type": "IPS, Anti-Glare"
+          },
+          "Storage/Memory": {
+            "Memory Capacity": "16 GB",
+            "Memory Type": "LPDDR4x (On Board)",
+            "Storage Capacity": "512 GB",
+            "Storage Type": "NVMe SSD",
+            "Number of Storage Slots": "2"
+          },
+          "General Information": {
+            "Colour": "Gray",
+            "Form Factor": "Laptop"
+          },
+          "Multimedia": {
+            "Speaker": "Stereo Speakers",
+            "Sound Effect": "Dolby Atmos®",
+            "Mic": "Dual Array Digital Mic",
+            "Camera": "1.0 MP"
+          },
+          "Network": {
+            "Wi-Fi": "Wi-Fi 6 (Gig+), 802.11 ax 2x2",
+            "Bluetooth Version": "Bluetooth v5.2",
+            "Ethernet": "Gigabit Ethernet [10/100/1000]"
+          },
+          "Ports": {
+            "HDMI": "1 HDMI",
+            "USB": "2 USB Type-C, 2 USB3.2",
+            "External Storage Support": "microSD",
+            "Earjack": "1 Headphone out/Mic-in Combo",
+            "Network Ports": "1 RJ45 (LAN)"
+          },
+          "Input": {
+            "Keyboard": "Pro keyboard with Numeric key",
+            "Keyboard Backlit": "Yes",
+            "Touchpad": "Clickpad"
+          },
+          "Security": {
+            "Security Slot": "Yes",
+            "TPM": "Yes",
+            "FingerPrint Reader": "Yes"
+          },
+          "Battery": {
+            "Battery Capacity (Typical)(Wh)": "54"
+          },
+          "Power": {
+            "Adapter": "45 W USB Type-C Adapter"
+          },
+          "Physical specification": {
+            "Dimension (WxDxH)": "35.66 cm x 22.91 cm x 1.54 cm",
+            "Weight": "1.55 kg"
+          },
+          "Services and Applications": {
+            "SmartThings Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Country of Origin": "India",
+            "Launch date": "May 21 st , 2024"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book4-156-inch-np750xgja-508143-542446681",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book4-156-inch-np750xgja-508143-542446686",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331444/in-feature-galaxy-book-541824934",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331444/in-feature-galaxy-book-541824935",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331448/in-feature-galaxy-book-541824940",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331448/in-feature-galaxy-book-541824941",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331447/in-feature-galaxy-book-541824938",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331447/in-feature-galaxy-book-541824939",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331446/in-feature-galaxy-book-541824936",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331446/in-feature-galaxy-book-541824937",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331449/in-feature-galaxy-book-541824944",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331449/in-feature-galaxy-book-541824945",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331451/in-feature-galaxy-book-541824950",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331452/in-feature-galaxy-book-541824953",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331443/in-feature-galaxy-book-541824932",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331443/in-feature-galaxy-book-541824933",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331453/in-feature-galaxy-book-541824954",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331453/in-feature-galaxy-book-541824955",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331434/in-feature-galaxy-book-541824916",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331434/in-feature-galaxy-book-541824917",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331441/in-feature-galaxy-book-541824928",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331441/in-feature-galaxy-book-541824929",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331431/in-feature-galaxy-book-541824910",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331431/in-feature-galaxy-book-541824911",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331440/in-feature-galaxy-book-541824926",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": []
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 03:07:08 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "NP750XQB-KA1",
+        "parent_product_id": null,
+        "sku": "NP750XQB-KA1",
+        "upc_ean": null,
+        "model_number": "NP750XQB-KA1",
+        "product_url": "https://www.samsung.com/in/computers/galaxy-book/galaxy-book4-edge-15-6-inch-snapdragon-16gb-512gb-np750xqb-ka1in/"
+      },
+      "core": {
+        "title": "Galaxy Book4 Edge, 39.62 cm, SnapdragonÂ® X, 16 GB, Copilot+ PC",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "PC",
+          "Galaxy Book",
+          "Galaxy Book4 Edge, 39.62 cm, Snapdragon® X, 16 GB, Copilot+ PC"
+        ],
+        "condition": "new",
+        "introduced_date": "July 14, 2025"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": null,
+        "current_price": null,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": false,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Galaxy Book4 Edge is your portable companion on the path to success. Reliable performance, sharpened by AI, Live Captions. Real-time AI translation & many more features",
+        "bullet_features": [],
+        "specifications": {
+          "Processor / Chipset": {
+            "CPU": "Snapdragon® X processor (8 cores, up to 3.0GHz), X1-26-100",
+            "GPU": "Qualcomm® Adreno™ GPU",
+            "GPU Type": "Shared",
+            "NPU": "Qualcomm® Hexagon™ NPU"
+          },
+          "Display": {
+            "Size": "39.62 cm",
+            "Resolution": "1920 x 1080 (FHD)",
+            "Type": "IPS, Anti-Glare"
+          },
+          "Storage/Memory": {
+            "Memory Capacity": "16 GB",
+            "Memory Type": "LPDDR5X (On Board)",
+            "Storage Capacity": "512 GB",
+            "Storage Type": "eUFS"
+          },
+          "General Information": {
+            "Colour": "Sapphire Blue",
+            "Form Factor": "Laptop"
+          },
+          "Multimedia": {
+            "Speaker": "Stereo Speakers",
+            "Sound Effect": "Dolby Atmos®",
+            "Mic": "Internal Dual Array Digital Mic",
+            "Camera": "2.0 MP"
+          },
+          "Network": {
+            "Wi-Fi": "Wi-Fi 7, 802.11 be 2x2",
+            "Bluetooth Version": "Bluetooth v5.4"
+          },
+          "Ports": {
+            "HDMI": "HDMI 2.1 (Supports 4K@60Hz)",
+            "USB": "2 USB4.0, 1 USB3.2",
+            "External Storage Support": "MicroSD Multi-media Card Reader",
+            "Earjack": "Headphone out/Mic-in Combo"
+          },
+          "Input": {
+            "Keyboard": "Pro keyboard with Numeric key",
+            "Touchpad": "Clickpad"
+          },
+          "Security": {
+            "Security Slot": "Yes",
+            "TPM": "TPM, FingerPrint Reader",
+            "FingerPrint Reader": "Yes"
+          },
+          "Battery": {
+            "Battery Capacity (Typical)(Wh)": "61.2"
+          },
+          "Power": {
+            "Adapter": "65W USB Type-C Adapter"
+          },
+          "Physical specification": {
+            "Dimension (WxDxH)": "35.66 cm x 22.975 cm x 1.50 cm",
+            "Weight": "1.5 kg"
+          },
+          "Services and Applications": {
+            "SmartThings Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung Electronics Vietnam Co., Ltd. Yen Phong 1 Industrial Zone, Yen Trung Commune, Yen Phong Dist, Bac Ninh, Vietnam",
+            "Country of Origin": "Vietnam",
+            "Imported by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Launch date": "July 25 th , 2025"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372170/in-feature--nbsp--548082145",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372170/in-feature--nbsp--548082146",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372173/in-feature--nbsp--548082151",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372173/in-feature--nbsp--548082152",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372166/in-feature-ai-powered-new-experience-548082141",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372166/in-feature-ai-powered-new-experience-548082142",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372165/in-feature-reliable-performance--sharpened-by-ai-548082137",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372165/in-feature-reliable-performance--sharpened-by-ai-548082138",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372167/in-feature-thin-and-light-design-548082139",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372167/in-feature-thin-and-light-design-548082140",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372168/in-feature-galaxy-connected-experience-548082135",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372168/in-feature-galaxy-connected-experience-548082136",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166379119/in-feature-galaxy-book4-edge-15-inch-np750xqbb-548144719",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166379119/in-feature-galaxy-book4-edge-15-inch-np750xqbb-548144727",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372154/in-feature-reliable-performance--sharpened-by-ai-548082111",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372154/in-feature-reliable-performance--sharpened-by-ai-548082112",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372158/in-feature-find-what-you-need-with-recall-548082123",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372158/in-feature-find-what-you-need-with-recall-548082124",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372172/in-feature-link-your-phone--unleash-galaxy-ai-on-pc-548082149",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372172/in-feature-link-your-phone--unleash-galaxy-ai-on-pc-548082150",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372171/in-feature-quick-access-to-ai--a-touch-of-genius-548082147",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372171/in-feature-quick-access-to-ai--a-touch-of-genius-548082148",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372163/in-feature-imagine--sketch--cocreator-does-the-rest-548082133",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372163/in-feature-imagine--sketch--cocreator-does-the-rest-548082134",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166372159/in-feature-live-captions--real-time-ai-translation-548082127",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": []
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 03:07:32 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "NP750XGJ-LG3",
+        "parent_product_id": null,
+        "sku": "NP750XGJ-LG3",
+        "upc_ean": null,
+        "model_number": "NP750XGJ-LG3",
+        "product_url": "https://www.samsung.com/in/computers/galaxy-book/galaxy-book4-15-6-inch--n-1--i7-16gb-512gb-np750xgj-lg3in/"
+      },
+      "core": {
+        "title": "Galaxy Book4, 39.62 cm, i7, 16 GB",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "PC",
+          "Galaxy Book"
+        ],
+        "condition": "new",
+        "introduced_date": "May 10, 2024"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": null,
+        "current_price": null,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": false,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "The new Samsung Galaxy Book4 39.62 cm Display Core™ i7 16GB Memory, 512GB storage, FingerPrint Reader & many more features. To know more visit Samsung India.",
+        "bullet_features": [],
+        "specifications": {
+          "Processor / Chipset": {
+            "CPU": "Intel® Core™ i7-1355U Processor(1.7 GHz up to 5.0 GHz 12 MB L3 Cache)",
+            "GPU": "Intel® Iris® Xe Graphics",
+            "GPU Type": "Shared"
+          },
+          "Display": {
+            "Size": "39.62 cm",
+            "Resolution": "1920 x 1080 (FHD)",
+            "Type": "IPS, Anti-Glare"
+          },
+          "Storage/Memory": {
+            "Memory Capacity": "16 GB",
+            "Memory Type": "LPDDR4x (On Board)",
+            "Storage Capacity": "512 GB",
+            "Storage Type": "NVMe SSD",
+            "Number of Storage Slots": "2"
+          },
+          "General Information": {
+            "Colour": "Gray",
+            "Form Factor": "Laptop"
+          },
+          "Multimedia": {
+            "Speaker": "Stereo Speakers",
+            "Sound Effect": "Dolby Atmos®",
+            "Mic": "Dual Array Digital Mic",
+            "Camera": "1.0 MP"
+          },
+          "Network": {
+            "Wi-Fi": "Wi-Fi 6 (Gig+), 802.11 ax 2x2",
+            "Bluetooth Version": "Bluetooth v5.2",
+            "Ethernet": "Gigabit Ethernet [10/100/1000]"
+          },
+          "Ports": {
+            "HDMI": "1 HDMI",
+            "USB": "2 USB Type-C, 2 USB3.2",
+            "External Storage Support": "microSD",
+            "Earjack": "1 Headphone out/Mic-in Combo",
+            "Network Ports": "1 RJ45 (LAN)"
+          },
+          "Input": {
+            "Keyboard": "Pro keyboard with Numeric key",
+            "Keyboard Backlit": "Yes",
+            "Touchpad": "Clickpad"
+          },
+          "Security": {
+            "Security Slot": "Yes",
+            "TPM": "Yes",
+            "FingerPrint Reader": "Yes"
+          },
+          "Battery": {
+            "Battery Capacity (Typical)(Wh)": "54"
+          },
+          "Power": {
+            "Adapter": "45 W USB Type-C Adapter"
+          },
+          "Physical specification": {
+            "Dimension (WxDxH)": "35.66 cm x 22.91 cm x 1.54 cm",
+            "Weight": "1.55 kg"
+          },
+          "Services and Applications": {
+            "SmartThings Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Country of Origin": "India",
+            "Launch date": "May 21 st , 2024"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book4-156-inch-np750xgja-508144-542446628",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book4-156-inch-np750xgja-508144-542446631",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331504/in-feature-galaxy-book-541825258",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331504/in-feature-galaxy-book-541825259",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331508/in-feature-galaxy-book-541825264",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331508/in-feature-galaxy-book-541825265",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331507/in-feature-galaxy-book-541825262",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331507/in-feature-galaxy-book-541825263",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331506/in-feature-galaxy-book-541825260",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331506/in-feature-galaxy-book-541825261",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331509/in-feature-galaxy-book-541825268",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331509/in-feature-galaxy-book-541825269",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331511/in-feature-galaxy-book-541825274",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331512/in-feature-galaxy-book-541825277",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331503/in-feature-galaxy-book-541825256",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331503/in-feature-galaxy-book-541825257",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331513/in-feature-galaxy-book-541825278",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331513/in-feature-galaxy-book-541825279",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331494/in-feature-galaxy-book-541825240",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331494/in-feature-galaxy-book-541825241",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331501/in-feature-galaxy-book-541825252",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331501/in-feature-galaxy-book-541825253",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331491/in-feature-galaxy-book-541825234",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331491/in-feature-galaxy-book-541825235",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331500/in-feature-galaxy-book-541825250",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": []
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 03:07:52 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "NP750XGK-LG2",
+        "parent_product_id": null,
+        "sku": "NP750XGK-LG2",
+        "upc_ean": null,
+        "model_number": "NP750XGK-LG2",
+        "product_url": "https://www.samsung.com/in/computers/galaxy-book/galaxy-book4-15-6-inch-core-5-16gb-512gb-np750xgk-lg2in/"
+      },
+      "core": {
+        "title": "Galaxy Book4, 39.62 cm, Coreâ¢ 5, 16 GB",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "PC",
+          "Galaxy Book",
+          "Galaxy Book4, 39.62 cm, Core™ 5, 16 GB"
+        ],
+        "condition": "new",
+        "introduced_date": "May 10, 2024"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": null,
+        "current_price": null,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": false,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "The new Samsung Galaxy Book4 39.62 cm Display Core™ 5, 16GB Memory, 512GB storage, FingerPrint Reader & many more features. Visit Samsung India for info.",
+        "bullet_features": [],
+        "specifications": {
+          "Processor / Chipset": {
+            "CPU": "Intel® Core™ 5 Processor 120U (1.4 GHz up to 5.0 GHz 12 MB Smart Cache)",
+            "GPU": "Intel® Graphics",
+            "GPU Type": "Shared"
+          },
+          "Display": {
+            "Size": "39.62 cm",
+            "Resolution": "1920 x 1080 (FHD)",
+            "Type": "IPS, Anti-Glare"
+          },
+          "Storage/Memory": {
+            "Memory Capacity": "16 GB",
+            "Memory Type": "LPDDR4x (On Board)",
+            "Storage Capacity": "512 GB",
+            "Storage Type": "NVMe SSD",
+            "Number of Storage Slots": "2"
+          },
+          "General Information": {
+            "Colour": "Gray",
+            "Form Factor": "Laptop"
+          },
+          "Multimedia": {
+            "Speaker": "Stereo Speakers",
+            "Sound Effect": "Dolby Atmos®",
+            "Mic": "Dual Array Digital Mic",
+            "Camera": "1.0 MP"
+          },
+          "Network": {
+            "Wi-Fi": "Wi-Fi 6 (Gig+), 802.11 ax 2x2",
+            "Bluetooth Version": "Bluetooth v5.2",
+            "Ethernet": "Gigabit Ethernet [10/100/1000]"
+          },
+          "Ports": {
+            "HDMI": "1 HDMI",
+            "USB": "2 USB Type-C, 2 USB3.2",
+            "External Storage Support": "microSD",
+            "Earjack": "1 Headphone out/Mic-in Combo",
+            "Network Ports": "1 RJ45 (LAN)"
+          },
+          "Input": {
+            "Keyboard": "Pro keyboard with Numeric key",
+            "Keyboard Backlit": "Yes",
+            "Touchpad": "Clickpad"
+          },
+          "Security": {
+            "Security Slot": "Yes",
+            "TPM": "Yes",
+            "FingerPrint Reader": "Yes"
+          },
+          "Battery": {
+            "Battery Capacity (Typical)(Wh)": "54"
+          },
+          "Power": {
+            "Adapter": "45 W USB Type-C Adapter"
+          },
+          "Physical specification": {
+            "Dimension (WxDxH)": "35.66 cm x 22.91 cm x 1.54 cm",
+            "Weight": "1.55 kg"
+          },
+          "Services and Applications": {
+            "SmartThings Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Country of Origin": "India",
+            "Launch date": "May 21 st , 2024"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book4-156-inch-np750xgka-508138-542443809",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book4-156-inch-np750xgka-508138-542443808",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331135/in-feature-galaxy-book-541823489",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331135/in-feature-galaxy-book-541823490",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331121/in-feature-galaxy-book-541823461",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331121/in-feature-galaxy-book-541823462",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331122/in-feature-galaxy-book-541823463",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331122/in-feature-galaxy-book-541823464",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331123/in-feature-galaxy-book-541823465",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331123/in-feature-galaxy-book-541823466",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331132/in-feature-galaxy-book-541823483",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331132/in-feature-galaxy-book-541823484",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331139/in-feature-galaxy-book-541823499",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331140/in-feature-galaxy-book-541823502",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331136/in-feature-galaxy-book-541823491",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331136/in-feature-galaxy-book-541823492",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331143/in-feature-galaxy-book-541823507",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331143/in-feature-galaxy-book-541823508",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331133/in-feature-galaxy-book-541823485",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331133/in-feature-galaxy-book-541823486",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331129/in-feature-galaxy-book-541823475",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331129/in-feature-galaxy-book-541823476",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331137/in-feature-galaxy-book-541823493",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331137/in-feature-galaxy-book-541823494",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165331131/in-feature-galaxy-book-541823479",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": []
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 03:08:14 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "NP754XGK-LS2",
+        "parent_product_id": null,
+        "sku": "NP754XGK-LS2",
+        "upc_ean": null,
+        "model_number": "NP754XGK-LS2",
+        "product_url": "https://www.samsung.com/in/computers/galaxy-book/galaxy-book4-15-6-inch-core-5-16gb-512gb-np754xgk-ls2in/"
+      },
+      "core": {
+        "title": "Galaxy Book4, 39.62 cm, Coreâ¢ 5, 16 GB",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "PC",
+          "Galaxy Book",
+          "Galaxy Book4, 39.62 cm, Core™ 5, 16 GB"
+        ],
+        "condition": "new",
+        "introduced_date": "August 5, 2024"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": null,
+        "current_price": null,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": false,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "The new Samsung Galaxy Book4 39.62cm Display Core™ 5 16GB Memory, 512GB storage, FingerPrint Reader and many more features. To know more visit Samsung India.",
+        "bullet_features": [],
+        "specifications": {
+          "Processor / Chipset": {
+            "CPU": "Intel® Core™ 5 Processor 120U (1.4 GHz up to 5.0 GHz 12 MB Smart Cache)",
+            "GPU": "Intel® Graphics",
+            "GPU Type": "Shared"
+          },
+          "Display": {
+            "Size": "39.62 cm",
+            "Resolution": "1920 x 1080 (FHD)",
+            "Type": "IPS, Anti-Glare"
+          },
+          "Storage/Memory": {
+            "Memory Capacity": "16 GB",
+            "Memory Type": "LPDDR4x (On Board)",
+            "Storage Capacity": "512 GB",
+            "Storage Type": "NVMe SSD",
+            "Number of Storage Slots": "2"
+          },
+          "General Information": {
+            "Colour": "Silver",
+            "Form Factor": "Laptop"
+          },
+          "Multimedia": {
+            "Speaker": "Stereo Speakers",
+            "Sound Effect": "Dolby Atmos®",
+            "Mic": "Dual Array Digital Mic",
+            "Camera": "1.0 MP"
+          },
+          "Network": {
+            "Wi-Fi": "Wi-Fi 6 (Gig+), 802.11 ax 2x2",
+            "Bluetooth Version": "Bluetooth v5.2",
+            "Ethernet": "Gigabit Ethernet [10/100/1000]"
+          },
+          "Ports": {
+            "HDMI": "1 HDMI",
+            "USB": "2 USB Type-C, 2 USB3.2",
+            "External Storage Support": "MircoSD",
+            "Earjack": "1 Headphone out/Mic-in Combo",
+            "Network Ports": "1 RJ45 (LAN)"
+          },
+          "Input": {
+            "Keyboard": "Pro keyboard with Numeric key",
+            "Touchpad": "Clickpad"
+          },
+          "Security": {
+            "Security Slot": "Yes",
+            "TPM": "Yes",
+            "FingerPrint Reader": "Yes"
+          },
+          "Battery": {
+            "Battery Capacity (Typical)(Wh)": "54"
+          },
+          "Power": {
+            "Adapter": "45 W USB Type-C Adapter"
+          },
+          "Physical specification": {
+            "Dimension (WxDxH)": "35.66 cm x 22.91 cm x 1.54 cm",
+            "Weight": "1.55 kg"
+          },
+          "Services and Applications": {
+            "SmartThings Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Country of Origin": "India",
+            "Launch date": "March 15 th , 2024"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book4-156-inch-np750xgka-519787-544327872",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/others/in-feature-galaxy-book4-156-inch-np750xgka-519787-544327873",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005960/in-feature--nbsp-539892665",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005960/in-feature--nbsp-539892666",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005941/in-feature-the-latest-intel-core-cpu-539892625",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005941/in-feature-the-latest-intel-core-cpu-539892626",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005942/in-feature-light-and-thin-design-539892629",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005942/in-feature-light-and-thin-design-539892630",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005943/in-feature-samsung-galaxy-connected-experience-539892627",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005943/in-feature-samsung-galaxy-connected-experience-539892628",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005957/in-feature-performance-you-can-count-on-539892657",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005957/in-feature-performance-you-can-count-on-539892658",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005951/in-feature--nbsp-539892649",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005951/in-feature--nbsp-539892650",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005953/in-feature--nbsp-539892644",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165005953/in-feature--nbsp-539892645",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165536621/in-feature-galaxy-book4-156-inch-np750xgka-519787-543208377",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165536622/in-feature-galaxy-book4-156-inch-np750xgka-519787-543208382",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/164997455/in-feature-more-ports--full-dongle-free-support-540431489",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/164997455/in-feature-more-ports--full-dongle-free-support-540431490",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/164997427/in-feature-galaxy-book4-156-inch-np750xgka-519787-543208388",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/164997427/in-feature-galaxy-book4-156-inch-np750xgka-519787-543208407",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/164997443/in-feature-dolby-atmos--ear-resistible-sound-quality-540431493",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/164997443/in-feature-dolby-atmos--ear-resistible-sound-quality-540431494",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/164997453/in-feature-samsung-galaxy-ecosystem-540431495",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": []
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 03:00:19 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "SCREEN-SIZE",
+        "parent_product_id": null,
+        "sku": "SCREEN-SIZE",
+        "upc_ean": null,
+        "model_number": "SM-A042FLBHINS",
+        "product_url": "https://www.samsung.com/in/computers/laptops-by-screen-size/"
+      },
+      "core": {
+        "title": "Mobile",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Computers",
+          "Laptops by Screen Size"
+        ],
+        "condition": "new",
+        "introduced_date": "December 22, 2025"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 80999.0,
+        "current_price": 80999.0,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Choose a laptop based on the Display Size. Compare laptops with 33.02 cm - 40.62 cm displays and buy online.",
+        "bullet_features": [],
+        "specifications": {},
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Shop_L1_Highlights_2-2.png",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Shop_L1_Highlights_2-3.png",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Shop_L1_Highlights_2-4.png",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Shop_L1_Highlights_2-5.png",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Shop_L1_Highlights_2-6.png",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Shop_L1_Highlights_2-7.png",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Phones_Tablets_L1_Product_2-2.png",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Phones_Tablets_L1_Product_2-3.png",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Phones_Tablets_L1_Product_2-4.png",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Phones_Tablets_L1_Product_2-5.png",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Phones_Tablets_L1_Product_2-6_0930.png",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/New_Tablet_2-7.png",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Wearables_L1_Product_2-2.png",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Wearables_L1_Product_2-3.png",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/assets/in/gnb/2609/Wearables_L1_Product_No_XR_2-8.png",
+            "type": "gallery",
+            "position": 15
+          }
+        ],
+        "videos": []
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 02:48:44 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "RF71DB9950QDTL",
+        "parent_product_id": null,
+        "sku": "RF71DB9950QD",
+        "upc_ean": null,
+        "model_number": null,
+        "product_url": "https://www.samsung.com/in/refrigerators/french-door/rf9000-t-style-french-door-32inch-family-hub-810l-stainless-steel-rf71db9950qdtl/"
+      },
+      "core": {
+        "title": "809 L Bespoke AI 4 - Door French Door Refrigerator with Family Hub 81.3 cm, Triple Cooling RF71DB9950QD",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Refrigerators",
+          "French Door"
+        ],
+        "condition": "new",
+        "introduced_date": "March 5, 2024"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 509000.0,
+        "current_price": 400690.0,
+        "discount_percentage": 21.28,
+        "is_on_sale": true,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": true,
+          "emi_starting_per_month": 19238.28,
+          "no_cost_emi_offers": [
+            "From ₹ 19238.28/mo. or ₹ 400690.00",
+            "No Cost EMI starts from ₹ 133563.23/ month.  Standard...",
+            "No Cost EMI starts from ₹ 133563.23/ month.  Standard EMI starts from ₹ 19238.28/ month."
+          ]
+        }
+      },
+      "content_and_specs": {
+        "short_description": "80 cm Family Hub<sup>TM</sup> Screen\nAI Vision Inside\nBESPOKE design with Auto Open Door\nDual Auto I/M with Ice Ball\nFlex Zone with 5 Convertible Modes\nTriple Cooling, Precise Cooling, Metal Cooling\nFamily Hub Hotspot",
+        "bullet_features": [
+          "Customers praise AI Vision Inside, touchscreen, and SmartThings integration for transforming food management and home automation",
+          "Reviewers highlight spacious interior with flexible storage, convertible freezer space, and door-within-a-door design for large families",
+          "Many admire the sleek black finish, quiet operation, and premium build quality as kitchen showpieces",
+          "Customers love the auto-refill beverage center and flavor infusion water jug for daily convenience",
+          "A few report ice maker issues or limited app functionality, though positive feedback significantly outweighs concerns",
+          "English",
+          "German",
+          "French",
+          "Spanish",
+          "Portuguese",
+          "Italian",
+          "Korean"
+        ],
+        "specifications": {
+          "Overview": {
+            "Net Total(Liter)": "809 L",
+            "Cooling Type": "Triple Cooling",
+            "Net Case Height with Hinge": "1.85 m",
+            "Net Depth with Door Handle": "86.90 cm",
+            "Net Weight (kg)": "168 kg",
+            "Net Width": "91.20 cm"
+          },
+          "Bottom Left": {
+            "Shelf": "2 EA",
+            "Box": "1 EA",
+            "Door Pocket": "3 EA",
+            "Icemaker": "Dual Auto Ice Maker",
+            "LED Interior Light": "Yes"
+          },
+          "Bottom Right": {
+            "Box": "1 EA",
+            "FlexZone": "Yes",
+            "Shelf": "2 EA",
+            "Door Pocket": "3 EA"
+          },
+          "Capacity": {
+            "Net for Freezer(Liter)": "327 L",
+            "Net for Fridge(Liter)": "482 L",
+            "Net Total(Liter)": "809 L"
+          },
+          "Cooling Feature": {
+            "Cooling Type": "Triple Cooling"
+          },
+          "Exterior Feature": {
+            "Beverage Station": "Yes",
+            "Colour": "Clean Charcoal + Stainless Steel",
+            "Dispenser with Water Filter": "Yes",
+            "Display Type": "Family Hub",
+            "Door Handle": "Recess",
+            "Door Type": "Bespoke",
+            "Dispenser Type": "Water Dispenser (Plumbing) + Autofill Pitcher"
+          },
+          "General Feature": {
+            "Door Alarm": "Yes",
+            "Cooling Cover": "Metal Cooling Duct"
+          },
+          "Physical specification": {
+            "Net Case Height with Hinge": "1.85 m",
+            "Net Case Height without Hinge": "1.79 m",
+            "Net Depth with Door Handle": "86.90 cm",
+            "Net Depth without Door Handle": "86.90 cm",
+            "Net Depth without Door": "74.80 cm",
+            "Net Weight": "168 kg",
+            "Net Width": "91.20 cm",
+            "Packing Dimension (WxHxD)": "97.20 cm x 1.99 m x 92.0 cm",
+            "Packing Weight(kg)": "178 kg"
+          },
+          "Refrigerator Feature": {
+            "Interior LED Light": "Wide Top LED",
+            "Number of Door Pocket": "6 EA",
+            "Number of Shelf (Total)": "4 EA",
+            "Number of Vegetable&Fruit Drawer": "2 EA",
+            "Deodorizer Type": "UV Deodorizer"
+          },
+          "Category": {
+            "Construction": "Freestanding"
+          },
+          "App Connectivity": {
+            "SmartThings App Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung Electronics Co. Ltd., 107 HanamSandan 6 BEON-RO, Gwansan Gu,Gwangju, Korea 62218",
+            "Country of Origin": "Korea",
+            "Imported by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Launch date": "April 15 th , 2024"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-thumb-554834433",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-554834432",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-554834434",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400965",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400938",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400939",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400940",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400941",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400942",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400943",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540611784",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400945",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400946",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400947",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400948",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400949",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-540400950",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-554901022",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-thumb-554834436",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-thumb-540400966",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-thumb-540400951",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-thumb-552412619",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-thumb-552412621",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-thumb-552412623",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-thumb-552412625",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://www.youtube.com/watch?v=zRSM9iaHzIs",
+            "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-552412618",
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_002",
+            "url": "https://www.youtube.com/watch?v=rQKnTF2YqhQ",
+            "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-552412620",
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_003",
+            "url": "https://www.youtube.com/watch?v=Pm4CTT0rhvA",
+            "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-552412622",
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_004",
+            "url": "https://www.youtube.com/watch?v=-YstsuiPSIM",
+            "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf71db9950qdtl/gallery/in-t-style-french-door-32inch-family-hub-rf71db9950qdtl-552412624",
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_005",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165006565/in-feature-t-style-french-door-32inch-family-hub-554806237.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_006",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/167638262/in-feature-t-style-french-door-32inch-family-hub-554807053.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_007",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-t-style-french-door-32inch-family-hub-554807851.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_008",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165710211/in-feature-t-style-french-door-32inch-family-hub-554809252.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_009",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165117653/in-feature-t-style-french-door-32inch-family-hub-554811029.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_010",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165117654/in-feature-t-style-french-door-32inch-family-hub-554811206.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 02:49:06 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "RF65DG90BDSGTL",
+        "parent_product_id": null,
+        "sku": "RF65DG90BDSG",
+        "upc_ean": null,
+        "model_number": null,
+        "product_url": "https://www.samsung.com/in/refrigerators/french-door/rf9000d-rf9000dc-t-style-french-door-beverage-center-650l-black-rf65dg90bdsgtl/"
+      },
+      "core": {
+        "title": "650 L Bespoke AI 4 - Door French Door Refrigerator | Triple Cooling | FlexZoneâ¢ | RF65DG90BDSG",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Refrigerators",
+          "French Door",
+          "650 L Bespoke AI 4 - Door French Door Refrigerator | Triple Cooling | FlexZone™ | RF65DG90BDSG"
+        ],
+        "condition": "new",
+        "introduced_date": "March 5, 2024"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 249999.0,
+        "current_price": 192990.0,
+        "discount_percentage": 22.8,
+        "is_on_sale": true,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": true,
+          "emi_starting_per_month": 9266.01,
+          "no_cost_emi_offers": [
+            "From ₹ 9266.01/mo. or ₹ 192990.00",
+            "No Cost EMI starts from ₹ 64329.95/ month.  Standard ...",
+            "No Cost EMI starts from ₹ 64329.95/ month.  Standard EMI starts from ₹ 9266.01/ month."
+          ]
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Flex Zone with 5 Convertible Modes\nPrecise Cooling | Triple Cooling\nSmart ThingsApp Integration",
+        "bullet_features": [
+          "Customers praise the convertible freezer compartment and adjustable shelving for flexible, family-friendly storage solutions",
+          "Many find the Family Hub smart screen intuitive, with recipe suggestions and meal planning adding genuine daily convenience",
+          "Reviewers consistently admire the sleek black finish, premium materials, and hidden water dispenser as stylish, luxury touches",
+          "Most customers report the AI-powered features and connected technology enhance daily life and family connection",
+          "A few note minor issues like ice tray access or app login problems, but overall satisfaction remains exceptionally high",
+          "Image",
+          "Video",
+          "Layer popup open",
+          "English",
+          "German",
+          "French",
+          "Spanish"
+        ],
+        "specifications": {
+          "Overview": {
+            "Net Total(Liter)": "650 L",
+            "Cooling Type": "Triple Cooling",
+            "Net Case Height with Hinge": "1.83 m",
+            "Net Depth with Door Handle": "72.30 cm",
+            "Net Weight (kg)": "123 kg",
+            "Net Width": "91.20 cm"
+          },
+          "Bottom Left": {
+            "Shelf": "2 EA",
+            "Box": "1 EA",
+            "Door Pocket": "3 EA",
+            "Icemaker": "Ice Tray",
+            "LED Interior Light": "Yes"
+          },
+          "Bottom Right": {
+            "Box": "1 EA",
+            "FlexZone": "Yes",
+            "Shelf": "2 EA",
+            "Door Pocket": "3 EA"
+          },
+          "Capacity": {
+            "Net for Freezer(Liter)": "250 L",
+            "Net for Fridge(Liter)": "400 L",
+            "Net Total(Liter)": "650 L"
+          },
+          "Cooling Feature": {
+            "Cooling Type": "Triple Cooling"
+          },
+          "Exterior Feature": {
+            "Colour": "Black Caviar",
+            "Display Type": "Internal (Simple UX LCD)",
+            "Door Handle": "Recess"
+          },
+          "General Feature": {
+            "Door Alarm": "Yes"
+          },
+          "Physical specification": {
+            "Net Case Height with Hinge": "1.83 m",
+            "Net Case Height without Hinge": "1.79 m",
+            "Net Depth with Door Handle": "72.30 cm",
+            "Net Depth without Door Handle": "72.30 cm",
+            "Net Depth without Door": "61.0 cm",
+            "Net Weight": "123 kg",
+            "Net Width": "91.20 cm",
+            "Packing Dimension (WxHxD)": "97.20 cm x 1.97 m x 77.60 cm",
+            "Packing Weight(kg)": "132 kg"
+          },
+          "Refrigerator Feature": {
+            "Interior LED Light": "Wide Top LED",
+            "Number of Door Pocket": "6 EA",
+            "Number of Shelf (Total)": "4 EA",
+            "Number of Vegetable&Fruit Drawer": "2 EA"
+          },
+          "Category": {
+            "Depth": "Counter Depth"
+          },
+          "App Connectivity": {
+            "SmartThings App Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung Electronics Co. Ltd., 107 HanamSandan 6 BEON-RO, Gwansan Gu,Gwangju, Korea 62218",
+            "Country of Origin": "Korea",
+            "Imported by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Launch date": "March 27 th , 2024"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-554834062",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-554834057",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-554834142",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400890",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400873",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400874",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-542545735",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400875",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400876",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400877",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400878",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400879",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-540400880",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-554834179",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400891",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400881",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-551254899",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400882",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-542545739",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400883",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400884",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400885",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400886",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400887",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-thumb-540400888",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://www.youtube.com/watch?v=37aQjWY0W-s",
+            "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/in/rf65dg90bdsgtl/gallery/in-t-style-french-door-beverage-center-rf65dg90bdsgtl-551254890",
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 02:49:24 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "RT56HG7A61SLTL",
+        "parent_product_id": null,
+        "sku": "RT56HG7A61SL",
+        "upc_ean": null,
+        "model_number": null,
+        "product_url": "https://www.samsung.com/in/refrigerators/double-door/rt7300d-smartthings-ai-energy-mode-double-door-refrigerator-with-bespoke-ai-530l-silver-rt56hg7a61sltl/"
+      },
+      "core": {
+        "title": "530 L Double Door Refrigerator with Bespoke AI, 1â RT56HG7A61SL",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Refrigerators",
+          "Double Door",
+          "530 L Double Door Refrigerator with Bespoke AI, 1★ RT56HG7A61SL"
+        ],
+        "condition": "new",
+        "introduced_date": "February 4, 2026"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 101999.0,
+        "current_price": 82690.0,
+        "discount_percentage": 18.93,
+        "is_on_sale": true,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": true,
+          "emi_starting_per_month": 3970.19,
+          "no_cost_emi_offers": [
+            "From ₹ 3970.19/mo. or ₹ 82690.00",
+            "No Cost EMI starts from ₹ 27556.44/ month.  Standard ...",
+            "No Cost EMI starts from ₹ 27556.44/ month.  Standard EMI starts from ₹ 3970.19/ month."
+          ]
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Buy Online 530 L Double Door Refrigerator With Bespoke Ai Rt56Hg7A61Sltl ,Explore Specs, Features, And Purchasing Information & Shop Refrigerators At Samsung India.",
+        "bullet_features": [
+          "English",
+          "German",
+          "French",
+          "Spanish",
+          "Portuguese",
+          "Italian",
+          "Korean",
+          "Chinese",
+          "Japanese",
+          "Arabic"
+        ],
+        "specifications": {
+          "Overview": {
+            "Net Total(Liter)": "530 ℓ",
+            "Net Dimension (WxHxD)": "79.00 cm x 1.85 m x 72.50 cm",
+            "Net Weight": "86 kg"
+          },
+          "Capacity": {
+            "Net Total(Liter)": "530 ℓ",
+            "Net for Freezer(Liter)": "126 ℓ",
+            "Net for Refrigerator(Liter)": "404 ℓ"
+          },
+          "Physical specification": {
+            "Net Dimension (WxHxD)": "79.00 cm x 1.85 m x 72.50 cm",
+            "Packing Dimension (WxHxD)": "84.60 cm x 1.94 m x 77.00 cm",
+            "Net Weight": "86 kg",
+            "Packing Weight(kg)": "93 kg",
+            "20/40/40H (Container)": "18/42/42 EA"
+          },
+          "Cooling Feature": {
+            "No Frost": "Yes",
+            "Multi Flow": "Yes",
+            "Cooling Type": "Twin Cooling"
+          },
+          "Refrigerator Feature": {
+            "Deodorizer": "Yes",
+            "Number of Shelf (Total)": "3 EA",
+            "Easy Slide Shelf": "Yes",
+            "Dairy Compartment": "No",
+            "Number of Vegetable&Fruit Drawer": "2 EA",
+            "Number of Door Pocket": "5 EA",
+            "Egg Container(Egg Tray)": "Yes",
+            "Fresh room": "Yes",
+            "Interior LED Light": "Top LED",
+            "Active Fresh Filter": "Yes"
+          },
+          "Freezer Feature": {
+            "Ice Maker": "Twist",
+            "Shelf Material": "Plastic",
+            "Number of Shelf (Total)": "1 EA",
+            "Number of Door Pocket": "2 EA",
+            "Interior LED Light": "Top LED"
+          },
+          "Exterior Feature": {
+            "Display Type": "Internal",
+            "Door Handle": "Recess",
+            "Colour": "EZ Clean Steel"
+          },
+          "Energy": {
+            "Energy Grade": "1 Star"
+          },
+          "Smart": {
+            "Wi-Fi Embedded": "Yes"
+          },
+          "App Connectivity": {
+            "SmartThings App Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Thai Samsung Electronics Co. Ltd., 313 Moo 1 Sukhaphiban 8 Rd Sriracha Industry Park T.Bung A.Sriracha Chonburi Thailand 20230",
+            "Country of Origin": "Thailand",
+            "Imported by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110004",
+            "Launch date": "March 20 th , 2026"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-553829006",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-553829003",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-553829007",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551054501",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551054502",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551054503",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551054504",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551054505",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551054506",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551054507",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551054508",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-551871695",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-553829009",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551054509",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551054510",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551054511",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551054512",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551054513",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551054514",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551054515",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551054516",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt56hg7a61sltl/gallery/in-top-freezer-smartthings-ai-energy-mode-580066-rt56hg7a61sltl-thumb-551871753",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165809460/in-feature-top-freezer-smartthings-ai-energy-mode-547175430",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165809460/in-feature-top-freezer-smartthings-ai-energy-mode-547175442",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165809478/in-feature-top-freezer-smartthings-ai-energy-mode-547175515",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165809488/in-feature--nbsp-544846795.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_002",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165592567/in-feature-prevent-light-glare-546246872.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_003",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165592561/in-feature-ice-and-simple-546246878.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_004",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165592576/in-feature-99-99--less-bacteria---546246888.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 12, 2026, 12:55:16 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "AR70H19D13WNNA",
+        "parent_product_id": null,
+        "sku": "AR70H19D13W",
+        "upc_ean": null,
+        "model_number": null,
+        "product_url": "https://www.samsung.com/in/air-conditioners/split-ac/bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna/"
+      },
+      "core": {
+        "title": "Bespoke AI WindFree Pro Inverter Split AC, 3 Star (2026) AR70H19D13W 5.10 kW (1.45)",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Air Conditioners",
+          "Split AC"
+        ],
+        "condition": "new",
+        "introduced_date": "March 20, 2026"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 14000.0,
+        "current_price": 14000.0,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Motion Wind\nAI Energy Mode (30% Energy Savings)\nAI Fast & Comfort Cooling",
+        "bullet_features": [
+          "Image",
+          "Video",
+          "Layer popup open",
+          "English",
+          "German",
+          "French",
+          "Spanish",
+          "Portuguese",
+          "Italian",
+          "Korean",
+          "Chinese",
+          "Japanese"
+        ],
+        "specifications": {
+          "Overview": {
+            "Capacity": "17402 Btu/hr",
+            "Capacity (Cooling, kW)": "5.10 kW",
+            "EER (Cooling, W/W)": "3.36 W/W",
+            "Net Dimension (Outdoor, WxHxD)": "79.0 cm x 54.80 cm x 28.50 cm"
+          },
+          "Capacity": {
+            "Capacity (Cooling, Btu/hr)": "17402 Btu/hr",
+            "Capacity (Cooling, Min - Max, Btu/hr)": "4,436 ~ 20,814 Btu/h",
+            "Capacity (Cooling, kW)": "5.10 kW",
+            "Capacity (Cooling, Min - Max, kW)": "1.3 ~ 6.1 kW"
+          },
+          "Energy Efficiency": {
+            "ISEER (W/W)": "4.43 W/W",
+            "EER (Cooling, W/W)": "3.36 W/W",
+            "EER (Cooling, Btu/hW)": "11.45 Btu/hW",
+            "Energy Star Rating (Cooling)": "3 Star"
+          },
+          "Noise Level": {
+            "Noise Level (Indoor, High/Low, dBA)": "45 / 26 dBA",
+            "Noise Level (Outdoor, High/Low, dBA)": "53 dBA"
+          },
+          "Electrical Data": {
+            "Power Source(Φ/V/Hz)": "1 / 230~ / 50",
+            "Power Consumption(Cooling, W)": "1520 W",
+            "Operating Current(Cooling, A)": "6.7 A"
+          },
+          "Physical Specification": {
+            "Gross Dimension (Indoor, WxHxD)": "95.0 cm x 32.0 cm x 37.50 cm",
+            "Gross Dimension (Outdoor, WxHxD)": "92.60 cm x 64.0 cm x 41.20 cm",
+            "Net Dimension (Indoor, WxHxD)": "88.90 cm x 29.90 cm x 23.0 cm",
+            "Net Dimension (Outdoor, WxHxD)": "79.0 cm x 54.80 cm x 28.50 cm",
+            "Gross Weight (Indoor, kg)": "12.2 kg",
+            "Gross Weight (Outdoor, kg)": "30.5 kg",
+            "Net Weight (Indoor, kg)": "10.6 kg",
+            "Net Weight (Outdoor, kg)": "26.0 kg"
+          },
+          "Technical Information": {
+            "Piping Length (Max, m)": "30 m",
+            "Piping Height (Max, m)": "15 m",
+            "SVC Valve (Liquid (ODxL))": "6.35",
+            "SVC Valve (Gas (ODxL))": "12.7",
+            "Moisture Removal (l/hr)": "2.0 l/hr",
+            "Air Circulation (Cooling, ㎥/min)": "14.3 ㎥/min",
+            "Refrigerant (Type)": "R32",
+            "Refrigerant (Charging)(kg)": "0.67 kg",
+            "Refrigerant (Charging, tCO2e)": "0.45 tCO2e",
+            "Low Ambient (Cooling, ℃)": "15 ~ 52 ℃",
+            "Outdoor Unit (Compressor Type)": "BLDC",
+            "Outdoor Unit (Anti-Corrosion Fin)": "Yes"
+          },
+          "Air Flow": {
+            "WindFree Cooling": "Yes",
+            "Air Direction Control (Up/Down)": "Auto",
+            "Air Direction Control (Left/Right)": "Auto",
+            "Air Flow Control Step (Cool/Fan)": "5 / 4"
+          },
+          "Air Purification": {
+            "PM 1.0 Filter": "No",
+            "Tri Care Filter": "No",
+            "4-in-1 Care Filter": "No",
+            "Copper Anti-bacterial Filter": "Yes",
+            "Auto Clean (Self Cleaning)": "Yes",
+            "Easy Filter Plus": "Yes"
+          },
+          "Convenience": {
+            "SmartThings": "Yes",
+            "AI Auto Cooling": "Yes",
+            "Motion Detect Sensor": "No",
+            "Freeze Wash": "Yes",
+            "Filter Cleaning Indicatior": "Yes",
+            "Indoor Temp. Display": "Yes",
+            "Display On/Off": "Yes",
+            "Beep On/Off": "Yes",
+            "24-Hour Timer": "Yes",
+            "Auto Changeover": "No",
+            "Auto Restart": "Yes"
+          },
+          "Operating Mode": {
+            "Auto Mode": "Yes",
+            "Fast Cool": "Yes",
+            "Dry Comfort": "Yes",
+            "Good Sleep": "Yes",
+            "Eco Mode": "No",
+            "5 Step Mode": "Yes",
+            "Max-Ampere Control": "No",
+            "Dehumidification": "Yes",
+            "Fan Mode": "Yes",
+            "Quiet": "Yes"
+          },
+          "Smart": {
+            "Wi-Fi Embedded": "Yes"
+          },
+          "App Connectivity": {
+            "SmartThings App Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110010",
+            "Country of Origin": "India",
+            "Launch date": "January 1 st , 2026"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-thumb-551772968",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772967",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/energylabel/in-energylabel-product-ar70h19d13wnna-554563678",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/energylabel/in-energylabel-ar70h19d13wnna-554563675",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772947",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772948",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772949",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772934",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772935",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772936",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772937",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772938",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772939",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772940",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772941",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772942",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772943",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772944",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772945",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551772946",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-551842580",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/energylabel/in-energylabel-product-ar70h19d13wnna-thumb-554563679",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/energylabel/in-energylabel-ar70h19d13wnna-thumb-554563677",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-thumb-551772963",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/ar70h19d13wnna/gallery/in-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-ar70h19d13wnna-thumb-551772964",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-551833244.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_002",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-551833263.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_003",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-551841497.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_004",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-551833437.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_005",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-551835752.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_006",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-551838802.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_007",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-551836211.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_008",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/others/in-feature-bespoke-ai-windfree-inverter-split-ac-ar70h19d13w-5-10-kw-3-star-2026-551840011.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  }
+]
