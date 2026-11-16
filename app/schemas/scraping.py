@@ -119,6 +119,41 @@ _REQUEST_EXAMPLE = {
     },
 }
 
+
+_AMAZON_REQUEST_EXAMPLE = {
+    "platform": "amazon",
+    "search": {
+        "product": "refrigerator",
+        "category": "Refrigerators",
+        "brand": "",
+        "keywords": ["double door"],
+        "marketplace": "amazon.in",
+        "language": "en",
+    },
+    "filters": {
+        "min_price": 15000,
+        "max_price": 60000,
+        "currency": "INR",
+        "exclude_keywords": ["cover", "stand"],
+    },
+    "scraping_options": {
+        "max_products": 5,
+        "max_pages": 1,
+        "sort_by": "relevance",
+        "review_pages_per_product": 1,
+        "date_range": {"type": "last_1_year", "start_date": None, "end_date": None},
+    },
+    "platform_options": {
+        "amazon": {
+            "include_sponsored": False,
+            "fulfilled_by_amazon_only": False,
+            "review_sort": "recent",
+            "verified_reviews_only": False,
+        }
+    },
+}
+
+
 class ScrapeJobRequest(BaseModel):
     platform: Platform
     search: SearchParams

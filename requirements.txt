@@ -6,7 +6,7 @@ pydantic-settings>=2.2.0
 
 # Task queue
 celery>=5.3.0
-redis>=5.0.0
+redis>=6.1.0
 
 # Storage
 motor>=3.4.0
@@ -16,6 +16,10 @@ openpyxl>=3.1.0
 # Scraping engine
 playwright>=1.44.0
 playwright-stealth>=1.0.6
+lxml>=5.0.0
+
+# UUIDv7 ids (built into Python 3.14+)
+uuid6>=2024.1.12; python_version < "3.14"
 
 # Language detection
 langdetect>=1.0.9

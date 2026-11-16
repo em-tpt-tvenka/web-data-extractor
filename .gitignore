@@ -18,4 +18,5 @@ local_data/logs/*
 local_data/debug/*
 local_data/backups/*
 local_data/chrome_scraper_profile/
+local_data/chrome_amazon_profile/
 !local_data/**/.gitkeep

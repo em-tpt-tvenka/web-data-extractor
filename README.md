@@ -82,6 +82,30 @@ For quick local testing you can run jobs in-process instead of via Celery — se
 `job_executor=inline` in `.env`. The API then executes each job in the background
 with asyncio; no Redis or worker is required.
 
+## Platforms
+
+Registered platforms are listed at `GET /api/v1/platforms`; each platform's
+`platform_options` are described at `GET /api/v1/platforms/{platform}/config-schema`.
+
+### Amazon
+
+- `search.marketplace` must be a supported English storefront: `amazon.in`,
+  `amazon.com`, `amazon.co.uk`, `amazon.ca`, `amazon.com.au`. If
+  `filters.currency` is given it must match the marketplace currency (prices are
+  never converted).
+- `platform_options.amazon`: `include_sponsored`, `fulfilled_by_amazon_only`,
+  `review_sort` (`recent` | `helpful`), `verified_reviews_only`.
+- The engine uses its own Chrome profile (`amazon_profile_dir`, default
+  `local_data/chrome_amazon_profile`). Amazon only serves full review pages
+  (`/product-reviews/`) to signed-in sessions. To collect more than the reviews
+  shown on the product page, sign in to Amazon manually once in that profile;
+  the scraper never signs in itself. Without sign-in, jobs still complete and
+  `execution_meta.actual.review_pages_login_required` reports it.
+- A CAPTCHA pauses the run for manual solving in the visible browser
+  (`captcha_wait_seconds`).
+- Throughput settings: `amazon_detail_concurrency` (default 1),
+  `amazon_max_retries`, `amazon_min_delay_seconds` / `amazon_max_delay_seconds`.
+
 ## Request shape & generated fields
 
 The request body is intentionally small (`platform`, `search`, `filters`,

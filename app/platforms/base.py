@@ -23,6 +23,11 @@ class PlatformAdapter(ABC):
     @abstractmethod
     def validate_options(self, raw: dict[str, Any]) -> Any: ...
 
+    def validate_request(self, request: ScrapeJobRequest) -> None:
+        """Optional platform checks on the common request fields (e.g. that the
+        marketplace is one this platform serves). Raise ValueError to reject the
+        job before it is queued. Default: no extra checks."""
+
     @abstractmethod
     async def scrape(
         self, request: ScrapeJobRequest, options: Any, run_id: str
