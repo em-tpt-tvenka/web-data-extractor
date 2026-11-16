@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     feedback_max_pages: int = 80
     captcha_wait_seconds: int = 300
 
+    samsung_base_url: str = "https://www.samsung.com/in"
+    samsung_bv_api_url: str | None = None
+    samsung_bv_passkey: str | None = None
+
     raw_data_dir: str = str(PROJECT_ROOT / "local_data" / "raw")
     debug_dir: str = str(PROJECT_ROOT / "local_data" / "debug")
 
