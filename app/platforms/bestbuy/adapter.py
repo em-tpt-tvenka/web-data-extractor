@@ -1,0 +1,1 @@
+"""bestbuy platform adapter."""

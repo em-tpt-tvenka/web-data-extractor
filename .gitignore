@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment / secrets
+.env
+
+# Local runtime data (keep the directory layout, ignore contents)
+local_data/raw/*
+local_data/exports/*
+local_data/logs/*
+local_data/debug/*
+local_data/backups/*
+local_data/chrome_scraper_profile/
+!local_data/**/.gitkeep
