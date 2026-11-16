@@ -24,7 +24,7 @@ from config import (
     search_platforms,
 )
 from database import MongoManager, save_laptops_to_json, load_reviews_map_for_products_json
-from models import extract_flat_summary, get_reviews_json_path, make_review_key
+from models import extract_flat_summary, get_reviews_json_path, get_standardized_json_path, make_review_key
 from scraper.filters import (
     ProductFilter,
     add_filter_args,
@@ -148,7 +148,9 @@ def _print_cli_results(
                 f"{flat['title']} | Date: {flat['introduced_date'] or 'N/A'} | Price: {p_info} | Reviews: {rat_str}"
             )
         reviews_json_path = get_reviews_json_path(output_file)
-        print(f"\n💾 Products JSON:     '{os.path.abspath(output_file)}'")
+        std_json_path = get_standardized_json_path(output_file)
+        print(f"\n💾 Standardized JSON: '{os.path.abspath(std_json_path)}'")
+        print(f"💾 Products JSON:     '{os.path.abspath(output_file)}'")
         print(f"💾 Reviews JSON:      '{os.path.abspath(reviews_json_path)}'")
     print("=" * 85 + "\n")
 

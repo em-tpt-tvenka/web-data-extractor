@@ -15,7 +15,7 @@ from urllib.parse import urlparse, urljoin, parse_qs
 from bs4 import BeautifulSoup
 
 from config import PLATFORM_CONFIGS
-from models import PriceDetails
+from models import PriceDetails, format_scraped_at_human_readable, normalize_iso_utc
 from scraper.filters import parse_date_string
 
 logger = logging.getLogger(__name__)
@@ -1395,7 +1395,7 @@ def extract_reviews_v2_from_json_ld(
                 "rating": r_rating,
                 "title": rev.get("name") or rev.get("headline"),
                 "body": body,
-                "published_at": normalize_iso_utc(str(date_pub)) if date_pub else None,
+                "published_at": format_scraped_at_human_readable(str(date_pub)) if date_pub else None,
                 "language": rev.get("inLanguage"),
                 "is_verified_purchase": None,
                 "is_incentivized_or_default": False,

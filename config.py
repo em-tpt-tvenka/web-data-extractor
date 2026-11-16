@@ -266,16 +266,19 @@ MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
 MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "samsung_ecommerce")
 MONGODB_COLLECTION = os.getenv("MONGODB_COLLECTION", "products")
 MONGODB_REVIEWS_COLLECTION = os.getenv("MONGODB_REVIEWS_COLLECTION", "reviews")
+MONGODB_STANDARDIZED_COLLECTION = os.getenv("MONGODB_STANDARDIZED_COLLECTION", "social_mentions")
 
 # File Storage Settings
 OUTPUT_JSON_PATH = os.getenv("OUTPUT_JSON_PATH", "output/samsung_products.json")
 OUTPUT_REVIEWS_JSON_PATH = os.getenv("OUTPUT_REVIEWS_JSON_PATH", "output/samsung_reviews.json")
+OUTPUT_STANDARDIZED_JSON_PATH = os.getenv("OUTPUT_STANDARDIZED_JSON_PATH", "output/samsung_standardized.json")
 OUTPUT_CSV_PATH = os.getenv("OUTPUT_CSV_PATH", "output/samsung_products.csv")
 OUTPUT_REVIEWS_CSV_PATH = os.getenv("OUTPUT_REVIEWS_CSV_PATH", "output/samsung_product_reviews.csv")
 
 # Backward Compatibility Paths
 OUTPUT_LAPTOPS_JSON_PATH = "output/samsung_laptops.json"
 OUTPUT_LAPTOPS_REVIEWS_JSON_PATH = "output/samsung_laptop_reviews.json"
+OUTPUT_LAPTOPS_STANDARDIZED_JSON_PATH = "output/samsung_laptop_standardized.json"
 OUTPUT_LAPTOPS_CSV_PATH = "output/samsung_laptops.csv"
 
 # HTTP Request Headers

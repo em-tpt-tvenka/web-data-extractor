@@ -1,17 +1,26 @@
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
+import hashlib
 import os
+import re
 from typing import List, Optional, Dict, Any, Tuple
+from urllib.parse import urlparse
 
 from config import (
     PLATFORM_CONFIGS,
     OUTPUT_JSON_PATH,
     OUTPUT_REVIEWS_JSON_PATH,
+    OUTPUT_STANDARDIZED_JSON_PATH,
     OUTPUT_LAPTOPS_JSON_PATH,
     OUTPUT_LAPTOPS_REVIEWS_JSON_PATH,
+    OUTPUT_LAPTOPS_STANDARDIZED_JSON_PATH,
 )
 
 SCHEMA_VERSION = "2.0.0"
+STANDARDIZED_SCHEMA_VERSION = "1.0"
+DEFAULT_TENANT_ID = "tenant_001"
+DEFAULT_PROJECT_ID = "retail_listening_001"
+DEFAULT_SCOPE_IDS = ["TND_Q2_FY27"]
 
 
 def now_iso_utc() -> str:
@@ -109,6 +118,25 @@ def get_reviews_json_path(products_filepath: str) -> str:
     return f"{base}_reviews{ext}"
 
 
+def get_standardized_json_path(products_filepath: str) -> str:
+    """Resolves the paired Standardized social_mention output path for a product JSON path."""
+    abs_in = os.path.abspath(products_filepath).lower()
+    if abs_in == os.path.abspath(OUTPUT_JSON_PATH).lower():
+        return os.path.join(os.path.dirname(products_filepath) or ".", os.path.basename(OUTPUT_STANDARDIZED_JSON_PATH))
+    if abs_in == os.path.abspath(OUTPUT_LAPTOPS_JSON_PATH).lower():
+        return os.path.join(os.path.dirname(products_filepath) or ".", os.path.basename(OUTPUT_LAPTOPS_STANDARDIZED_JSON_PATH))
+    base, ext = os.path.splitext(products_filepath)
+    if not ext:
+        ext = ".json"
+    if base.endswith("_standardized"):
+        return f"{base}{ext}"
+    if base.endswith("_products"):
+        base = base[:-9]
+    elif base.endswith("_reviews"):
+        base = base[:-8]
+    return f"{base}_standardized{ext}"
+
+
 def get_platform_metadata(platform: str) -> Dict[str, str]:
     """Looks up marketplace_type, region, and default currency from PLATFORM_CONFIGS."""
     key = (platform or "generic").strip().lower()
@@ -129,6 +157,19 @@ def is_v2_product_doc(doc: Optional[Dict[str, Any]]) -> bool:
 def is_v2_review_doc(doc: Optional[Dict[str, Any]]) -> bool:
     """Returns True if dict follows Schema v2.0.0 Review Details layout."""
     return isinstance(doc, dict) and "metadata" in doc and "reviews" in doc
+
+
+def is_standardized_mention_doc(doc: Optional[Dict[str, Any]]) -> bool:
+    """Returns True if dict follows the Standardized social_mention layout."""
+    return (
+        isinstance(doc, dict)
+        and doc.get("record_type") == "social_mention"
+        and "tenant" in doc
+        and "source" in doc
+        and "content" in doc
+        and "entities" in doc
+        and "commercial" in doc
+    )
 
 
 def _normalize_star_distribution(raw_dist: Optional[Dict[Any, Any]]) -> Dict[str, int]:
@@ -410,6 +451,13 @@ def make_review_key(doc: Optional[Dict[str, Any]]) -> Tuple[str, str]:
         plat = str(meta.get("platform") or "").strip().lower()
         pid = str(meta.get("platform_product_id") or "").strip()
         return (plat, pid)
+    if is_standardized_mention_doc(doc):
+        src = doc.get("source") or {}
+        plat = str(src.get("platform") or "").strip().lower()
+        entities = doc.get("entities") or {}
+        prods = entities.get("products") or []
+        pid = str((prods[0] if prods else {}).get("product_id") or src.get("parent_item_id") or "").strip()
+        return (plat, pid)
     plat = str(doc.get("platform") or "samsung").strip().lower()
     pid = str(doc.get("product_id") or doc.get("product_url") or "").strip()
     return (plat, pid)
@@ -615,16 +663,10 @@ def extract_flat_summary(
 
 
 def _parse_v1_review_date(dt_raw: Optional[str]) -> Optional[str]:
-    """Converts v1 human-readable date ('August 15, 2024') or ISO string to ISO UTC Z."""
+    """Converts review date string to user-readable format."""
     if not dt_raw or not isinstance(dt_raw, str):
         return None
-    for fmt in ("%B %d, %Y", "%b %d, %Y", "%Y-%m-%d"):
-        try:
-            dt = datetime.strptime(dt_raw.strip(), fmt).replace(tzinfo=timezone.utc)
-            return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
-        except ValueError:
-            continue
-    return normalize_iso_utc(dt_raw)
+    return format_scraped_at_human_readable(dt_raw) or dt_raw
 
 
 def convert_v1_to_v2(v1_doc: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
@@ -762,6 +804,548 @@ def convert_v1_to_v2(v1_doc: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, 
         scraped_at=scraped_at,
     )
     return product_v2, review_v2
+
+
+def extract_capacity_attribute(title: str, specs: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+    """Extracts capacity attribute (e.g. {'value': 450, 'unit': 'litre'}) from specs or title."""
+    specs = specs or {}
+    for sec_name, sec_dict in specs.items():
+        if not isinstance(sec_dict, dict):
+            continue
+        for k, v in sec_dict.items():
+            k_lower = str(k).lower()
+            v_str = str(v).strip()
+            if any(term in k_lower for term in ("capacity", "net total", "gross total", "volume", "storage capacity")):
+                m_lit = re.search(r"(\d+(?:\.\d+)?)\s*(?:l|liter|litre|litres|liters)\b", v_str, re.I)
+                if m_lit:
+                    val = float(m_lit.group(1))
+                    return {"value": int(val) if val.is_integer() else val, "unit": "litre"}
+                m_kg = re.search(r"(\d+(?:\.\d+)?)\s*kg\b", v_str, re.I)
+                if m_kg:
+                    val = float(m_kg.group(1))
+                    return {"value": int(val) if val.is_integer() else val, "unit": "kg"}
+                m_ton = re.search(r"(\d+(?:\.\d+)?)\s*(?:ton|tr)\b", v_str, re.I)
+                if m_ton:
+                    val = float(m_ton.group(1))
+                    return {"value": int(val) if val.is_integer() else val, "unit": "ton"}
+                m_kw = re.search(r"(\d+(?:\.\d+)?)\s*kw\b", v_str, re.I)
+                if m_kw:
+                    val = float(m_kw.group(1))
+                    return {"value": int(val) if val.is_integer() else val, "unit": "kW"}
+
+    if title:
+        m_lit = re.search(r"(\d+(?:\.\d+)?)\s*(?:L|Liter|Litre|litres|liters)\b", title, re.I)
+        if m_lit:
+            val = float(m_lit.group(1))
+            return {"value": int(val) if val.is_integer() else val, "unit": "litre"}
+        m_kw = re.search(r"(\d+(?:\.\d+)?)\s*kW\b", title, re.I)
+        if m_kw:
+            val = float(m_kw.group(1))
+            return {"value": int(val) if val.is_integer() else val, "unit": "kW"}
+        m_ton = re.search(r"(\d+(?:\.\d+)?)\s*(?:Ton|TR)\b", title, re.I)
+        if m_ton:
+            val = float(m_ton.group(1))
+            return {"value": int(val) if val.is_integer() else val, "unit": "ton"}
+        m_ram = re.search(r"(\d+)\s*(?:GB|TB)\b", title)
+        if m_ram:
+            return {"value": int(m_ram.group(1)), "unit": "GB"}
+
+    return None
+
+
+def extract_color_attribute(
+    title: str,
+    specs: Optional[Dict[str, Any]] = None,
+    variants: Optional[List[Dict[str, Any]]] = None,
+) -> Optional[str]:
+    """Extracts product color (e.g. 'Silver', 'Clean Charcoal + Stainless Steel')."""
+    specs = specs or {}
+    for sec_name, sec_dict in specs.items():
+        if not isinstance(sec_dict, dict):
+            continue
+        for k, v in sec_dict.items():
+            k_lower = str(k).lower()
+            if any(term in k_lower for term in ("colour", "color", "shade", "exterior finish", "exterior feature")):
+                val = str(v).strip()
+                if val:
+                    return val
+
+    for v in (variants or []):
+        if isinstance(v, dict):
+            c = (v.get("attributes") or {}).get("color")
+            if c:
+                return str(c).strip()
+
+    known_colors = [
+        "Stainless Steel", "Charcoal", "Space Gray", "Silver", "Black", "White",
+        "Navy", "Blue", "Gold", "Titanium", "Graphite", "Beige"
+    ]
+    if title:
+        for c in known_colors:
+            if re.search(rf"\b{re.escape(c)}\b", title, re.I):
+                return c
+    return None
+
+
+def extract_energy_rating(title: str, specs: Optional[Dict[str, Any]] = None) -> Optional[str]:
+    """Extracts energy rating (e.g. '3_star', '5_star')."""
+    raw = title or ""
+    specs = specs or {}
+    for sec_name, sec_dict in specs.items():
+        if isinstance(sec_dict, dict):
+            for k, v in sec_dict.items():
+                if "energy" in str(k).lower() or "star" in str(k).lower():
+                    raw += " " + str(v)
+    m = re.search(r"(\d)\s*Star", raw, re.I)
+    if m:
+        return f"{m.group(1)}_star"
+    return None
+
+
+def extract_taxonomy_attributes(
+    category_path: Optional[List[str]],
+    title: str,
+    platform: str = "generic",
+) -> Dict[str, str]:
+    """Extracts standardized taxonomy mapping (industry, category, subcategory, product_type)."""
+    clean_path = [str(c).strip() for c in (category_path or []) if str(c).strip()]
+    combined = (title + " " + " ".join(clean_path)).lower()
+
+    if any(k in combined for k in ("refrigerator", "fridge", "french door", "side by side", "frost free")):
+        industry = "Tech & Durables"
+        category = "Large White Goods"
+        subcategory = "Refrigerator"
+        if "french door" in combined:
+            product_type = "French Door"
+        elif "side by side" in combined or "side-by-side" in combined:
+            product_type = "Side by Side"
+        elif "frost free" in combined or "frost-free" in combined:
+            product_type = "Frost Free"
+        elif "single door" in combined:
+            product_type = "Single Door"
+        elif "double door" in combined:
+            product_type = "Double Door"
+        else:
+            product_type = "Refrigerator"
+    elif any(k in combined for k in ("air conditioner", "split ac", "windfree", "inverter ac")):
+        industry = "Tech & Durables"
+        category = "Large White Goods"
+        subcategory = "Air Conditioner"
+        if "split" in combined:
+            product_type = "Inverter Split AC"
+        elif "window" in combined:
+            product_type = "Window AC"
+        else:
+            product_type = "Air Conditioner"
+    elif any(k in combined for k in ("washer", "washing machine", "dryer")):
+        industry = "Tech & Durables"
+        category = "Large White Goods"
+        subcategory = "Washing Machine"
+        if "front load" in combined:
+            product_type = "Front Load"
+        elif "top load" in combined:
+            product_type = "Top Load"
+        else:
+            product_type = "Washing Machine"
+    elif any(k in combined for k in ("laptop", "galaxy book", "notebook", "computer", "macbook")):
+        industry = "Tech & Durables"
+        category = "Computers & Laptops"
+        subcategory = "Laptops"
+        if "pro" in combined:
+            product_type = "Pro Laptop"
+        elif "ultra" in combined:
+            product_type = "Ultra Laptop"
+        elif "gaming" in combined:
+            product_type = "Gaming Laptop"
+        else:
+            product_type = "Laptop"
+    elif any(k in combined for k in ("smartphone", "phone", "mobile", "galaxy s", "iphone")):
+        industry = "Tech & Durables"
+        category = "Mobile Communications"
+        subcategory = "Smartphones"
+        product_type = "Smartphone"
+    elif any(k in combined for k in ("tv", "television", "oled", "qled", "neo qled")):
+        industry = "Tech & Durables"
+        category = "Audio & Video"
+        subcategory = "Television"
+        product_type = "Smart TV"
+    else:
+        industry = "Tech & Durables"
+        category = clean_path[0] if clean_path else "Consumer Goods"
+        subcategory = clean_path[1] if len(clean_path) > 1 else (clean_path[0] if clean_path else "General")
+        product_type = clean_path[-1] if clean_path else "Standard"
+
+    return {
+        "industry": industry,
+        "category": category,
+        "subcategory": subcategory,
+        "product_type": product_type,
+        "taxonomy_version": "TND_2026_V1",
+        "mapping_method": "catalog_mapping",
+        "mapping_status": "mapped",
+    }
+
+
+def build_standardized_mention(
+    *,
+    product_doc: Dict[str, Any],
+    review_item: Optional[Dict[str, Any]] = None,
+    review_summary: Optional[Dict[str, Any]] = None,
+    tenant_id: str = DEFAULT_TENANT_ID,
+    project_id: str = DEFAULT_PROJECT_ID,
+    report_scope_ids: Optional[List[str]] = None,
+    collection_run_id: Optional[str] = None,
+    item_index: int = 1,
+) -> Dict[str, Any]:
+    """
+    Constructs a single Standardized social_mention record matching Schema v1.0.
+    Integrates product details, commercial terms, attributes, and individual review data.
+    """
+    if is_v2_product_doc(product_doc):
+        meta = product_doc.get("metadata") or {}
+        prod = product_doc.get("product") or {}
+    else:
+        v2_prod, _ = convert_v1_to_v2(product_doc)
+        meta = v2_prod.get("metadata") or {}
+        prod = v2_prod.get("product") or {}
+
+    ids = prod.get("identifiers") or {}
+    core = prod.get("core") or {}
+    pa = prod.get("pricing_and_availability") or {}
+    fulfill = pa.get("fulfillment") or {}
+    financing = pa.get("financing") or {}
+    content_specs = prod.get("content_and_specs") or {}
+    media = prod.get("media") or {}
+    seller = prod.get("seller") or {}
+
+    plat = (meta.get("platform") or "generic").lower()
+    pid = ids.get("platform_product_id") or ""
+    parent_pid = ids.get("parent_product_id")
+    sku = ids.get("sku")
+    model_num = ids.get("model_number") or sku
+    p_url = ids.get("product_url") or ""
+    p_title = core.get("title") or ""
+    brand_name = core.get("brand") or "Samsung"
+    brand_id = f"BRAND_{brand_name.upper().replace(' ', '_')}"
+
+    retailer_name = PLATFORM_CONFIGS.get(plat, {}).get("name") or plat.capitalize()
+    retailer_id = f"RETAILER_{plat.upper().replace(' ', '_')}"
+
+    # Determine marketplace domain
+    parsed_u = urlparse(p_url) if p_url else None
+    if parsed_u and parsed_u.netloc:
+        domain_part = parsed_u.netloc.replace("www.", "")
+        path_first = parsed_u.path.strip("/").split("/")[0] if parsed_u.path.strip("/") else ""
+        if path_first in ("in", "us", "uk", "ca"):
+            marketplace = f"{domain_part}/{path_first}"
+        else:
+            marketplace = domain_part
+    else:
+        dom = PLATFORM_CONFIGS.get(plat, {}).get("domain", f"{plat}.com")
+        reg = (meta.get("region") or "IN").lower()
+        marketplace = f"{dom}/{reg}" if reg != "global" else dom
+
+    collected_at = meta.get("scraped_at") or now_human_readable()
+    run_id = collection_run_id or f"RUN_{datetime.now().strftime('%Y%m%d')}_001"
+
+    if review_item:
+        rid = review_item.get("review_id") or f"review_{pid}_{item_index}"
+        source_type = "review"
+        content_type = "review"
+        title = review_item.get("title")
+        text = (review_item.get("body") or review_item.get("text") or "").strip()
+        rating_val = review_item.get("rating")
+        pub_at = format_scraped_at_human_readable(review_item.get("published_at")) or review_item.get("published_at")
+        is_verified = bool(review_item.get("is_verified_purchase", True))
+        helpful = review_item.get("helpful_votes")
+        reviewer = review_item.get("reviewer") or {}
+        author_name = reviewer.get("name")
+        author_uid = reviewer.get("user_id")
+        author_country = reviewer.get("country_code") or meta.get("region") or "IN"
+        rev_media = review_item.get("media") or []
+        comments = review_item.get("comments") or []
+    else:
+        rid = f"prod_{pid}_{item_index}"
+        source_type = "review"
+        content_type = "review"
+        title = p_title
+        text = (content_specs.get("short_description") or p_title).strip()
+        rating_val = (review_summary or {}).get("average_rating")
+        pub_at = format_scraped_at_human_readable(core.get("introduced_date")) or core.get("introduced_date")
+        is_verified = True
+        helpful = None
+        reviewer = {}
+        author_name = None
+        author_uid = None
+        author_country = meta.get("region") or "IN"
+        rev_media = []
+        comments = []
+
+    # Commercial calculations
+    lp = pa.get("list_price")
+    cp = pa.get("current_price")
+    curr = (pa.get("currency") or "INR").upper()
+    disc_pct = pa.get("discount_percentage")
+    disc_amt = round(max(0.0, ((lp or 0.0) - (cp or 0.0))), 2) if (lp and cp and lp > cp) else 0.0
+    is_promo = bool((disc_pct and disc_pct > 0) or pa.get("is_on_sale"))
+    free_ship = bool(fulfill.get("free_shipping", True))
+
+    # Attributes & Taxonomy
+    specs = content_specs.get("specifications") or {}
+    capacity = extract_capacity_attribute(p_title, specs)
+    color = extract_color_attribute(p_title, specs, content_specs.get("variants"))
+    energy_rating = extract_energy_rating(p_title, specs)
+    taxonomy = extract_taxonomy_attributes(core.get("category_path"), p_title, plat)
+
+    # Hashes & IDs
+    record_id = f"{tenant_id}:{plat}:{rid}"
+    content_hash = f"sha256:{hashlib.sha256(text.encode('utf-8')).hexdigest()}" if text else None
+    author_id_hash = f"sha256:{hashlib.sha256(str(author_uid).encode('utf-8')).hexdigest()[:16]}" if author_uid else None
+
+    source_url_clean = p_url or None
+    if source_url_clean and review_item and rid and not source_url_clean.endswith(rid):
+        source_url_clean = f"{source_url_clean}#review-{rid}"
+
+    return {
+        "_id": record_id,
+        "schema_version": STANDARDIZED_SCHEMA_VERSION,
+        "record_type": "social_mention",
+        "tenant": {
+            "tenant_id": tenant_id,
+            "project_id": project_id,
+            "report_scope_ids": report_scope_ids or list(DEFAULT_SCOPE_IDS),
+        },
+        "source": {
+            "platform": plat,
+            "channel": "ecommerce_review",
+            "source_type": source_type,
+            "source_item_id": rid,
+            "source_url": source_url_clean,
+            "parent_item_id": parent_pid,
+            "published_at": format_scraped_at_human_readable(pub_at) or pub_at,
+            "collected_at": collected_at,
+            "updated_at": None,
+            "country_code": author_country or "IN",
+            "marketplace": marketplace,
+        },
+        "content": {
+            "title": title,
+            "text": text,
+            "language": (review_item or {}).get("language") or "en",
+            "original_language": (review_item or {}).get("original_language") or (review_item or {}).get("language") or "en",
+            "content_type": content_type,
+            "media": rev_media if isinstance(rev_media, list) else [],
+            "hashtags": [],
+            "mentions": [],
+            "keywords": [],
+        },
+        "entities": {
+            "brands": [
+                {
+                    "brand_id": brand_id,
+                    "brand_name": brand_name,
+                    "brand_role": "client",
+                }
+            ],
+            "products": [
+                {
+                    "product_id": pid,
+                    "product_name": p_title,
+                    "sku": sku,
+                    "model_number": model_num,
+                    "product_url": p_url or None,
+                }
+            ],
+            "retailer": {
+                "retailer_id": retailer_id,
+                "retailer_name": retailer_name,
+            },
+            "other_brands": [],
+        },
+        "taxonomy": taxonomy,
+        "product_attributes": {
+            "model_number": model_num,
+            "capacity": capacity,
+            "color": color,
+            "energy_rating": energy_rating,
+            "specifications": specs,
+        },
+        "commercial": {
+            "price": {
+                "listed_price": {
+                    "amount": lp if lp is not None else cp,
+                    "currency": curr,
+                },
+                "selling_price": {
+                    "amount": cp,
+                    "currency": curr,
+                },
+                "original_price": {
+                    "amount": lp if lp is not None else cp,
+                    "currency": curr,
+                },
+                "discount_amount": disc_amt,
+                "discount_percentage": disc_pct if disc_pct is not None else 0.0,
+                "price_type": "promotional" if is_promo else "standard",
+                "price_observed_at": collected_at,
+            },
+            "price_range": {
+                "minimum": None,
+                "maximum": None,
+                "currency": curr,
+                "period_start": None,
+                "period_end": None,
+            },
+            "promotion": {
+                "is_promotional": is_promo,
+                "promotion_type": "festival_sale" if is_promo else None,
+                "promotion_name": "Festive Offer" if is_promo else None,
+                "coupon_available": True if is_promo else False,
+                "coupon_code": None,
+            },
+            "payment_options": {
+                "emi_available": bool(financing.get("emi_starting_per_month") or financing.get("no_cost_emi_available")),
+                "no_cost_emi": bool(financing.get("no_cost_emi_available")),
+                "bank_offer_available": bool(financing.get("no_cost_emi_offers")),
+                "exchange_offer_available": True,
+                "cash_on_delivery": True,
+            },
+            "availability": {
+                "status": "in_stock" if pa.get("in_stock", True) else "out_of_stock",
+                "stock_quantity": None,
+            },
+            "delivery": {
+                "delivery_charge": {
+                    "amount": 0 if free_ship else 0,
+                    "currency": curr,
+                },
+                "estimated_delivery_date": None,
+                "delivery_type": "free_delivery" if free_ship else "standard",
+            },
+            "warranty": {
+                "duration_months": 12,
+                "warranty_type": "manufacturer",
+            },
+        },
+        "metrics": {
+            "rating": {
+                "value": int(rating_val) if (rating_val is not None and float(rating_val).is_integer()) else rating_val,
+                "scale_min": 1,
+                "scale_max": 5,
+            },
+            "engagement": {
+                "likes": None,
+                "comments": len(comments) if comments else None,
+                "shares": None,
+                "views": None,
+                "reactions": None,
+            },
+            "helpful_votes": helpful,
+            "review_count": (review_summary or {}).get("total_ratings") or (review_summary or {}).get("total_written_reviews") or None,
+            "author_followers": None,
+            "reach": None,
+        },
+        "author": {
+            "source_author_id_hash": author_id_hash,
+            "display_name": author_name,
+            "author_type": "customer",
+            "is_verified_purchase": is_verified,
+            "profile_url": None,
+            "follower_count": None,
+        },
+        "location": {
+            "country_code": author_country or "IN",
+            "region": None,
+            "city": None,
+            "location_precision": "country",
+        },
+        "campaign": {
+            "campaign_name": None,
+            "campaign_type": None,
+            "event_name": None,
+            "campaign_id": None,
+        },
+        "deduplication": {
+            "content_hash": content_hash,
+            "duplicate_status": "unique",
+            "canonical_record_id": record_id,
+            "duplicate_of": None,
+        },
+        "provenance": {
+            "collection_run_id": run_id,
+            "connector_name": f"{plat}_connector",
+            "connector_version": "1.0.0",
+            "normalizer_version": "1.0.0",
+            "source_payload_ref": None,
+            "ingestion_timestamp": collected_at,
+        },
+        "quality": {
+            "status": "accepted",
+            "is_valid": True,
+            "is_relevant": True,
+            "validation_errors": [],
+            "missing_optional_fields": [],
+        },
+        "lifecycle": {
+            "first_seen_at": collected_at,
+            "last_seen_at": collected_at,
+            "record_status": "active",
+        },
+    }
+
+
+def convert_product_and_reviews_to_standardized(
+    product_doc: Dict[str, Any],
+    review_doc: Optional[Dict[str, Any]] = None,
+    tenant_id: str = DEFAULT_TENANT_ID,
+    project_id: str = DEFAULT_PROJECT_ID,
+    report_scope_ids: Optional[List[str]] = None,
+    collection_run_id: Optional[str] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Converts a Product Details doc and its paired Review Details doc into a list of
+    Standardized social_mention records matching Schema v1.0.
+    """
+    if is_standardized_mention_doc(product_doc):
+        return [product_doc]
+
+    if not is_v2_product_doc(product_doc):
+        product_doc, v2_rev = convert_v1_to_v2(product_doc)
+        if review_doc is None:
+            review_doc = v2_rev
+
+    rev_block = (review_doc or {}).get("reviews") or {}
+    pr_block = rev_block.get("product_reviews") or {}
+    items = pr_block.get("items") or []
+    summary = pr_block.get("summary") or {}
+
+    out: List[Dict[str, Any]] = []
+    if items:
+        for idx, item in enumerate(items, 1):
+            mention = build_standardized_mention(
+                product_doc=product_doc,
+                review_item=item,
+                review_summary=summary,
+                tenant_id=tenant_id,
+                project_id=project_id,
+                report_scope_ids=report_scope_ids,
+                collection_run_id=collection_run_id,
+                item_index=idx,
+            )
+            out.append(mention)
+    else:
+        mention = build_standardized_mention(
+            product_doc=product_doc,
+            review_item=None,
+            review_summary=summary,
+            tenant_id=tenant_id,
+            project_id=project_id,
+            report_scope_ids=report_scope_ids,
+            collection_run_id=collection_run_id,
+            item_index=1,
+        )
+        out.append(mention)
+    return out
 
 
 # Legacy dataclasses preserved for compatibility with existing callers/imports

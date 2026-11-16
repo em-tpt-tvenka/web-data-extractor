@@ -13,15 +13,26 @@ import pymongo
 from pymongo import MongoClient, ReplaceOne
 from pymongo.errors import ConnectionFailure, PyMongoError
 
-from config import MONGODB_URI, MONGODB_DB_NAME, MONGODB_COLLECTION, MONGODB_REVIEWS_COLLECTION
+from config import (
+    MONGODB_URI,
+    MONGODB_DB_NAME,
+    MONGODB_COLLECTION,
+    MONGODB_REVIEWS_COLLECTION,
+    MONGODB_STANDARDIZED_COLLECTION,
+    OUTPUT_STANDARDIZED_JSON_PATH,
+)
 from models import (
     is_v2_product_doc,
     is_v2_review_doc,
+    is_standardized_mention_doc,
     convert_v1_to_v2,
     extract_flat_summary,
     make_review_key,
     get_reviews_json_path,
+    get_standardized_json_path,
     normalize_metadata_scraped_at,
+    build_standardized_mention,
+    convert_product_and_reviews_to_standardized,
 )
 from scraper.filters import ProductFilter, filter_and_sort_products, to_mongo_query
 
@@ -32,13 +43,19 @@ def _build_reviews_map(review_docs: List[Dict[str, Any]]) -> Dict[Any, Dict[str,
     """Builds fast lookup dict keyed by (platform, platform_product_id) and platform_product_id."""
     rev_map: Dict[Any, Dict[str, Any]] = {}
     for doc in review_docs:
-        if not is_v2_review_doc(doc):
-            continue
-        key = make_review_key(doc)
-        if key[1]:
-            rev_map[key] = doc
-            if key[1] not in rev_map:
-                rev_map[key[1]] = doc
+        if is_v2_review_doc(doc):
+            key = make_review_key(doc)
+            if key[1]:
+                rev_map[key] = doc
+                if key[1] not in rev_map:
+                    rev_map[key[1]] = doc
+        elif is_standardized_mention_doc(doc):
+            key = make_review_key(doc)
+            if key[1]:
+                if key not in rev_map:
+                    rev_map[key] = doc
+                if key[1] not in rev_map:
+                    rev_map[key[1]] = doc
     return rev_map
 
 
@@ -51,15 +68,18 @@ class MongoManager:
         db_name: str = MONGODB_DB_NAME,
         collection_name: str = MONGODB_COLLECTION,
         reviews_collection_name: str = MONGODB_REVIEWS_COLLECTION,
+        standardized_collection_name: str = MONGODB_STANDARDIZED_COLLECTION,
     ):
         self.uri = uri
         self.db_name = db_name
         self.collection_name = collection_name
         self.reviews_collection_name = reviews_collection_name
+        self.standardized_collection_name = standardized_collection_name
         self._client: Optional[MongoClient] = None
         self._db = None
         self._collection = None
         self._reviews_collection = None
+        self._standardized_collection = None
 
     def connect(self) -> bool:
         """Establishes connection pool and initializes collections/indexes."""
@@ -75,9 +95,11 @@ class MongoManager:
             self._db = self._client[self.db_name]
             self._collection = self._db[self.collection_name]
             self._reviews_collection = self._db[self.reviews_collection_name]
+            self._standardized_collection = self._db[self.standardized_collection_name]
             self._create_indexes()
             logger.info(
-                f"Connected to MongoDB database '{self.db_name}', collections '{self.collection_name}' & '{self.reviews_collection_name}'"
+                f"Connected to MongoDB database '{self.db_name}', collections '{self.collection_name}', "
+                f"'{self.reviews_collection_name}' & '{self.standardized_collection_name}'"
             )
             return True
         except ConnectionFailure as e:
@@ -130,7 +152,17 @@ class MongoManager:
                 [("reviews.product_reviews.summary.average_rating", pymongo.DESCENDING)],
                 name="idx_v2_avg_rating",
             )
-            logger.debug("Schema v2.0.0 MongoDB indexes created successfully.")
+            if self._standardized_collection is not None:
+                self._standardized_collection.create_index(
+                    [("source.platform", pymongo.ASCENDING), ("source.source_item_id", pymongo.ASCENDING)],
+                    unique=True,
+                    name="idx_std_platform_item_id",
+                )
+                self._standardized_collection.create_index(
+                    [("entities.products.product_id", pymongo.ASCENDING)],
+                    name="idx_std_product_id",
+                )
+            logger.debug("Schema v2.0.0 & Standardized MongoDB indexes created successfully.")
         except PyMongoError as e:
             logger.warning(f"Failed to create indexes: {e}")
 
@@ -198,10 +230,29 @@ class MongoManager:
                 )
             )
 
+        std_ops: List[ReplaceOne] = []
+        prod_map = {make_review_key(p): p for p in (product_list or [])}
+        for raw_r in (review_list if review_list is not None else auto_reviews):
+            if is_standardized_mention_doc(raw_r):
+                std_ops.append(ReplaceOne({"_id": raw_r["_id"]}, raw_r, upsert=True))
+            elif isinstance(raw_r, dict):
+                k = make_review_key(raw_r)
+                paired_p = prod_map.get(k) or (product_list[0] if product_list else {})
+                for m in convert_product_and_reviews_to_standardized(paired_p, raw_r):
+                    if m.get("_id"):
+                        std_ops.append(ReplaceOne({"_id": m["_id"]}, m, upsert=True))
+
+        if not std_ops and product_list:
+            for p_doc in product_list:
+                for m in convert_product_and_reviews_to_standardized(p_doc, None):
+                    if m.get("_id"):
+                        std_ops.append(ReplaceOne({"_id": m["_id"]}, m, upsert=True))
+
         inserted_count = 0
         modified_count = 0
         matched_count = 0
         rev_upserted = 0
+        std_synced = 0
 
         try:
             if prod_ops:
@@ -214,9 +265,13 @@ class MongoManager:
                 rev_res = self._reviews_collection.bulk_write(rev_ops, ordered=False)
                 rev_upserted = (len(rev_res.upserted_ids) if rev_res.upserted_ids else 0) + rev_res.modified_count
 
+            if std_ops and self._standardized_collection is not None:
+                std_res = self._standardized_collection.bulk_write(std_ops, ordered=False)
+                std_synced = (len(std_res.upserted_ids) if std_res.upserted_ids else 0) + std_res.modified_count
+
             logger.info(
                 f"Bulk write successful! Products upserted: {inserted_count}, updated: {modified_count}; "
-                f"Reviews synced: {rev_upserted}"
+                f"Reviews synced: {rev_upserted}; Standardized mentions synced: {std_synced}"
             )
             return {
                 "inserted": inserted_count,
@@ -224,10 +279,25 @@ class MongoManager:
                 "matched": matched_count,
                 "total": len(prod_ops),
                 "reviews_upserted": rev_upserted,
+                "standardized_synced": std_synced,
             }
         except PyMongoError as e:
             logger.error(f"Bulk write error: {e}")
             raise
+
+    def bulk_upsert_standardized_mentions(self, mentions: List[Dict[str, Any]]) -> Dict[str, int]:
+        """Batch upserts standardized social_mention documents using native _id."""
+        if not mentions:
+            return {"inserted": 0, "modified": 0, "total": 0}
+        if not self.is_connected() and not self.connect():
+            raise ConnectionError(f"Cannot connect to MongoDB at {self.uri}")
+        ops = [ReplaceOne({"_id": m["_id"]}, m, upsert=True) for m in mentions if m.get("_id")]
+        if not ops or self._standardized_collection is None:
+            return {"inserted": 0, "modified": 0, "total": 0}
+        res = self._standardized_collection.bulk_write(ops, ordered=False)
+        ins = len(res.upserted_ids) if res.upserted_ids else 0
+        mod = res.modified_count
+        return {"inserted": ins, "modified": mod, "total": len(ops)}
 
     bulk_upsert_laptops = bulk_upsert_products
 
@@ -390,13 +460,53 @@ def save_laptops_to_json(
         f"📁 Stored {len(laptop_list)} product(s) [Schema v2.0.0] in JSON file: '{filepath}' (Total: {len(final_products)})"
     )
 
-    if final_reviews:
+    # Convert products & review bundles into Standardized social_mention records (Schema v1.0)
+    prod_by_key = {make_review_key(p): p for p in final_products}
+    standardized_records: List[Dict[str, Any]] = []
+    seen_std_ids = set()
+
+    for rev in final_reviews:
+        k = make_review_key(rev)
+        paired_p = prod_by_key.get(k) or (final_products[0] if final_products else {})
+        std_list = convert_product_and_reviews_to_standardized(paired_p, rev)
+        for doc in std_list:
+            doc_id = doc.get("_id")
+            if doc_id and doc_id not in seen_std_ids:
+                seen_std_ids.add(doc_id)
+                standardized_records.append(doc)
+
+    if not standardized_records and final_products:
+        for p in final_products:
+            std_list = convert_product_and_reviews_to_standardized(p, None)
+            for doc in std_list:
+                doc_id = doc.get("_id")
+                if doc_id and doc_id not in seen_std_ids:
+                    seen_std_ids.add(doc_id)
+                    standardized_records.append(doc)
+
+    standardized_filepath = get_standardized_json_path(filepath)
+    if standardized_records:
+        os.makedirs(os.path.dirname(standardized_filepath) or ".", exist_ok=True)
+        with open(standardized_filepath, "w", encoding="utf-8") as sf:
+            json.dump(standardized_records, sf, indent=2, ensure_ascii=False)
+        logger.info(
+            f"📁 Stored {len(standardized_records)} standardized social mention record(s) [Schema v1.0] in JSON file: '{standardized_filepath}'"
+        )
+
         os.makedirs(os.path.dirname(reviews_filepath) or ".", exist_ok=True)
         with open(reviews_filepath, "w", encoding="utf-8") as rf:
-            json.dump(final_reviews, rf, indent=2, ensure_ascii=False)
+            json.dump(standardized_records, rf, indent=2, ensure_ascii=False)
         logger.info(
-            f"📁 Stored {len(final_reviews)} review bundle(s) [Schema v2.0.0] in JSON file: '{reviews_filepath}'"
+            f"📁 Stored {len(standardized_records)} standardized review record(s) [Schema v1.0] in JSON file: '{reviews_filepath}'"
         )
+
+    if final_reviews:
+        v2_reviews_filepath = reviews_filepath.replace(".json", "_v2.json")
+        try:
+            with open(v2_reviews_filepath, "w", encoding="utf-8") as v2f:
+                json.dump(final_reviews, v2f, indent=2, ensure_ascii=False)
+        except Exception:
+            pass
 
     if export_csv:
         csv_file = filepath.replace(".json", ".csv")
@@ -405,6 +515,21 @@ def save_laptops_to_json(
         save_laptops_to_csv(final_products, csv_file, reviews_csv, review_list=final_reviews)
 
     return filepath
+
+
+def save_standardized_to_json(
+    mentions: List[Dict[str, Any]],
+    filepath: str = "output/samsung_standardized.json",
+) -> str:
+    """Saves standardized social_mention records directly to a JSON file."""
+    os.makedirs(os.path.dirname(filepath) or ".", exist_ok=True)
+    with open(filepath, "w", encoding="utf-8") as f:
+        json.dump(mentions, f, indent=2, ensure_ascii=False)
+    logger.info(f"📁 Stored {len(mentions)} standardized social mention record(s) in: '{filepath}'")
+    return filepath
+
+
+save_standardized_mentions_to_json = save_standardized_to_json
 
 
 def save_laptops_to_csv(

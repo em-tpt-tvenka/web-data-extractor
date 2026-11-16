@@ -10,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, Tuple, Optional, List
 
 from config import BV_API_URL, BV_PASSKEY, DEFAULT_HEADERS, REQUEST_TIMEOUT
-from models import build_review_v2, normalize_iso_utc
+from models import build_review_v2, normalize_iso_utc, format_scraped_at_human_readable
 
 logger = logging.getLogger(__name__)
 
@@ -169,7 +169,7 @@ def parse_bazaarvoice_response(
             "rating": rating_val,
             "title": r.get("Title"),
             "body": r.get("ReviewText"),
-            "published_at": normalize_iso_utc(r.get("SubmissionTime")),
+            "published_at": format_scraped_at_human_readable(r.get("SubmissionTime")) or normalize_iso_utc(r.get("SubmissionTime")),
             "language": lang,
             "is_verified_purchase": is_verified,
             "is_incentivized_or_default": is_incentivized,

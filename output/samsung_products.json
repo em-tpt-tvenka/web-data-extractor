@@ -4,6 +4,1280 @@
       "platform": "samsung",
       "marketplace_type": "D2C",
       "region": "IN",
+      "scraped_at": "November 16, 2026, 02:46:39 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "RS76CB81A312HL",
+        "parent_product_id": null,
+        "sku": "RS76CB81A312",
+        "upc_ean": null,
+        "model_number": null,
+        "product_url": "https://www.samsung.com/in/refrigerators/bespoke-refrigerators/bespoke-convertible-5in1-side-by-side-refrigerator-653l-clean-white-rs76cb81a312hl/"
+      },
+      "core": {
+        "title": "653 L Bespoke AI Side by Side Refrigerator with Twin Cooling Plusâ¢ | Convertible 5in1 | 3â | RS76CB81A312",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Refrigerators",
+          "BESPOKE refrigerators",
+          "653 L Bespoke AI Side by Side Refrigerator with Twin Cooling Plus™ | Convertible 5in1 | 3★ | RS76CB81A312"
+        ],
+        "condition": "new",
+        "introduced_date": "March 26, 2024"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 158000.0,
+        "current_price": 124190.0,
+        "discount_percentage": 21.4,
+        "is_on_sale": true,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Convertible 5-in-1\nTwin Cooling Plus & Precise Cooling\nBESPOKE Design with Auto Open Door\n10% energy savings with AI Energy mode\n20 Year Compressor Warranty\n3 Star SBS",
+        "bullet_features": [
+          "Image",
+          "Video",
+          "Layer popup open",
+          "English",
+          "German",
+          "French",
+          "Spanish",
+          "Portuguese",
+          "Italian",
+          "Korean",
+          "Chinese",
+          "Japanese"
+        ],
+        "specifications": {
+          "Overview": {
+            "Net Total(Liter)": "653 ℓ",
+            "Net Width": "91.20 cm",
+            "Net Case Height with Hinge": "1.78 m",
+            "Net Depth with Door Handle": "71.60 cm",
+            "Net Weight": "108 kg",
+            "Cooling Type": "Twin Cooling Plus",
+            "Number of Shelf (Total)": "4 EA"
+          },
+          "Capacity": {
+            "Net Total(Liter)": "653 ℓ",
+            "Net for Freezer(Liter)": "244 ℓ",
+            "Net for Fridge(Liter)": "409 ℓ"
+          },
+          "Physical specification": {
+            "Net Width": "91.20 cm",
+            "Net Case Height with Hinge": "1.78 m",
+            "Net Case Height without Hinge": "1.74 m",
+            "Net Depth with Door Handle": "71.60 cm",
+            "Net Depth without Door Handle": "71.60 cm",
+            "Net Depth without Door": "61.0 cm",
+            "Packing Width": "98.0 cm",
+            "Packing Height": "1.90 m",
+            "Packing Depth": "77.60 cm",
+            "Net Weight": "108 kg",
+            "Packing Weight(kg)": "118 kg",
+            "20/40/40H (Container)": "18/36/36"
+          },
+          "Cooling Feature": {
+            "Power Cool Function": "Yes",
+            "Power Freeze Function": "Yes",
+            "Cooling Type": "Twin Cooling Plus"
+          },
+          "Refrigerator Feature": {
+            "Number of Shelf (Total)": "4 EA",
+            "Wine Rack": "Yes",
+            "Number of Door Pocket": "5 EA",
+            "Interior LED Light": "Top LED",
+            "Shelf Material": "Tempered Glass",
+            "Number of Vegetable&Fruit Drawer": "2 EA"
+          },
+          "Freezer Feature": {
+            "Number of Shelf (Total)": "4 EA",
+            "Number of Door Pocket": "5 EA",
+            "Icemaker": "Manual Twist.",
+            "Interior LED Light": "Top LED",
+            "Number of Drawer": "2 EA"
+          },
+          "General Feature": {
+            "Door Alarm": "Yes",
+            "Vacation Mode": "Yes",
+            "Refrigerant": "R600a",
+            "Compressor": "Digital Inverter Compressor"
+          },
+          "Exterior Feature": {
+            "Display Type": "Internal (Simple UX LED)",
+            "Door Handle": "Recess",
+            "Colour": "Clean White",
+            "Door Type": "Auto Open Door"
+          },
+          "Performance": {
+            "Noise Level": "37 dBA",
+            "Climate Class": "SN, N, ST, T"
+          },
+          "Energy": {
+            "Energy Star Rating": "3 Star"
+          },
+          "Smart": {
+            "Wi-Fi Embedded": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Country of Origin": "India",
+            "Launch date": "April 19 th , 2024"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-thumb-540881567",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-540881559",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/energylabel/in-energylabel-product-rs76cb81a312hl-554043234",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/energylabel/in-energylabel-rs76cb81a312hl-554043232",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-540881560",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-540881561",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-540881562",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-540881563",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-540881564",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-540881565",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-540881566",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a312hl-551922262",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/energylabel/in-energylabel-product-rs76cb81a312hl-thumb-554043236",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/energylabel/in-energylabel-rs76cb81a312hl-thumb-554043233",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-thumb-540881568",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-thumb-540881569",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-thumb-540881570",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-thumb-540881571",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-thumb-540881572",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-thumb-540881573",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-503212-rs76cb81a312hl-thumb-540881574",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a312hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a312hl-thumb-551922263",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165168788/in-feature-bespoke-refrigerators-540877955",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165168788/in-feature-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-550597137",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165168793/in-feature-bespoke-refrigerators-540877965",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165168794/in-feature-bespoke-refrigerators-540877969.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 16, 2026, 02:46:44 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "RS76CB81A333HL",
+        "parent_product_id": null,
+        "sku": "RS76CB81A333",
+        "upc_ean": null,
+        "model_number": null,
+        "product_url": "https://www.samsung.com/in/refrigerators/bespoke-refrigerators/bespoke-convertible-5in1-side-by-side-refrigerator-653l-glam-deep-charcoal-rs76cb81a333hl/"
+      },
+      "core": {
+        "title": "653 L Bespoke AI Side by Side Refrigerator with Twin Cooling Plusâ¢ | Convertible 5in1 | 3â | RS76CB81A333",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Refrigerators",
+          "BESPOKE refrigerators",
+          "653 L Bespoke AI Side by Side Refrigerator with Twin Cooling Plus™ | Convertible 5in1 | 3★ | RS76CB81A333"
+        ],
+        "condition": "new",
+        "introduced_date": "March 26, 2024"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 158000.0,
+        "current_price": 124190.0,
+        "discount_percentage": 21.4,
+        "is_on_sale": true,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Convertible 5-in-1\nTwin Cooling Plus & Precise Cooling\nBESPOKE Design with Auto Open Door\n10% energy savings with AI Energy mode\n20 Year Compressor Warranty\n3 Star SBS",
+        "bullet_features": [
+          "Image",
+          "Video",
+          "Layer popup open",
+          "English",
+          "German",
+          "French",
+          "Spanish",
+          "Portuguese",
+          "Italian",
+          "Korean",
+          "Chinese",
+          "Japanese"
+        ],
+        "specifications": {
+          "Overview": {
+            "Net Total(Liter)": "653 ℓ",
+            "Net Width": "91.20 cm",
+            "Net Case Height with Hinge": "1.78 m",
+            "Net Depth with Door Handle": "71.60 cm",
+            "Net Weight": "108 kg",
+            "Cooling Type": "Twin Cooling Plus",
+            "Number of Shelf (Total)": "4 EA"
+          },
+          "Capacity": {
+            "Net Total(Liter)": "653 ℓ",
+            "Net for Freezer(Liter)": "244 ℓ",
+            "Net for Fridge(Liter)": "409 ℓ"
+          },
+          "Physical specification": {
+            "Net Width": "91.20 cm",
+            "Net Case Height with Hinge": "1.78 m",
+            "Net Case Height without Hinge": "1.74 m",
+            "Net Depth with Door Handle": "71.60 cm",
+            "Net Depth without Door Handle": "71.60 cm",
+            "Net Depth without Door": "61.0 cm",
+            "Packing Width": "98.00 cm",
+            "Packing Height": "1.90 m",
+            "Packing Depth": "77.60 cm",
+            "Net Weight": "108 kg",
+            "Packing Weight(kg)": "118 kg",
+            "20/40/40H (Container)": "18/36/36"
+          },
+          "Cooling Feature": {
+            "Power Cool Function": "Yes",
+            "Power Freeze Function": "Yes",
+            "Cooling Type": "Twin Cooling Plus"
+          },
+          "Refrigerator Feature": {
+            "Number of Shelf (Total)": "4 EA",
+            "Wine Rack": "Yes",
+            "Number of Door Pocket": "5 EA",
+            "Interior LED Light": "Top LED",
+            "Shelf Material": "Tempered Glass",
+            "Number of Vegetable&Fruit Drawer": "2 EA"
+          },
+          "Freezer Feature": {
+            "Number of Shelf (Total)": "4 EA",
+            "Number of Door Pocket": "5 EA",
+            "Icemaker": "Manual Twist.",
+            "Interior LED Light": "Top LED",
+            "Number of Drawer": "2 EA"
+          },
+          "General Feature": {
+            "Door Alarm": "Yes",
+            "Vacation Mode": "Yes",
+            "Refrigerant": "R600a",
+            "Compressor": "Digital Inverter Compressor"
+          },
+          "Exterior Feature": {
+            "Display Type": "Internal (Simple UX LED)",
+            "Door Handle": "Recess",
+            "Colour": "Glam Deep Charcoal",
+            "Door Type": "Auto Open Door"
+          },
+          "Performance": {
+            "Noise Level": "37 dBA",
+            "Climate Class": "SN, N, ST, T"
+          },
+          "Energy": {
+            "Energy Star Rating": "3 Star"
+          },
+          "Smart": {
+            "Wi-Fi Embedded": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Country of Origin": "India",
+            "Launch date": "April 19 th , 2024"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-540877689",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-540877681",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/energylabel/in-energylabel-product-rs76cb81a333hl-554043241",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/energylabel/in-energylabel-rs76cb81a333hl-554043238",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-540877682",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-540877688",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-540877683",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-540877684",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-540877685",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-540877686",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-540877687",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-551922264",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/energylabel/in-energylabel-product-rs76cb81a333hl-thumb-554043242",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/energylabel/in-energylabel-rs76cb81a333hl-thumb-554043239",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-540877690",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-540877696",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-540877691",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-540877692",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-540877693",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-540877694",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-540877695",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rs76cb81a333hl/gallery/in-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-rs76cb81a333hl-thumb-551922266",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165168788/in-feature-bespoke-refrigerators-540877955",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165168788/in-feature-653l-bespoke-convertible-5in1-side-by-side-refrigerator-rs76cb81a3-550597137",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165168793/in-feature-bespoke-refrigerators-540877965",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/165168794/in-feature-bespoke-refrigerators-540877969.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 16, 2026, 02:46:46 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "MOUNT-FREEZER",
+        "parent_product_id": null,
+        "sku": "MOUNT-FREEZER",
+        "upc_ean": null,
+        "model_number": "MOUNT-FREEZER",
+        "product_url": "https://www.samsung.com/in/refrigerators/bottom-mount-freezer/"
+      },
+      "core": {
+        "title": "Bottom Mount Freezer Refrigerators",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Refrigerators",
+          "Bottom Mount Freezer"
+        ],
+        "condition": "new",
+        "introduced_date": "July 2, 2026"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 70090.0,
+        "current_price": 70090.0,
+        "discount_percentage": null,
+        "is_on_sale": false,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Explore Bottom Mount Refrigerator & 2 Door Refrigerator online at the best price in India. Explore Samsung Bottom Mount Fridge & more at Samsung India.",
+        "bullet_features": [],
+        "specifications": {},
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-553820039",
+            "type": "main",
+            "position": 1
+          }
+        ],
+        "videos": []
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 16, 2026, 02:46:50 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "RB45DG6005B1TL",
+        "parent_product_id": null,
+        "sku": "RB45DG6005B1",
+        "upc_ean": null,
+        "model_number": null,
+        "product_url": "https://www.samsung.com/in/refrigerators/bottom-mount-freezer/rb6000d-458-l-bmf-bespoke-ai-bmf-refrigerator-458l-black-doi-rb45dg6005b1tl/"
+      },
+      "core": {
+        "title": "458 L Double Door Refrigerator with Bespoke AI, Bottom Mount Freezer, 1â RB45DG6005B1",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Refrigerators",
+          "Bottom mount Freezer",
+          "458 L Double Door Refrigerator with Bespoke AI, Bottom Mount Freezer, 1★ RB45DG6005B1"
+        ],
+        "condition": "new",
+        "introduced_date": "December 9, 2025"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 86990.0,
+        "current_price": 70090.0,
+        "discount_percentage": 19.43,
+        "is_on_sale": true,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Extra wide, less energy\nProactive savings\nMore space inside",
+        "bullet_features": [],
+        "specifications": {
+          "Overview": {
+            "Net Width": "75.90 cm",
+            "Net Case Height with Hinge": "1.78 m",
+            "Net Depth with Door Handle": "71.10 cm",
+            "Net Weight": "80.5 kg",
+            "Cooling Type": "Mono Cooling"
+          },
+          "Capacity": {
+            "Net Total(Liter)": "458 ℓ",
+            "Net for Freezer(Liter)": "168 ℓ",
+            "Net for Fridge(Liter)": "290 ℓ"
+          },
+          "Physical specification": {
+            "Net Dimension (WxHxD)": "75.90 cm x 1.78 m x 71.10 cm",
+            "Net Width": "75.90 cm",
+            "Net Case Height with Hinge": "1.78 m",
+            "Net Case Height without Hinge": "1.75 m",
+            "Net Depth with Door Handle": "71.10 cm",
+            "Net Depth without Door Handle": "71.10 cm",
+            "Net Depth without Door": "62.60 cm",
+            "Packing Dimension (WxHxD)": "80.30 cm x 1.86 m x 74.70 cm",
+            "Net Weight": "80.5 kg",
+            "Packing Weight(kg)": "87 kg",
+            "20/40/40H (Container)": "21/42/42 EA"
+          },
+          "Cooling Feature": {
+            "No Frost": "Yes",
+            "Power Cool Function": "Yes",
+            "Power Freeze Function": "Yes",
+            "Cooling Type": "Mono Cooling"
+          },
+          "Refrigerator Feature": {
+            "Metal Cooling Duct": "No",
+            "Deodorizer": "Yes",
+            "Number of Shelf (Total)": "3 EA",
+            "Multi Tray": "No",
+            "Number of Door Pocket": "5 EA",
+            "Egg Container(Egg Tray)": "Yes",
+            "Interior LED Light": "Top LED",
+            "Number of Vegetable&Fruit Drawer": "1"
+          },
+          "Freezer Feature": {
+            "Number of Shelf (Total)": "1 EA",
+            "Number of Drawer": "2 EA",
+            "Icemaker": "Twist Ice Maker"
+          },
+          "General Feature": {
+            "Door Reversible": "Yes",
+            "Door Alarm": "Yes",
+            "Refrigerant": "R-600a"
+          },
+          "Exterior Feature": {
+            "Display Type": "Internal",
+            "Door Handle": "Recess",
+            "Colour": "BLACK DOI"
+          },
+          "Performance": {
+            "Climate Class": "T"
+          },
+          "Energy": {
+            "Energy Grade": "1 Star"
+          },
+          "Smart": {
+            "Wi-Fi Embedded": "Yes"
+          },
+          "App Connectivity": {
+            "SmartThings App Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Thai Samsung Electronics Co. Ltd., 313 Moo 1 Sukhaphiban 8 Rd Sriracha Industry Park T.Bung A.Sriracha Chonburi Thailand 20230",
+            "Country of Origin": "Thailand",
+            "Imported by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110002",
+            "Launch date": "January 12 th , 2026"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-553820039",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-553820025",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-553820042",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550420430",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550420432",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550420431",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550420433",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550420434",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550420435",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550420436",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550420437",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550749769",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-550602911",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-553820043",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550420438",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550420440",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-551837491",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-551837670",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550420439",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550420441",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550420442",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550420443",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550420444",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550420445",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-550749771",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://www.youtube.com/watch?v=GAxuKa2lri8",
+            "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-551837491",
+            "duration_seconds": null
+          },
+          {
+            "video_id": "vid_002",
+            "url": "https://www.youtube.com/watch?v=E8BbLBIp_aU",
+            "thumbnail_url": "https://images.samsung.com/is/image/samsung/p6pim/in/rb45dg6005b1tl/gallery/in-bottom-mount-freezer-smartthings-ai-energy-mode-and-spacemax-technology-rb45dg6005b1tl-thumb-551837670",
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
+      "scraped_at": "November 16, 2026, 02:46:54 PM IST",
+      "schema_version": "2.0.0"
+    },
+    "product": {
+      "identifiers": {
+        "platform_product_id": "RT80H51C2BHL",
+        "parent_product_id": null,
+        "sku": "RT80H51C2B",
+        "upc_ean": null,
+        "model_number": null,
+        "product_url": "https://www.samsung.com/in/refrigerators/double-door/bespoke-refrigerator-tmf-convertible-5in1-bespoke-ai-double-door-refrigerator-467l-black-rt80h51c2bhl/"
+      },
+      "core": {
+        "title": "467 L Double Door Refrigerator with Bespoke AI, 2â RT80H51C2B",
+        "brand": "Samsung",
+        "manufacturer": "Samsung Electronics",
+        "category_path": [
+          "Home Appliances",
+          "Refrigerators",
+          "Double Door",
+          "467 L Double Door Refrigerator with Bespoke AI, 2★ RT80H51C2B"
+        ],
+        "condition": "new",
+        "introduced_date": "December 12, 2025"
+      },
+      "pricing_and_availability": {
+        "currency": "INR",
+        "list_price": 90999.0,
+        "current_price": 71190.0,
+        "discount_percentage": 21.77,
+        "is_on_sale": true,
+        "b2b_price_tiers": [],
+        "moq": 1,
+        "in_stock": true,
+        "stock_status_text": null,
+        "fulfillment": {
+          "is_platform_fulfilled": true,
+          "free_shipping": null,
+          "estimated_delivery_days": null
+        },
+        "financing": {
+          "no_cost_emi_available": false,
+          "emi_starting_per_month": null,
+          "no_cost_emi_offers": []
+        }
+      },
+      "content_and_specs": {
+        "short_description": "Buy Online 467 L Double Door Refrigerator ith Bespoke Ai Rt80H51C2Bhl ,Explore Specs, Features, And Purchasing Information & Shop Refrigerators At Samsung India.",
+        "bullet_features": [
+          "Image",
+          "Video",
+          "Layer popup open",
+          "English",
+          "German",
+          "French",
+          "Spanish",
+          "Portuguese",
+          "Italian",
+          "Korean",
+          "Chinese",
+          "Japanese"
+        ],
+        "specifications": {
+          "Overview": {
+            "Net Total(Liter)": "467 L",
+            "Net Dimension (WxHxD)": "70.00 cm x 1.82 m x 79.40 cm",
+            "Net Weight": "79.5 kg"
+          },
+          "Capacity": {
+            "Net Total(Liter)": "467 L",
+            "Net for Freezer(Liter)": "107 L",
+            "Net for Refrigerator(Liter)": "360 L"
+          },
+          "Physical specification": {
+            "Net Dimension (WxHxD)": "70.00 cm x 1.82 m x 79.40 cm",
+            "Packing Dimension (WxHxD)": "74.60 cm x 1.92 m x 83.50 cm",
+            "Net Weight": "79.5 kg",
+            "Packing Weight(kg)": "87.5 kg",
+            "20/40/40H (Container)": "18/42/42 EA"
+          },
+          "Cooling Feature": {
+            "No Frost": "Yes",
+            "Multi Flow": "Yes",
+            "Cooling Type": "Twin Cooling"
+          },
+          "Refrigerator Feature": {
+            "Number of Shelf (Total)": "3 EA",
+            "Shelf Material": "Tempered Glass",
+            "Number of Vegetable&Fruit Drawer": "1 EA",
+            "Number of Door Pocket": "4 EA",
+            "Egg Container(Egg Tray)": "Yes",
+            "Fresh room": "Yes",
+            "Interior LED Light": "Top LED",
+            "Active Fresh Filter+": "Yes"
+          },
+          "Freezer Feature": {
+            "Icemaker": "Twist Ice Maker",
+            "Shelf Material": "Plastic",
+            "Number of Shelf (Total)": "1 EA",
+            "Number of Door Pocket": "2 EA"
+          },
+          "General Feature": {
+            "Compressor": "Digital Inverter Comperssor"
+          },
+          "Exterior Feature": {
+            "Door Type": "Flat Door",
+            "Display Type": "Internal",
+            "Door Handle": "Recess",
+            "Colour": "Black Glass"
+          },
+          "Performance": {
+            "Climate Class": "T"
+          },
+          "Energy": {
+            "Energy Star Rating": "2 Star"
+          },
+          "Smart": {
+            "Wi-Fi Embedded": "Yes"
+          },
+          "App Connectivity": {
+            "SmartThings App Support": "Yes"
+          },
+          "Manufacturer’s Information": {
+            "Manufactured by": "Samsung India Electronics Pvt. Ltd. having its Registered Office at: 6th Floor, DLF Centre, Sansad Marg, New Delhi-110001",
+            "Country of Origin": "India",
+            "Launch date": "January 30 th , 2026"
+          }
+        },
+        "included_items": [],
+        "variants": [],
+        "b2b_customization": {
+          "oem_odm_available": false,
+          "custom_logo": false,
+          "custom_packaging": false
+        }
+      },
+      "media": {
+        "images": [
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-550459680",
+            "type": "main",
+            "position": 1
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-550459672",
+            "type": "gallery",
+            "position": 2
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/energylabel/in-energylabel-product-rt80h51c2bhl-553849680",
+            "type": "gallery",
+            "position": 3
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/energylabel/in-energylabel-rt80h51c2bhl-553849677",
+            "type": "gallery",
+            "position": 4
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-550459671",
+            "type": "gallery",
+            "position": 5
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-550459669",
+            "type": "gallery",
+            "position": 6
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-550459670",
+            "type": "gallery",
+            "position": 7
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-550459668",
+            "type": "gallery",
+            "position": 8
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-550459667",
+            "type": "gallery",
+            "position": 9
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-550459665",
+            "type": "gallery",
+            "position": 10
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-550459666",
+            "type": "gallery",
+            "position": 11
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-551864999",
+            "type": "gallery",
+            "position": 12
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/energylabel/in-energylabel-product-rt80h51c2bhl-thumb-553849681",
+            "type": "gallery",
+            "position": 13
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/energylabel/in-energylabel-rt80h51c2bhl-thumb-553849679",
+            "type": "gallery",
+            "position": 14
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-550459679",
+            "type": "gallery",
+            "position": 15
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-550459678",
+            "type": "gallery",
+            "position": 16
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-550459677",
+            "type": "gallery",
+            "position": 17
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-550459676",
+            "type": "gallery",
+            "position": 18
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-550459675",
+            "type": "gallery",
+            "position": 19
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-550459673",
+            "type": "gallery",
+            "position": 20
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-550459674",
+            "type": "gallery",
+            "position": 21
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/rt80h51c2bhl/gallery/in-bespoke-refrigerator-tmf-convertible-5in1-573931-rt80h51c2bhl-thumb-551865003",
+            "type": "gallery",
+            "position": 22
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165948097/in-feature-beautiful--intelligent--flexible-546246792",
+            "type": "gallery",
+            "position": 23
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/165948097/in-feature-beautiful--intelligent--flexible-546246793",
+            "type": "gallery",
+            "position": 24
+          },
+          {
+            "url": "https://images.samsung.com/is/image/samsung/p6pim/in/feature/166049249/in-feature--nbsp-546061069",
+            "type": "gallery",
+            "position": 25
+          }
+        ],
+        "videos": [
+          {
+            "video_id": "vid_001",
+            "url": "https://images.samsung.com/is/content/samsung/p6pim/in/feature/166049249/in-feature--nbsp-546061067.mp4",
+            "thumbnail_url": null,
+            "duration_seconds": null
+          }
+        ]
+      },
+      "seller": {
+        "seller_id": null,
+        "seller_name": "Samsung Official Store",
+        "store_url": "https://www.samsung.com/in/",
+        "is_official_brand_store": true,
+        "is_verified_seller": true,
+        "years_active": null,
+        "seller_rating": null,
+        "on_time_delivery_rate": null,
+        "response_rate": null
+      }
+    }
+  },
+  {
+    "metadata": {
+      "platform": "samsung",
+      "marketplace_type": "D2C",
+      "region": "IN",
       "scraped_at": "November 12, 2026, 03:13:13 PM IST",
       "schema_version": "2.0.0"
     },
