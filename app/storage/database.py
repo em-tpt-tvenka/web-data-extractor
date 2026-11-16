@@ -6,11 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from app.core.config import settings
 
-# Motor clients are bound to the event loop that first uses them. The API and the
-# Celery worker (which calls asyncio.run per job) run on different loops, so a
-# client is cached per loop to avoid "attached to a different loop" errors.
 _clients: dict[int, AsyncIOMotorClient] = {}
-
 
 def get_client() -> AsyncIOMotorClient:
     loop = asyncio.get_event_loop()
@@ -23,10 +19,8 @@ def get_client() -> AsyncIOMotorClient:
         _clients[key] = client
     return client
 
-
 def get_db() -> AsyncIOMotorDatabase:
     return get_client()[settings.mongo_db]
-
 
 async def ensure_indexes() -> None:
     db = get_db()
@@ -35,7 +29,6 @@ async def ensure_indexes() -> None:
     await db.records.create_index("source.platform")
     await db.records.create_index("deduplication.content_hash")
     await db.records.create_index("provenance.collection_run_id")
-    # Dedup lookup: reuse an existing _id for the same source item on re-runs.
     await db.records.create_index(
         [("tenant.tenant_id", 1), ("source.platform", 1), ("source.source_item_id", 1)]
     )

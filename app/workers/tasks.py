@@ -7,11 +7,9 @@ from app.workers.celery_app import celery_app
 
 _log = get_logger("worker")
 
-
 async def _run(job_id: str) -> None:
     await ensure_indexes()
     await Orchestrator().run_job(job_id)
-
 
 @celery_app.task(name="scraping.run_job", bind=True)
 def run_scrape_job(self, job_id: str) -> str:

@@ -7,13 +7,13 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-
 class Platform(str, Enum):
-    amazon = "amazon"
     alibaba = "alibaba"
+    amazon = "amazon"
+    flipkart = "flipkart"
+    samsung = "samsung"
     bestbuy = "bestbuy"
     walmart = "walmart"
-
 
 class SortBy(str, Enum):
     relevance = "relevance"
@@ -22,19 +22,14 @@ class SortBy(str, Enum):
     rating = "rating"
     newest = "newest"
 
-
 class DateRangeType(str, Enum):
-    monthly = "monthly"          # last 1 month
-    quarterly = "quarterly"      # last 3 months
-    last_1_year = "last_1_year"  # last 12 months
-    last_2_years = "last_2_years"  # last 24 months
-    custom = "custom"            # explicit start_date..end_date
-
+    monthly = "monthly"
+    quarterly = "quarterly"
+    last_1_year = "last_1_year"
+    last_2_years = "last_2_years"
+    custom = "custom"
 
 class DateRange(BaseModel):
-    """Review date-filter window. For every type except ``custom`` the window is
-    computed relative to today; ``custom`` requires start_date and end_date."""
-
     type: DateRangeType = DateRangeType.last_1_year
     start_date: date | None = None
     end_date: date | None = None
@@ -48,7 +43,6 @@ class DateRange(BaseModel):
                 raise ValueError("start_date cannot be after end_date")
         return self
 
-
 class SearchParams(BaseModel):
     product: str = Field(min_length=1)
     category: str | None = None
@@ -56,7 +50,6 @@ class SearchParams(BaseModel):
     keywords: list[str] = Field(default_factory=list)
     marketplace: str = Field(min_length=1)
     language: str | None = None
-
 
 class CommonFilters(BaseModel):
     min_price: Decimal | None = Field(default=None, ge=0)
@@ -74,7 +67,6 @@ class CommonFilters(BaseModel):
             raise ValueError("min_price cannot be greater than max_price")
         return self
 
-
 class ScrapingOptions(BaseModel):
     max_products: int = Field(default=20, ge=1, le=500)
     max_pages: int = Field(default=1, ge=0, le=50)
@@ -82,11 +74,7 @@ class ScrapingOptions(BaseModel):
     review_pages_per_product: int = Field(default=1, ge=0, le=50)
     date_range: DateRange = Field(default_factory=DateRange)
 
-
 class TrackingOptions(BaseModel):
-    """History-tracking behaviour. No longer accepted as API input: tracking is
-    always enabled and configured in code via DEFAULT_TRACKING below."""
-
     save_history: bool = True
     track_price_changes: bool = True
     track_availability_changes: bool = True
@@ -95,16 +83,8 @@ class TrackingOptions(BaseModel):
     track_seller_changes: bool = True
     track_specification_changes: bool = True
 
-
-# Hardcoded, always-on tracking config used by the history layer. Kept in code
-# (not request input) so every job tracks the same way.
 DEFAULT_TRACKING = TrackingOptions()
 
-
-# Example request body for the API docs, written in field-priority order:
-# platform first, then what to search, how to filter, how much to scrape, and
-# finally platform-specific options. Taxonomy is NOT included: it is derived
-# during scraping and stored on the output records, not supplied by the caller.
 _REQUEST_EXAMPLE = {
     "platform": "alibaba",
     "search": {
@@ -139,7 +119,6 @@ _REQUEST_EXAMPLE = {
     },
 }
 
-
 class ScrapeJobRequest(BaseModel):
     platform: Platform
     search: SearchParams
@@ -169,7 +148,6 @@ class ScrapeJobRequest(BaseModel):
     def options_for_platform(self) -> dict[str, Any]:
         return self.platform_options.get(self.platform.value, {})
 
-
 class JobStatus(str, Enum):
     pending = "pending"
     queued = "queued"
@@ -177,13 +155,11 @@ class JobStatus(str, Enum):
     completed = "completed"
     failed = "failed"
 
-
 class JobCreatedResponse(BaseModel):
     job_id: str
     status: JobStatus
     platform: Platform
     created_at: datetime
-
 
 class JobStatusResponse(BaseModel):
     job_id: str

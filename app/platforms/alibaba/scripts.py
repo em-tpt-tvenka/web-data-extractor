@@ -1,10 +1,3 @@
-"""Browser-context JavaScript executed via Playwright page.evaluate().
-
-These are the extraction routines that read Alibaba's rendered DOM and its
-embedded detail payload (window.detailData.globalData). Kept as module-level
-constants so the engine stays readable and the scripts are easy to diff.
-"""
-
 REVIEWS_JS = r"""
 () => {
     const tabs = {};

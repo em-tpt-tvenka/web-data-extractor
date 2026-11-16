@@ -17,10 +17,8 @@ from app.storage.repositories.record_repository import RecordRepository
 
 _log = get_logger("orchestrator")
 
-
 def _now() -> datetime:
     return datetime.now(timezone.utc)
-
 
 class Orchestrator:
     def __init__(self) -> None:
@@ -50,7 +48,6 @@ class Orchestrator:
             written = await self.records.upsert_many(records)
             summary = quality_checker.summarize(records)
 
-            # Isolated per-platform JSON + Excel export of this run's records.
             exports = self.local.export_records(request.platform.value, job_id, records)
 
             await self.jobs.mark_status(
@@ -70,15 +67,6 @@ class Orchestrator:
     async def _assign_identity(
         self, records: list[SocialMentionRecord], request: ScrapeJobRequest
     ) -> None:
-        """Identifier Management layer. Stamps platform-independent tenant/project
-        identity and derives report scopes, and resolves each record's _id so that
-        re-scraping the same review reuses its id (dedup by platform +
-        source_item_id) instead of creating a duplicate.
-
-        The platform mapper leaves tenant unassigned and generates a candidate
-        uuid7 _id; here we keep that id for new records and reuse the stored id for
-        records already seen. Runs before deduplication so canonical ids line up.
-        """
         if not records:
             return
 
@@ -99,7 +87,7 @@ class Orchestrator:
             sid = record.source.source_item_id
             existing = assigned.get(sid)
             if existing is None:
-                assigned[sid] = record.id  # keep the mapper's fresh uuid7
+                assigned[sid] = record.id
             else:
                 record.id = existing
                 reused += 1

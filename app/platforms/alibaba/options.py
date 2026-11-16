@@ -12,12 +12,10 @@ from app.schemas.config_schema import (
     ValidationRule,
 )
 
-
 class SupplierType(str, Enum):
     manufacturer = "manufacturer"
     trading_company = "trading_company"
     all = "all"
-
 
 class AlibabaOptions(BaseModel):
     verified_supplier_only: bool = False
@@ -39,7 +37,6 @@ class AlibabaOptions(BaseModel):
         ):
             raise ValueError("min_order_quantity cannot exceed max_order_quantity")
         return self
-
 
 def config_schema() -> PlatformConfigSchema:
     fields = [

@@ -4,7 +4,6 @@ from collections import Counter
 
 from app.schemas.record import SocialMentionRecord
 
-
 def summarize(records: list[SocialMentionRecord]) -> dict:
     status = Counter(r.quality.status for r in records)
     dup = Counter(r.deduplication.duplicate_status for r in records)

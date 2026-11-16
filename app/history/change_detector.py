@@ -1,1 +1,1 @@
-"""Change detection between snapshots."""
+

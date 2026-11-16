@@ -5,7 +5,6 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-
 class FieldType(str, Enum):
     boolean = "boolean"
     integer = "integer"
@@ -14,11 +13,9 @@ class FieldType(str, Enum):
     enum = "enum"
     array = "array"
 
-
 class FieldOption(BaseModel):
     value: str
     label: str
-
 
 class ValidationRule(BaseModel):
     required: bool = False
@@ -26,7 +23,6 @@ class ValidationRule(BaseModel):
     maximum: float | None = None
     min_length: int | None = None
     max_length: int | None = None
-
 
 class ConfigField(BaseModel):
     name: str
@@ -37,7 +33,6 @@ class ConfigField(BaseModel):
     options: list[FieldOption] = Field(default_factory=list)
     item_type: FieldType | None = None
     validation: ValidationRule = Field(default_factory=ValidationRule)
-
 
 class PlatformConfigSchema(BaseModel):
     platform: str

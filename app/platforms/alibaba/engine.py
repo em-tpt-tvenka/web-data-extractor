@@ -1,18 +1,3 @@
-"""Alibaba scraping engine (Playwright).
-
-Ported from the standalone scraper and refactored so that:
-  * all tunables arrive through EngineConfig (no module-level globals, no
-    user-supplied URLs — search is always keyword-built);
-  * per-run state (supplier-feedback cache, concurrency guards) lives on the
-    instance, so a long-lived worker can run many jobs without cross-talk;
-  * it returns in-memory raw models instead of writing CSV/JSON/Mongo — output
-    and normalization are the caller's responsibility.
-
-The engine performs real browser automation against alibaba.com and never
-bypasses login, CAPTCHA, or anti-bot controls; a CAPTCHA pauses the run for
-manual solving in the visible browser.
-"""
-
 from __future__ import annotations
 
 import asyncio
@@ -51,8 +36,8 @@ _SORT_MAP = {
     "relevance": "relevance",
     "price_asc": "price-asc",
     "price_desc": "price-desc",
-    "rating": "relevance",   # Alibaba trade search has no rating sort
-    "newest": "relevance",   # nor a true "newest" sort
+    "rating": "relevance",
+    "newest": "relevance",
 }
 _PAGE_KEYS = ("pageno", "pagenum", "page", "currentpage", "pageindex",
               "beginpage", "curpage", "pagestart", "start")
@@ -71,7 +56,6 @@ _FEEDBACK_BLOCK_RE = re.compile(
     r"doubleclick|log\.alibaba|mmstat|/wdm/|hm\.baidu",
     re.I,
 )
-
 
 @dataclass
 class EngineConfig:
@@ -99,7 +83,6 @@ class EngineConfig:
     captcha_wait_seconds: int = 300
     debug_dir: str | None = None
 
-
 def _build_search_url(cfg: EngineConfig, page: int) -> str:
     params: dict[str, str] = {
         "fsb": "y",
@@ -121,7 +104,6 @@ def _build_search_url(cfg: EngineConfig, page: int) -> str:
         params["minQuantity"] = str(cfg.min_quantity)
     params["sortType"] = _SORT_MAP.get(cfg.sort_by, "relevance")
     return "https://www.alibaba.com/trade/search?" + urllib.parse.urlencode(params, safe="%")
-
 
 def _raw_review_items(payload: dict) -> list:
     candidates = []
@@ -145,7 +127,6 @@ def _raw_review_items(payload: dict) -> list:
     if not candidates:
         return []
     return max(candidates, key=len)[:50]
-
 
 def _parse_api_reviews(payload: dict) -> dict | None:
     candidates = []
@@ -221,14 +202,12 @@ def _parse_api_reviews(payload: dict) -> dict | None:
         "_source": "api",
     }
 
-
 def _item_key(it: dict) -> str:
     for k in ("feedbackId", "id", "reviewId", "evaluateId", "gmtCreate", "feedbackTime"):
         v = it.get(k)
         if v:
             return f"{k}:{v}"
     return json.dumps(it, sort_keys=True)[:200]
-
 
 def _next_request(url: str, post_data, page_no: int):
     parsed = urllib.parse.urlparse(url)
@@ -256,12 +235,10 @@ def _next_request(url: str, post_data, page_no: int):
                     return url, urllib.parse.urlencode({k: v[0] for k, v in fqs.items()})
     return None, None
 
-
 def _dom_review_key(r: dict) -> tuple:
     return (str(r.get("reviewer", "")).strip(),
             str(r.get("date", "")).strip(),
             str(r.get("text", ""))[:60].strip())
-
 
 def _dom_review_has_content(r: dict) -> bool:
     media = r.get("review_media", {})
@@ -269,12 +246,10 @@ def _dom_review_has_content(r: dict) -> bool:
             or r.get("date", "N/A") != "N/A" or r.get("stars", "N/A") != "N/A"
             or media.get("images") or media.get("videos"))
 
-
 def _feedback_key(r: dict) -> tuple:
     return (str(r.get("reviewer", "")).strip(),
             str(r.get("date", "")).strip(),
             str(r.get("text", ""))[:60].strip())
-
 
 def _feedback_first_id(items: list) -> str | None:
     for r in items:
@@ -282,13 +257,11 @@ def _feedback_first_id(items: list) -> str | None:
             return f'{r.get("reviewer", "")}|{r.get("date", "")}'
     return None
 
-
 def _classify_review_tab(label: str) -> str:
     low = label.lower()
     if any(k in low for k in ("store", "supplier", "company", "seller")):
         return "store_reviews"
     return "product_reviews"
-
 
 def _build_model(r: dict, ts: str) -> dict:
     pid = product_id_from_href(r["href"])
@@ -328,16 +301,13 @@ def _build_model(r: dict, ts: str) -> dict:
         "is_sponsored": r.get("is_sponsored", False),
     }
 
-
 class AlibabaEngine:
     def __init__(self, cfg: EngineConfig):
         self.cfg = cfg
-        self.pages_processed = 0  # actual search-result pages processed
+        self.pages_processed = 0
         self._feedback_cache: dict = {}
         self._feedback_inflight: dict = {}
         self._feedback_sem = asyncio.Semaphore(max(1, cfg.feedback_concurrency))
-
-    # ── Browser helpers ──────────────────────────────────────────────────
 
     async def _new_context(self, browser):
         return await browser.new_context(
@@ -431,8 +401,6 @@ class AlibabaEngine:
             await asyncio.sleep(2)
         _log.info("event=captcha_cleared")
 
-    # ── Search-page extraction ───────────────────────────────────────────
-
     async def _extract_page(self, page: Page) -> list[dict]:
         payload = await page.evaluate(scripts.EXTRACT_JS)
         items = payload["items"]
@@ -445,8 +413,6 @@ class AlibabaEngine:
                   payload["selector"], payload["count"], len(items))
         ts = datetime.now(timezone.utc).isoformat()
         return [_build_model(r, ts) for r in items]
-
-    # ── Review extraction ────────────────────────────────────────────────
 
     async def _wait_review_anchors(self, page) -> None:
         try:
@@ -645,8 +611,6 @@ class AlibabaEngine:
                 except Exception:
                     pass
         return await self._paginate_review_dom(page, block, tab_count)
-
-    # ── Supplier feedback page ───────────────────────────────────────────
 
     async def _feedback_route(self, route):
         try:
@@ -990,8 +954,6 @@ class AlibabaEngine:
                 await page.close()
             except Exception:
                 pass
-
-    # ── Orchestration ────────────────────────────────────────────────────
 
     async def run(self) -> list[dict]:
         cfg = self.cfg

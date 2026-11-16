@@ -1,11 +1,3 @@
-"""Pure, side-effect-free parsing and validation helpers for Alibaba data.
-
-Everything here is deterministic and unit-testable: no browser, no network, no
-I/O. The guiding rule is the same as the original scraper — never fabricate a
-value. When the correct value cannot be established from source evidence the
-result is null with an explicit status, and raw input is preserved.
-"""
-
 from __future__ import annotations
 
 import hashlib
@@ -15,10 +7,7 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
-# ── Identity ────────────────────────────────────────────────────────────────
-
 _BAD_NAMES = {"", "n/a", "na", "null", "none", "-", "unknown"}
-
 
 def product_id_from_href(href: str) -> str:
     m = re.search(r"_(\d{8,})(?:\.html|$|\?)", href)
@@ -31,14 +20,10 @@ def product_id_from_href(href: str) -> str:
     clean = href.split("?")[0].rstrip("/")
     return hashlib.md5(clean.encode()).hexdigest()[:16]
 
-
 def _norm_name(name: Any) -> str:
     return re.sub(r"\s+", " ", str(name or "").strip().lower())
 
-
 def resolve_supplier_identity(company_id, card_name, detail_name) -> dict:
-    """Stable supplier identity derived from the real company id, else a hash of
-    the real company name, else None — never a hash of 'N/A'."""
     real_name = detail_name if _norm_name(detail_name) not in _BAD_NAMES else card_name
     norm = _norm_name(real_name)
 
@@ -63,14 +48,10 @@ def resolve_supplier_identity(company_id, card_name, detail_name) -> dict:
         "raw": {"card_name": card_name, "detail_name": detail_name},
     }
 
-
-# ── Dates ───────────────────────────────────────────────────────────────────
-
 _DATE_FORMATS = (
     "%b %d, %Y", "%B %d, %Y", "%b %d %Y", "%B %d %Y",
     "%Y-%m-%d", "%Y/%m/%d", "%d %b %Y", "%d %B %Y",
 )
-
 
 def parse_posted_date(s: str | None):
     if not s or s == "N/A":
@@ -95,9 +76,6 @@ def parse_posted_date(s: str | None):
             return None
     return None
 
-
-# ── Pricing ─────────────────────────────────────────────────────────────────
-
 _CURRENCY_SYMBOLS = {
     "US$": "USD", "C$": "CAD", "A$": "AUD", "₹": "INR", "$": "USD",
     "€": "EUR", "£": "GBP", "¥": "CNY", "₫": "VND", "₩": "KRW",
@@ -107,19 +85,16 @@ _CURRENCY_WORDS = {
     "rmb": "CNY", "eur": "EUR", "gbp": "GBP",
 }
 
-
 def _to_decimal(num: str):
     try:
         return Decimal(num.replace(",", "").strip())
     except (InvalidOperation, ValueError, AttributeError):
         return None
 
-
 def dec_num(d):
     if not isinstance(d, Decimal):
         return None
     return int(d) if d == d.to_integral_value() else float(d)
-
 
 def parse_price(raw) -> dict:
     out = {
@@ -158,7 +133,6 @@ def parse_price(raw) -> dict:
         out["price_extraction_status"] = "parsed"
     return out
 
-
 _UNIT_SINGULAR = {
     "pieces": "piece", "pcs": "piece", "pc": "piece", "sets": "set", "units": "unit",
     "kilograms": "kilogram", "kgs": "kilogram", "kg": "kilogram", "tons": "ton",
@@ -166,7 +140,6 @@ _UNIT_SINGULAR = {
     "boxes": "box", "bags": "bag", "rolls": "roll", "cartons": "carton",
     "dozens": "dozen", "acres": "acre", "liters": "liter", "litres": "liter",
 }
-
 
 def parse_moq(raw) -> dict:
     out = {
@@ -189,19 +162,14 @@ def parse_moq(raw) -> dict:
     out["moq_extraction_status"] = "parsed"
     return out
 
-
-# ── Images ──────────────────────────────────────────────────────────────────
-
 _ICON_RE = re.compile(
     r"\.svg(\?|$)|/flags?/|/common/|/mobile/|tps-\d{1,3}-\d{1,3}\.|"
     r"-55-tps-|-56-tps-|icon|sprite|placeholder|avatar",
     re.I,
 )
 
-
 def _is_icon(u: str) -> bool:
     return not u or not u.startswith("http") or bool(_ICON_RE.search(u))
-
 
 def classify_images(card_images, product_media, supplier_logo) -> dict:
     pm_imgs = (product_media or {}).get("images") or []
@@ -235,9 +203,6 @@ def classify_images(card_images, product_media, supplier_logo) -> dict:
         "image_extraction_status": status,
     }
 
-
-# ── Model number / brand validation ─────────────────────────────────────────
-
 _MODEL_JUNK = {
     "number", "no", "no.", "num", "num.", "model", "model number",
     "n/a", "na", "-", "null", "none", "",
@@ -254,7 +219,6 @@ _GENERIC_BRANDS = {
     "no brand", "nobrand", "unbranded", "other", "others", "customized", "custom", "",
 }
 
-
 def sanitize_model_number(v):
     if v in (None, "", "N/A"):
         return None
@@ -263,10 +227,8 @@ def sanitize_model_number(v):
         return None
     return s
 
-
 def _norm_ident(s) -> str:
     return re.sub(r"\s+", " ", str(s or "").strip()).lower()
-
 
 def _cpu_spec_values(specs: dict) -> list[str]:
     out = []
@@ -275,7 +237,6 @@ def _cpu_spec_values(specs: dict) -> list[str]:
         if ("processor" in kl or "cpu" in kl) and v not in (None, "", "N/A"):
             out.append(str(v))
     return out
-
 
 def _model_candidates(ex: dict) -> list[tuple[str, str]]:
     cands: list[tuple[str, str]] = []
@@ -291,7 +252,6 @@ def _model_candidates(ex: dict) -> list[tuple[str, str]]:
             break
     return cands
 
-
 def _is_cpu_value(model: str, cpu_values: list[str]) -> str | None:
     nm = _norm_ident(model)
     if not nm:
@@ -306,10 +266,7 @@ def _is_cpu_value(model: str, cpu_values: list[str]) -> str | None:
                 return cv
     return None
 
-
 def validate_model_number(ex: dict) -> dict:
-    """Establish the model number from source evidence, rejecting a CPU value
-    masquerading as the model. The CPU is never substituted."""
     specs = ex.get("specifications") or {}
     cpu_values = _cpu_spec_values(specs)
     raw_cands = _model_candidates(ex)
@@ -355,7 +312,6 @@ def validate_model_number(ex: dict) -> dict:
             "candidates": all_values, "reason": reason, "collides_with": None,
             "confidence": confidence}
 
-
 def sanitize_brand(v) -> dict:
     if v in (None, "", "N/A"):
         return {"value": None, "status": "missing_on_source", "raw": None,
@@ -365,9 +321,6 @@ def sanitize_brand(v) -> dict:
         return {"value": None, "status": "not_verified", "raw": s,
                 "reason": f"generic value {s!r}; consumer brand not established"}
     return {"value": s, "status": "available", "raw": s, "reason": None}
-
-
-# ── Reviews ─────────────────────────────────────────────────────────────────
 
 _UI_NOISE_RE = re.compile(
     r"^(what are you looking for|all categories|know your supplier|search|sort by|"
@@ -383,7 +336,6 @@ _UI_NOISE_RE = re.compile(
 _TAGBAR_RE = re.compile(r"^(?:[\w ]+\(\d+\))(?:\s*[\w ]+\(\d+\)){1,}$")
 _REPLY_RE = re.compile(r"(?i)supplier'?s?\s*repl(?:y|ies)\s*:?\s*")
 
-
 def split_supplier_reply(text):
     if not isinstance(text, str):
         return text, None
@@ -394,13 +346,11 @@ def split_supplier_reply(text):
     reply = text[m.end():].strip() or None
     return customer, reply
 
-
 def _looks_like_ui(text) -> bool:
     t = str(text or "").strip()
     if not t or t == "N/A":
         return False
     return bool(_UI_NOISE_RE.match(t)) or bool(_TAGBAR_RE.match(t))
-
 
 def parse_stars(raw):
     if raw in (None, "", "N/A"):
@@ -414,7 +364,6 @@ def parse_stars(raw):
     v = round(float(m.group(1)))
     return v if 1 <= v <= 5 else None
 
-
 def dedupe(seq) -> list:
     seen, out = set(), []
     for x in seq or []:
@@ -422,7 +371,6 @@ def dedupe(seq) -> list:
             seen.add(x)
             out.append(x)
     return out
-
 
 def validate_review(item: dict) -> dict:
     warnings: list[str] = []
@@ -460,7 +408,6 @@ def validate_review(item: dict) -> dict:
     )
     return {"valid": bool(has_content), "rating": rating, "warnings": warnings,
             "clean_reviewer": clean_reviewer, "clean_country": clean_country}
-
 
 def review_quality(block: dict | None, tab_count: int, complete: bool = False) -> dict:
     if block is None:
@@ -503,9 +450,7 @@ def review_quality(block: dict | None, tab_count: int, complete: bool = False) -
             "extracted": extracted, "valid": valid_n, "rejected": rejected_n,
             "missing_ratings": missing_ratings, "warnings": warnings[:20]}
 
-
 def normalize_native_item(it: dict) -> dict:
-    """Map one raw Alibaba feedback object onto the normalized review shape."""
     def pick(*keys, default="N/A"):
         for k in keys:
             v = it.get(k)

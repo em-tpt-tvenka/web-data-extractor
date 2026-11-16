@@ -2,10 +2,7 @@ from __future__ import annotations
 
 from app.schemas.record import SocialMentionRecord
 
-
 def apply_deduplication(records: list[SocialMentionRecord]) -> list[SocialMentionRecord]:
-    """Mark duplicate status within a batch by content hash. The first record
-    seen for a hash is canonical; later records with the same hash point to it."""
     canonical_by_hash: dict[str, str] = {}
     for record in records:
         content_hash = record.deduplication.content_hash

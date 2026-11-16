@@ -1,11 +1,3 @@
-"""Map raw Alibaba engine models to the unified social-mention schema.
-
-One record is emitted per extracted review (product reviews and store/supplier
-reviews). A product with no extractable reviews yields a single listing record
-so the product is still represented. Nothing is fabricated: fields the source
-does not provide are left null.
-"""
-
 from __future__ import annotations
 
 import hashlib
@@ -26,8 +18,6 @@ from app.platforms.categories import (
 
 PLATFORM = "alibaba"
 
-# Placeholder tenant; the identifier layer (orchestrator) assigns the real,
-# provisioned tenant/project before validation and output.
 _UNASSIGNED = "__unassigned__"
 from app.schemas.record import (
     AuthorBlock,
@@ -77,10 +67,8 @@ _COUNTRY_NAME_TO_CODE = {
     "vietnam": "VN", "indonesia": "ID", "turkey": "TR", "mexico": "MX",
 }
 
-
 def _now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
-
 
 def _country_code(value) -> str | None:
     if not value or str(value).strip() in ("", "N/A"):
@@ -90,15 +78,12 @@ def _country_code(value) -> str | None:
         return s.upper()
     return _COUNTRY_NAME_TO_CODE.get(s.lower())
 
-
 def _iso_date(value) -> str | None:
     d = parsing.parse_posted_date(value)
     return d.isoformat() if d else None
 
-
 def _hash(*parts: str) -> str:
     return hashlib.sha256("|".join(p or "" for p in parts).encode()).hexdigest()
-
 
 def _spec_lookup(specs: dict, *needles: str):
     for key, val in (specs or {}).items():
@@ -106,7 +91,6 @@ def _spec_lookup(specs: dict, *needles: str):
         if any(n in kl for n in needles) and val not in (None, "", "N/A"):
             return str(val)
     return None
-
 
 def _parse_capacity(specs: dict) -> Capacity | None:
     raw = _spec_lookup(specs, "capacity", "volume")
@@ -118,7 +102,6 @@ def _parse_capacity(specs: dict) -> Capacity | None:
     unit = m.group(2).lower()
     unit = {"l": "litre", "liter": "litre"}.get(unit, unit)
     return Capacity(value=float(m.group(1)), unit=unit)
-
 
 def _parse_warranty(raw) -> WarrantyBlock | None:
     if not raw or str(raw).strip() in ("", "N/A"):
@@ -134,10 +117,7 @@ def _parse_warranty(raw) -> WarrantyBlock | None:
         return None
     return WarrantyBlock(duration_months=months, warranty_type=wtype)
 
-
 class _ProductContext:
-    """Normalized, reusable view of one raw product model."""
-
     def __init__(self, model: dict, request: ScrapeJobRequest):
         pd = model["product_details"]
         ex = model.get("product_ex") or {}
@@ -148,8 +128,6 @@ class _ProductContext:
         self.scraped_at = pd["scraped_at"]
         self.is_sponsored = model.get("is_sponsored", False)
 
-        # Always extract everything: specifications, images, seller details and
-        # reviews are no longer gated by request flags.
         self.specs = ex.get("specifications") or {}
         brand = parsing.sanitize_brand(ex.get("brand"))
         self.brand = brand["value"]
@@ -245,7 +223,6 @@ class _ProductContext:
             retailer = RetailerEntity(retailer_id=self.supplier_id, retailer_name=self.supplier_name)
         return EntitiesBlock(brands=brands, products=products, retailer=retailer)
 
-
 def _currency_from_pattern(pattern) -> str | None:
     if not pattern:
         return None
@@ -254,12 +231,7 @@ def _currency_from_pattern(pattern) -> str | None:
             return code
     return None
 
-
 def _taxonomy(request: ScrapeJobRequest) -> TaxonomyBlock:
-    # Taxonomy is not supplied by the caller. It is derived from the search
-    # context during scraping and stored on the record. For now the product
-    # category comes from the search; industry/subcategory/product_type are left
-    # for a later classification step.
     category = request.search.category
     has_values = bool(category)
     return TaxonomyBlock(
@@ -271,33 +243,22 @@ def _taxonomy(request: ScrapeJobRequest) -> TaxonomyBlock:
         mapping_status="mapped" if has_values else "unmapped",
     )
 
-
 def _campaign(request: ScrapeJobRequest) -> CampaignBlock:
-    # Campaign is no longer an API input (pending confirmation from Nagarjuna).
-    # The block is still emitted with null values so the output schema is stable.
     return CampaignBlock()
 
-
 def _placeholder_tenant() -> TenantBlock:
-    # Real tenant/project are assigned by the identifier layer; the platform
-    # mapper never provisions tenant identity itself.
     return TenantBlock(tenant_id=_UNASSIGNED, project_id=_UNASSIGNED)
-
 
 def _media_items(images, videos) -> list[MediaItem]:
     items = [MediaItem(media_type="image", url=u) for u in parsing.dedupe(images)]
     items += [MediaItem(media_type="video", url=u) for u in parsing.dedupe(videos)]
     return items
 
-
 def _source_item_id(review: dict, kind: str, reviewer, review_date, text) -> str:
-    """Preserve the platform's original review id when present; otherwise a
-    clearly-marked content-derived fallback. Never uses the product id."""
     original = review.get("review_id") or review.get("id")
     if original not in (None, "", "N/A"):
         return str(original)
     return "gen:" + _hash(kind, reviewer or "", review_date or "", (text or "")[:80])
-
 
 def _review_record(
     ctx: _ProductContext, review: dict, kind: str,
@@ -338,8 +299,6 @@ def _review_record(
         ),
         content=ContentBlock(
             text=text,
-            # Detected from the actual text; the requested search language does
-            # not override it. No translation is performed.
             language=language,
             original_language=language,
             content_type=content_type,
@@ -350,8 +309,6 @@ def _review_record(
         product_attributes=ctx.product_attributes(),
         commercial=ctx.commercial(),
         metrics=MetricsBlock(
-            # Individual review rating only; product-level aggregates are not
-            # copied onto a single review.
             rating=RatingMetric(value=rating) if rating is not None else None,
         ),
         author=AuthorBlock(
@@ -379,12 +336,9 @@ def _review_record(
         ),
     )
 
-
 def _listing_record(
     ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
 ) -> SocialMentionRecord:
-    # A listing is a product-level record, so its source item id is the product
-    # id (appropriate here); the _id is still an independent uuid7.
     source_item_id = ctx.offer_id
     content_hash = identifiers.content_hash(ctx.offer_id, ctx.subject or "")
     record_id = identifiers.record_id(PLATFORM)
@@ -400,9 +354,6 @@ def _listing_record(
             source_item_id=source_item_id,
             source_url=ctx.product_url,
             collected_at=ctx.scraped_at,
-            # Supplier country is used for filtering only, not stored here: the
-            # source/location country denotes reviewer location, which a product
-            # listing has none of.
             country_code=None,
             marketplace=request.search.marketplace,
         ),
@@ -436,16 +387,12 @@ def _listing_record(
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
     )
 
-
 def build_records(
     model: dict, request: ScrapeJobRequest, run_id: str
 ) -> list[SocialMentionRecord]:
     ctx = _ProductContext(model, request)
     records: list[SocialMentionRecord] = []
 
-    # Reviews are always extracted: all review types (product + supplier feedback)
-    # and all available counts. Reviews outside the requested date window are
-    # dropped; reviews without a parseable date are kept (see in_window).
     window = resolve_window(request.scraping_options.date_range)
 
     def _in_range(review: dict) -> bool:
@@ -460,7 +407,7 @@ def build_records(
             return
         try:
             records.append(_review_record(ctx, review, kind, request, run_id))
-        except Exception as exc:  # one malformed review must not abort the product
+        except Exception as exc:
             _log.warning("event=review_map_failed product=%s kind=%s error=%s",
                          ctx.offer_id, kind, exc)
 

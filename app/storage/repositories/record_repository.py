@@ -5,7 +5,6 @@ from pymongo import UpdateOne
 from app.schemas.record import SocialMentionRecord
 from app.storage.database import get_db
 
-
 class RecordRepository:
     @property
     def _col(self):
@@ -14,8 +13,6 @@ class RecordRepository:
     async def existing_ids_by_source(
         self, tenant_id: str, platform: str, source_item_ids: list[str]
     ) -> dict[str, str]:
-        """Map source_item_id -> existing _id for records already stored under the
-        same tenant and platform, so re-runs reuse ids instead of duplicating."""
         ids = [s for s in set(source_item_ids) if s]
         if not ids:
             return {}

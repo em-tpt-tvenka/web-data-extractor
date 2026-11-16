@@ -5,7 +5,6 @@ from app.core.config import settings
 
 _CONFIGURED = False
 
-
 def configure_logging() -> None:
     global _CONFIGURED
     if _CONFIGURED:
@@ -26,7 +25,6 @@ def configure_logging() -> None:
         logging.getLogger(noisy).setLevel(logging.WARNING)
 
     _CONFIGURED = True
-
 
 def get_logger(name: str) -> logging.Logger:
     configure_logging()

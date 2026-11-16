@@ -6,10 +6,8 @@ from typing import Any
 from app.schemas.scraping import JobStatus
 from app.storage.database import get_db
 
-
 def _now() -> datetime:
     return datetime.now(timezone.utc)
-
 
 class JobRepository:
     @property

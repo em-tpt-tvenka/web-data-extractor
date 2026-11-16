@@ -25,10 +25,7 @@ from app.storage.repositories.job_repository import JobRepository
 
 _log = get_logger("job_manager")
 
-# Keep strong references to in-flight inline tasks so they are not garbage
-# collected before completion.
 _INLINE_TASKS: set[asyncio.Task] = set()
-
 
 class JobManager:
     def __init__(self) -> None:
@@ -51,8 +48,6 @@ class JobManager:
         created_at = datetime.now(timezone.utc)
         await self.jobs.create(job_id, platform, request.model_dump(mode="json"))
 
-        # Mark queued before dispatch so the status is persisted first; the
-        # executor then moves it to running/completed.
         await self.jobs.mark_status(job_id, JobStatus.queued)
         try:
             self._dispatch(job_id)
@@ -98,7 +93,6 @@ class JobManager:
 
     @staticmethod
     def _dispatch_inline(job_id: str) -> None:
-        """Run the job in-process on the current event loop (no broker)."""
         task = asyncio.create_task(JobManager._run_inline(job_id))
         _INLINE_TASKS.add(task)
         task.add_done_callback(_INLINE_TASKS.discard)
@@ -109,5 +103,5 @@ class JobManager:
 
         try:
             await Orchestrator().run_job(job_id)
-        except Exception:  # pragma: no cover - defensive; orchestrator self-reports
+        except Exception:
             _log.exception("event=inline_job_crashed job_id=%s", job_id)

@@ -13,7 +13,6 @@ from app.schemas.scraping import ScrapeJobRequest
 
 _log = get_logger("alibaba.adapter")
 
-
 class AlibabaAdapter(PlatformAdapter):
     name = "alibaba"
 
@@ -131,15 +130,10 @@ class AlibabaAdapter(PlatformAdapter):
     def _passes_filters(
         self, model: dict, request: ScrapeJobRequest, options: AlibabaOptions
     ) -> bool:
-        # Rating / review-count gating was removed. Remaining filters use the
-        # supplier's own profile data (not reviewer or product-origin fields), and
-        # exclude a product when the signal cannot be verified rather than guess.
         seller = model.get("seller_native") or {}
         supplier = model.get("supplier_details") or {}
 
         if options.verified_supplier_only:
-            # Alibaba's actual supplier verification badge, not buyer purchase
-            # verification (which lives on author.is_verified_purchase).
             if supplier.get("verification_status") != "Verified":
                 return False
 
@@ -151,7 +145,6 @@ class AlibabaAdapter(PlatformAdapter):
                 return False
 
         if options.supplier_type is not SupplierType.all:
-            # Classify from the supplier's business type, never from name keywords.
             business_type = (seller.get("companyBusinessType") or "").lower()
             needle = "manufacturer" if options.supplier_type is SupplierType.manufacturer else "trading"
             if needle not in business_type:

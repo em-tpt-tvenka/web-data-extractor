@@ -23,14 +23,10 @@ _OPTIONAL_CHECKS = {
     "product_attributes.model_number": lambda r: bool(r.product_attributes.model_number),
 }
 
-
 def _is_relevant(record: SocialMentionRecord) -> bool:
     if record.record_type in LISTING_RECORD_TYPES:
         return bool(record.content.text or record.entities.products)
-    # A review/mention must carry actual textual content to be accepted; a rating
-    # with empty/whitespace-only text is not a valid review.
     return bool(record.content.text and record.content.text.strip())
-
 
 def validate_record(record: SocialMentionRecord) -> SocialMentionRecord:
     errors = [f"missing required field: {name}" for name, check in _REQUIRED.items() if not check(record)]
@@ -50,7 +46,6 @@ def validate_record(record: SocialMentionRecord) -> SocialMentionRecord:
     else:
         record.quality.status = "accepted"
     return record
-
 
 def validate_batch(records: list[SocialMentionRecord]) -> list[SocialMentionRecord]:
     return [validate_record(r) for r in records]

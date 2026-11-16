@@ -11,7 +11,6 @@ from app.storage.database import ensure_indexes
 
 _log = get_logger("app")
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     configure_logging()
@@ -21,9 +20,7 @@ async def lifespan(app: FastAPI):
         _log.warning("event=index_setup_failed error=%s", exc)
     yield
 
-
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
-
 
 @app.exception_handler(AppError)
 async def _app_error_handler(request: Request, exc: AppError) -> JSONResponse:
@@ -32,11 +29,9 @@ async def _app_error_handler(request: Request, exc: AppError) -> JSONResponse:
         content={"error": {"code": exc.code, "message": exc.message}},
     )
 
-
 @app.get("/health", tags=["health"])
 async def health() -> dict[str, str]:
     return {"status": "ok"}
-
 
 for module in (scraping, jobs, platforms):
     app.include_router(module.router, prefix=settings.api_v1_prefix)
