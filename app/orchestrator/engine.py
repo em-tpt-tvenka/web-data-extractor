@@ -48,7 +48,9 @@ class Orchestrator:
             written = await self.records.upsert_many(records)
             summary = quality_checker.summarize(records)
 
-            exports = self.local.export_records(request.platform.value, job_id, records)
+            exports = self.local.export_records(
+                request.platform.value, job_id, records, label=request.search.product
+            )
 
             await self.jobs.mark_status(
                 job_id, JobStatus.completed, finished_at=_now(),

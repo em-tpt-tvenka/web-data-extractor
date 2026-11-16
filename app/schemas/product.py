@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 class BrandEntity(BaseModel):
     brand_id: str | None = None
@@ -10,6 +10,8 @@ class BrandEntity(BaseModel):
     brand_role: str | None = None
 
 class ProductEntity(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     product_id: str | None = None
     product_name: str | None = None
     sku: str | None = None
@@ -31,6 +33,8 @@ class Capacity(BaseModel):
     unit: str | None = None
 
 class ProductAttributesBlock(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+
     model_number: str | None = None
     capacity: Capacity | None = None
     color: str | None = None

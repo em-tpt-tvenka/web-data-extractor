@@ -38,6 +38,15 @@ class Settings(BaseSettings):
     samsung_base_url: str = "https://www.samsung.com/in"
     samsung_bv_api_url: str | None = None
     samsung_bv_passkey: str | None = None
+    # Amazon engine. A separate browser profile so Amazon and Alibaba jobs never
+    # contend for the same Chrome user-data directory. Sign in to Amazon manually
+    # once in this profile to allow full review pages (/product-reviews/), which
+    # Amazon only serves to signed-in sessions; sign-in is never automated.
+    amazon_profile_dir: str | None = str(PROJECT_ROOT / "local_data" / "chrome_amazon_profile")
+    amazon_detail_concurrency: int = 1
+    amazon_max_retries: int = 3
+    amazon_min_delay_seconds: float = 2.0
+    amazon_max_delay_seconds: float = 4.5
 
     raw_data_dir: str = str(PROJECT_ROOT / "local_data" / "raw")
     debug_dir: str = str(PROJECT_ROOT / "local_data" / "debug")

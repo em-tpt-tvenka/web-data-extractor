@@ -43,6 +43,10 @@ class JobManager:
             raise RequestValidationError(
                 f"invalid platform_options for {platform}: {exc.errors()}"
             )
+        try:
+            adapter.validate_request(request)
+        except ValueError as exc:
+            raise RequestValidationError(f"invalid request for {platform}: {exc}")
 
         job_id = identifiers.execution_id(platform)
         created_at = datetime.now(timezone.utc)

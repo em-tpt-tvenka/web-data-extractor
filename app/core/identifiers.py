@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import hashlib
-from uuid import uuid7
+try:
+    from uuid import uuid7  # Python 3.14+
+except ImportError:  # older Pythons: same UUIDv7 from the uuid6 package
+    from uuid6 import uuid7
 
 from app.core.exceptions import PlatformNotSupportedError
 
