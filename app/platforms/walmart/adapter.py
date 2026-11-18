@@ -61,7 +61,7 @@ class WalmartAdapter(PlatformAdapter):
             review_pages_per_product=opts.review_pages_per_product,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
-            chrome_profile_dir=settings.chrome_profile_dir,
+            chrome_profile_dir=settings.profile_for("walmart"),
             nav_timeout_ms=settings.nav_timeout_ms,
             debug_dir=settings.debug_dir,
         )

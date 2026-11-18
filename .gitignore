@@ -12,11 +12,13 @@ venv/
 .env
 
 # Local runtime data (keep the directory layout, ignore contents)
-local_data/raw/*
 local_data/exports/*
-local_data/logs/*
 local_data/debug/*
-local_data/backups/*
 local_data/chrome_scraper_profile/
 local_data/chrome_amazon_profile/
+local_data/profiles/
 !local_data/**/.gitkeep
+
+# Local run-id scratch files (runtime job tracking)
+.run_job_ids.json
+local_data/.*_ids.json

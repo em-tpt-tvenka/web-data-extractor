@@ -9,20 +9,17 @@ Walmart), with normalization, history tracking, and analytics.
 ```
 app/
   main.py                  # FastAPI entry point
-  api/v1/                  # HTTP API (scraping, jobs, products, history, analytics)
-  core/                    # config, logging, exceptions
-  platforms/               # per-platform scraping adapters + registry
-  orchestrator/            # job orchestration, scheduling of scrape runs
-  schemas/                 # Pydantic models (product, offer, review, history)
-  processing/              # normalize, validate, deduplicate, quality-check
-  history/                 # snapshots + change detection
-  storage/                 # database, ORM models, repositories, local storage
-  workers/                 # background workers (optional)
-  scheduler/               # recurring job scheduling (optional)
-  analytics/               # analytics computations
-local_data/                # raw dumps, exports, logs, debug, backups
-migrations/                # database migrations
-tests/                     # unit, adapters, integration, history
+  api/v1/                  # HTTP API (scraping, jobs, platforms)
+  core/                    # config, logging, exceptions, identifiers, periods
+  schemas/                 # Pydantic models (record + offer/product/review/history blocks, scraping)
+  orchestrator/            # job manager, run engine, identity assignment, result aggregation
+  platforms/               # per-platform scrapers + base/registry/categories/common/browser
+    alibaba/ amazon/ flipkart/ samsung/ walmart/ bestbuy/
+  processing/              # normalize, validate, deduplicate, quality-check, language detect
+  storage/                 # database, repositories (jobs/records/provisioning), local export
+  workers/                 # Celery app + background task
+local_data/                # exports, debug dumps, chrome profiles
+docs/                      # USAGE, TECH_STACK, ARCHITECTURE, REQUEST_EXAMPLES
 ```
 
 ## Getting started

@@ -15,6 +15,7 @@ from playwright_stealth import Stealth
 
 from app.core.logging import get_logger
 from app.platforms.alibaba import scripts
+from app.platforms.browser import proxy_settings
 from app.platforms.alibaba.parsing import product_id_from_href
 
 _log = get_logger("alibaba.engine")
@@ -980,10 +981,11 @@ class AlibabaEngine:
                 if cfg.chrome_profile_dir:
                     ctx = await pw.chromium.launch_persistent_context(
                         cfg.chrome_profile_dir, channel=cfg.browser_channel,
-                        headless=cfg.headless, args=launch_args)
+                        headless=cfg.headless, args=launch_args, proxy=proxy_settings())
                 else:
                     browser = await pw.chromium.launch(
-                        headless=cfg.headless, channel=cfg.browser_channel, args=launch_args)
+                        headless=cfg.headless, channel=cfg.browser_channel, args=launch_args,
+                        proxy=proxy_settings())
                     ctx = await self._new_context(browser)
             except Exception as exc:
                 _log.error(

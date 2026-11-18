@@ -121,7 +121,7 @@ class AlibabaAdapter(PlatformAdapter):
             feedback_max_pages=min(opts.review_pages_per_product, settings.feedback_max_pages),
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
-            chrome_profile_dir=settings.chrome_profile_dir,
+            chrome_profile_dir=settings.profile_for("alibaba"),
             nav_timeout_ms=settings.nav_timeout_ms,
             captcha_wait_seconds=settings.captcha_wait_seconds,
             debug_dir=settings.debug_dir,

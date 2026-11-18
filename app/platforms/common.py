@@ -1,11 +1,3 @@
-"""Platform-agnostic helpers shared by platform mappers and parsers.
-
-Everything here is pure and side-effect free. New platforms import from this
-module instead of from another platform's package, so platforms stay isolated
-from each other. (The Alibaba package predates this module and keeps its own
-private copies of a few of these helpers.)
-"""
-
 from __future__ import annotations
 
 import hashlib

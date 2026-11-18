@@ -12,6 +12,7 @@ from playwright.async_api import BrowserContext, Page, async_playwright
 
 from app.core.logging import get_logger
 from app.platforms.amazon import parsing
+from app.platforms.browser import proxy_settings, random_user_agent
 from app.platforms.amazon.options import Marketplace
 
 _log = get_logger("amazon.engine")
@@ -120,6 +121,8 @@ class AmazonEngine:
         opts = dict(
             headless=cfg.headless, locale=mp.locale, timezone_id=mp.timezone,
             viewport={"width": 1440, "height": 900},
+            user_agent=random_user_agent(),
+            proxy=proxy_settings(),
             extra_http_headers={"Accept-Language": mp.accept_language},
             args=["--disable-blink-features=AutomationControlled"],
         )

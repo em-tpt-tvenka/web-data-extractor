@@ -90,7 +90,7 @@ class AmazonAdapter(PlatformAdapter):
             max_delay_seconds=settings.amazon_max_delay_seconds,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
-            profile_dir=settings.amazon_profile_dir,
+            profile_dir=settings.profile_for("amazon"),
             nav_timeout_ms=settings.nav_timeout_ms,
             captcha_wait_seconds=settings.captcha_wait_seconds,
             debug_dir=settings.debug_dir,

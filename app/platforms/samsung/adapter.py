@@ -62,7 +62,7 @@ class SamsungAdapter(PlatformAdapter):
             fetch_reviews=True,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
-            chrome_profile_dir=settings.chrome_profile_dir,
+            chrome_profile_dir=settings.profile_for("samsung"),
             nav_timeout_ms=settings.nav_timeout_ms,
             bv_api_url=settings.samsung_bv_api_url,
             bv_passkey=settings.samsung_bv_passkey,

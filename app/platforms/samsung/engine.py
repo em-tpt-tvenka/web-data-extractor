@@ -9,6 +9,7 @@ from urllib.parse import quote_plus
 from playwright.async_api import Page, async_playwright
 
 from app.core.logging import get_logger
+from app.platforms.browser import proxy_settings, random_user_agent
 from app.platforms.samsung import parsing
 
 _log = get_logger("samsung.engine")
@@ -21,7 +22,11 @@ _STEALTH = """
 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
 window.chrome = { runtime: {} };
 """
-_BLOCK_RE = re.compile(r"captcha|access denied|are you a human|unusual traffic|verify you are human", re.I)
+_BLOCK_RE = re.compile(
+    r"access denied|are you a human|unusual traffic|verify you are human"
+    r"|pardon our interruption|request unsuccessful|access to this page has been denied",
+    re.I,
+)
 
 
 @dataclass
@@ -68,11 +73,12 @@ class SamsungEngine:
                 if cfg.chrome_profile_dir:
                     ctx = await pw.chromium.launch_persistent_context(
                         cfg.chrome_profile_dir, channel=cfg.browser_channel, headless=cfg.headless,
-                        args=launch_args, user_agent=UA, locale="en-IN",
-                        viewport={"width": 1440, "height": 900})
+                        args=launch_args, user_agent=random_user_agent(UA), locale="en-IN",
+                        viewport={"width": 1440, "height": 900}, proxy=proxy_settings())
                 else:
-                    browser = await pw.chromium.launch(headless=cfg.headless, channel=cfg.browser_channel, args=launch_args)
-                    ctx = await browser.new_context(user_agent=UA, locale="en-IN", viewport={"width": 1440, "height": 900})
+                    browser = await pw.chromium.launch(headless=cfg.headless, channel=cfg.browser_channel,
+                                                       args=launch_args, proxy=proxy_settings())
+                    ctx = await browser.new_context(user_agent=random_user_agent(UA), locale="en-IN", viewport={"width": 1440, "height": 900})
             except Exception as exc:
                 _log.error("event=browser_launch_failed error=%s", exc)
                 raise
@@ -191,11 +197,10 @@ class SamsungEngine:
             await page.evaluate("window.scrollBy(0, 900)")
             await page.wait_for_timeout(500)
         html = await self._html(page)
-        if _BLOCK_RE.search(html):
+        model = parsing.parse_product(html, page.url)
+        if not model.get("product_name") and _BLOCK_RE.search(html):
             _log.warning("event=product_blocked url=%s", url[:90])
             return None
-
-        model = parsing.parse_product(html, page.url)
 
         if cfg.fetch_reviews and not model.get("reviews") and cfg.bv_api_url and cfg.bv_passkey:
             model["reviews"] = await self._bazaarvoice(ctx, model.get("product_id"))

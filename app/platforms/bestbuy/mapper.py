@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import date, datetime, timezone
 
 from app.core import identifiers
@@ -12,6 +13,7 @@ from app.schemas.record import (
     AuthorBlock,
     AvailabilityBlock,
     BrandEntity,
+    Capacity,
     CampaignBlock,
     CommercialBlock,
     ContentBlock,
@@ -77,6 +79,38 @@ def _media_items(images, videos) -> list[MediaItem]:
     return items
 
 
+def _find_spec(specs: dict, *names):
+    lowered = {str(k).strip().lower(): v for k, v in (specs or {}).items()}
+    for want in names:
+        v = lowered.get(want.lower())
+        if v not in (None, "", [], {}):
+            return v
+    return None
+
+
+def _capacity(raw) -> Capacity | None:
+    if not raw:
+        return None
+    m = re.search(r"([\d.]+)\s*(cu\.?\s*ft|litre|liter|l\b|ml|kg|g\b|oz|gb|tb)", str(raw), re.I)
+    if not m:
+        return None
+    unit = m.group(2).lower().replace(".", "").replace(" ", "")
+    unit = {"liter": "litre", "l": "litre", "cuft": "cu_ft"}.get(unit, unit)
+    return Capacity(value=float(m.group(1)), unit=unit)
+
+
+def _energy(raw) -> str | None:
+    if not raw:
+        return None
+    s = str(raw).strip()
+    m = re.search(r"([1-5])\s*[- ]?star", s, re.I)
+    if m:
+        return f"{m.group(1)}_star"
+    if re.search(r"yes|certified|true", s, re.I):
+        return "energy_star_certified"
+    return None
+
+
 class _ProductContext:
     def __init__(self, model: dict):
         self.model = model
@@ -86,10 +120,15 @@ class _ProductContext:
         self.description = model.get("description")
         self.scraped_at = model.get("scraped_at") or _now_iso()
         self.brand = model.get("brand")
-        self.model_number = model.get("model_number")
         self.price = model.get("price", {}) or {}
         self.currency = self.price.get("currency") or "USD"
         self.ratings = model.get("ratings", {}) or {}
+        self.specs = model.get("specifications", {}) or {}
+        self.model_number = model.get("model_number") or _find_spec(
+            self.specs, "Model Number", "Model", "Manufacturer Model Number")
+        self.color = _find_spec(self.specs, "Color", "Colour", "Finish")
+        self.capacity = _capacity(_find_spec(self.specs, "Capacity", "Total Capacity", "Storage Capacity"))
+        self.energy_rating = _energy(_find_spec(self.specs, "Energy Star Certified", "Energy Rating", "ENERGY STAR Certified"))
 
     def entities(self) -> EntitiesBlock:
         brands = [BrandEntity(brand_name=self.brand)] if self.brand else []
@@ -103,7 +142,10 @@ class _ProductContext:
     def product_attributes(self) -> ProductAttributesBlock:
         return ProductAttributesBlock(
             model_number=self.model_number,
-            specifications=self.model.get("specifications", {}) or {},
+            capacity=self.capacity,
+            color=self.color,
+            energy_rating=self.energy_rating,
+            specifications=self.specs,
         )
 
     def commercial(self) -> CommercialBlock:

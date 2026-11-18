@@ -59,7 +59,7 @@ class BestBuyAdapter(PlatformAdapter):
             fetch_reviews=True,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
-            chrome_profile_dir=settings.chrome_profile_dir,
+            chrome_profile_dir=settings.profile_for("bestbuy"),
             nav_timeout_ms=settings.nav_timeout_ms,
             debug_dir=settings.debug_dir,
         )

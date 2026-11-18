@@ -8,7 +8,10 @@ from dataclasses import dataclass, field
 
 from playwright.async_api import Page, async_playwright
 
+from app.core.config import settings
 from app.core.logging import get_logger
+from app.platforms import net_routing
+from app.platforms.browser import random_user_agent
 from app.platforms.walmart import parsing
 
 _log = get_logger("walmart.engine")
@@ -75,22 +78,14 @@ class WalmartEngine:
         launch_args = ["--disable-blink-features=AutomationControlled", "--start-maximized"]
 
         async with async_playwright() as pw:
-            browser = None
-            mode = "persistent_profile" if cfg.chrome_profile_dir else "fresh_context"
-            _log.info("event=browser_launching mode=%s channel=%s headless=%s", mode, cfg.browser_channel, cfg.headless)
-            try:
-                if cfg.chrome_profile_dir:
-                    ctx = await pw.chromium.launch_persistent_context(
-                        cfg.chrome_profile_dir, channel=cfg.browser_channel, headless=cfg.headless,
-                        args=launch_args, user_agent=UA, locale="en-US", viewport={"width": 1440, "height": 900})
-                else:
-                    browser = await pw.chromium.launch(headless=cfg.headless, channel=cfg.browser_channel, args=launch_args)
-                    ctx = await browser.new_context(user_agent=UA, locale="en-US", viewport={"width": 1440, "height": 900})
-            except Exception as exc:
-                _log.error("event=browser_launch_failed error=%s", exc)
-                raise
-            await ctx.add_init_script(_STEALTH)
-            _log.info("event=browser_launched mode=%s", mode)
+            async def _on_context(c):
+                await c.add_init_script(_STEALTH)
+
+            ctx, browser, route = await net_routing.open_routed_context(
+                pw, "walmart", headless=cfg.headless, channel=cfg.browser_channel,
+                profile_dir=cfg.chrome_profile_dir, user_agent=random_user_agent(UA),
+                launch_args=launch_args, on_context=_on_context)
+            _log.info("event=browser_launched route=%s", route.value)
 
             try:
                 products = await self._search(ctx)
@@ -143,10 +138,10 @@ class WalmartEngine:
                 except Exception as exc:
                     _log.warning("event=search_page_failed page=%d error=%s", page_no, exc)
                     continue
-                body = await self._text(page)
-                if _BLOCK_RE.search(body):
-                    _log.warning("event=search_blocked page=%d (captcha/verification)", page_no)
-                    break
+                if _BLOCK_RE.search(await self._text(page)):
+                    if not await self._wait_manual_solve(page):
+                        _log.warning("event=search_blocked page=%d (captcha/verification)", page_no)
+                        break
                 self.pages_processed += 1
                 props = await self._next_data(page)
                 items = parsing.search_items(props)
@@ -190,8 +185,9 @@ class WalmartEngine:
         await page.wait_for_timeout(2500)
         body = await self._text(page)
         if _BLOCK_RE.search(body):
-            _log.warning("event=product_blocked id=%s", base.get("product_id"))
-            return None
+            if not await self._wait_manual_solve(page):
+                _log.warning("event=product_blocked id=%s", base.get("product_id"))
+                return None
 
         props = await self._next_data(page)
         product_data = ((props.get("initialData") or {}).get("data") or {}).get("product") or {}
@@ -265,6 +261,23 @@ class WalmartEngine:
         except Exception as exc:
             _log.warning("event=next_data_failed error=%s", exc)
         return {}
+
+    async def _wait_manual_solve(self, page: Page) -> bool:
+        if self.cfg.headless:
+            return False
+        deadline = settings.captcha_wait_seconds
+        _log.warning("event=captcha_wait seconds=%d msg=solve the challenge in the browser window", deadline)
+        waited = 0
+        while waited < deadline:
+            await page.wait_for_timeout(5000)
+            waited += 5
+            try:
+                if not _BLOCK_RE.search(await self._text(page)):
+                    _log.info("event=captcha_cleared waited=%ds", waited)
+                    return True
+            except Exception:
+                pass
+        return False
 
     async def _text(self, page: Page) -> str:
         try:
