@@ -150,8 +150,10 @@ class SamsungEngine:
                     await page.wait_for_timeout(900)
                 html = await self._html(page)
                 self.pages_processed += 1
-                if not _BLOCK_RE.search(html):
-                    for u in parsing.search_result_urls(html, page.url, base):
+                # if not _BLOCK_RE.search(html):
+                #     for u in parsing.search_result_urls(html, page.url, base):
+                urls = parsing.search_result_urls(html, page.url, base)
+                for u in urls:
                         add(u)
                         if cfg.max_products > 0 and len(found) >= cfg.max_products:
                             break
@@ -198,12 +200,12 @@ class SamsungEngine:
             await page.wait_for_timeout(500)
         html = await self._html(page)
         model = parsing.parse_product(html, page.url)
-        if not model.get("product_name") and _BLOCK_RE.search(html):
-            _log.warning("event=product_blocked url=%s", url[:90])
-            return None
-
-        if cfg.fetch_reviews and not model.get("reviews") and cfg.bv_api_url and cfg.bv_passkey:
-            model["reviews"] = await self._bazaarvoice(ctx, model.get("product_id"))
+        # if not model.get("product_name") and _BLOCK_RE.search(html):
+        #     _log.warning("event=product_blocked url=%s", url[:90])
+        #     return None
+        if model and model.get("product_name"):
+             if cfg.fetch_reviews and not model.get("reviews") and cfg.bv_api_url and cfg.bv_passkey:
+                        model["reviews"] = await self._bazaarvoice(ctx, model.get("product_id"))
         return model
 
     async def _bazaarvoice(self, ctx, product_id: str | None) -> list[dict]:
