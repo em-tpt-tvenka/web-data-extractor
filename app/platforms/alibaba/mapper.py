@@ -1,13 +1,22 @@
 from __future__ import annotations
 
-import hashlib
 import re
-from datetime import datetime, timezone
 
 from app.core import identifiers
 from app.core.logging import get_logger
 from app.core.periods import in_window, resolve_window
 from app.platforms.alibaba import parsing
+from app.platforms.common import (
+    clean_text,
+    country_code,
+    empty_campaign,
+    is_blank,
+    media_items,
+    now_iso,
+    placeholder_tenant,
+    sha_hash,
+    warranty_months,
+)
 from app.processing.language import detect_language
 from app.platforms.categories import (
     RECORD_TYPE_LISTING,
@@ -18,13 +27,11 @@ from app.platforms.categories import (
 
 PLATFORM = "alibaba"
 
-_UNASSIGNED = "__unassigned__"
 from app.schemas.record import (
     AuthorBlock,
     AvailabilityBlock,
     BrandEntity,
     Capacity,
-    CampaignBlock,
     CommercialBlock,
     ContentBlock,
     DeduplicationBlock,
@@ -32,7 +39,6 @@ from app.schemas.record import (
     EntitiesBlock,
     LifecycleBlock,
     LocationBlock,
-    MediaItem,
     MetricsBlock,
     MoneyAmount,
     PaymentOptionsBlock,
@@ -48,7 +54,6 @@ from app.schemas.record import (
     SocialMentionRecord,
     SourceBlock,
     TaxonomyBlock,
-    TenantBlock,
     WarrantyBlock,
 )
 from app.schemas.scraping import ScrapeJobRequest
@@ -59,31 +64,9 @@ NORMALIZER_VERSION = "1.0.0"
 
 _log = get_logger("alibaba.mapper")
 
-_COUNTRY_NAME_TO_CODE = {
-    "india": "IN", "china": "CN", "united states": "US", "usa": "US",
-    "united kingdom": "GB", "uk": "GB", "germany": "DE", "france": "FR",
-    "italy": "IT", "spain": "ES", "canada": "CA", "australia": "AU",
-    "brazil": "BR", "japan": "JP", "south korea": "KR", "russia": "RU",
-    "vietnam": "VN", "indonesia": "ID", "turkey": "TR", "mexico": "MX",
-}
-
-def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-def _country_code(value) -> str | None:
-    if not value or str(value).strip() in ("", "N/A"):
-        return None
-    s = str(value).strip()
-    if len(s) == 2 and s.isalpha():
-        return s.upper()
-    return _COUNTRY_NAME_TO_CODE.get(s.lower())
-
 def _iso_date(value) -> str | None:
     d = parsing.parse_posted_date(value)
     return d.isoformat() if d else None
-
-def _hash(*parts: str) -> str:
-    return hashlib.sha256("|".join(p or "" for p in parts).encode()).hexdigest()
 
 def _spec_lookup(specs: dict, *needles: str):
     for key, val in (specs or {}).items():
@@ -104,14 +87,10 @@ def _parse_capacity(specs: dict) -> Capacity | None:
     return Capacity(value=float(m.group(1)), unit=unit)
 
 def _parse_warranty(raw) -> WarrantyBlock | None:
-    if not raw or str(raw).strip() in ("", "N/A"):
+    if is_blank(raw):
         return None
     text = str(raw)
-    months: int | None = None
-    m = re.search(r"(\d+(?:\.\d+)?)\s*(year|yr|month|mo)", text, re.I)
-    if m:
-        value = float(m.group(1))
-        months = int(value * 12) if m.group(2).lower().startswith(("year", "yr")) else int(value)
+    months = warranty_months(text)
     wtype = "manufacturer" if re.search(r"manufactur", text, re.I) else None
     if months is None and wtype is None:
         return None
@@ -168,6 +147,9 @@ class _ProductContext:
             (model.get("seller_native") or {}).get("companyRegisterCountry")
             or model["supplier_details"].get("country")
         )
+        # Source country is the supplier's registered country (where the offer
+        # originates), not the reviewer's location.
+        self.supplier_country_code = country_code(self.supplier_country)
 
         prns = model.get("product_review_summary_native") or {}
         card_rating = parsing.parse_stars(model["reviews"]["product_reviews"].get("rating"))
@@ -243,22 +225,11 @@ def _taxonomy(request: ScrapeJobRequest) -> TaxonomyBlock:
         mapping_status="mapped" if has_values else "unmapped",
     )
 
-def _campaign(request: ScrapeJobRequest) -> CampaignBlock:
-    return CampaignBlock()
-
-def _placeholder_tenant() -> TenantBlock:
-    return TenantBlock(tenant_id=_UNASSIGNED, project_id=_UNASSIGNED)
-
-def _media_items(images, videos) -> list[MediaItem]:
-    items = [MediaItem(media_type="image", url=u) for u in parsing.dedupe(images)]
-    items += [MediaItem(media_type="video", url=u) for u in parsing.dedupe(videos)]
-    return items
-
 def _source_item_id(review: dict, kind: str, reviewer, review_date, text) -> str:
     original = review.get("review_id") or review.get("id")
-    if original not in (None, "", "N/A"):
+    if not is_blank(original):
         return str(original)
-    return "gen:" + _hash(kind, reviewer or "", review_date or "", (text or "")[:80])
+    return "gen:" + sha_hash(kind, reviewer or "", review_date or "", text or "")
 
 def _review_record(
     ctx: _ProductContext, review: dict, kind: str,
@@ -269,8 +240,9 @@ def _review_record(
     text = (text or "").strip()
     text = None if text in ("", "N/A") else text
     language = detect_language(text)
+    text = clean_text(text)
     media = review.get("media") or review.get("review_media") or {}
-    media_items = _media_items(media.get("images", []), media.get("videos", []))
+    media_list = media_items(media.get("images", []), media.get("videos", []))
 
     reviewer = review.get("reviewer")
     reviewer = None if reviewer in (None, "", "N/A") else reviewer
@@ -284,7 +256,7 @@ def _review_record(
     return SocialMentionRecord(
         _id=record_id,
         record_type=RECORD_TYPE_MENTION,
-        tenant=_placeholder_tenant(),
+        tenant=placeholder_tenant(),
         source=SourceBlock(
             platform=PLATFORM,
             channel=channel,
@@ -294,7 +266,7 @@ def _review_record(
             parent_item_id=ctx.offer_id,
             published_at=_iso_date(review_date),
             collected_at=ctx.scraped_at,
-            country_code=_country_code(review.get("country")),
+            country_code=ctx.supplier_country_code,
             marketplace=request.search.marketplace,
         ),
         content=ContentBlock(
@@ -302,7 +274,7 @@ def _review_record(
             language=language,
             original_language=language,
             content_type=content_type,
-            media=media_items,
+            media=media_list,
         ),
         entities=ctx.entities(include_seller=True),
         taxonomy=_taxonomy(request),
@@ -312,23 +284,23 @@ def _review_record(
             rating=RatingMetric(value=rating) if rating is not None else None,
         ),
         author=AuthorBlock(
-            source_author_id_hash=_hash(reviewer) if reviewer else None,
+            source_author_id_hash=sha_hash(reviewer) if reviewer else None,
             display_name=reviewer,
             author_type=author_type,
             is_verified_purchase=bool(review.get("verified_purchase", False)),
         ),
         location=LocationBlock(
-            country_code=_country_code(review.get("country")),
-            location_precision="country",
+            country_code=country_code(review.get("country")),
+            location_precision="country" if country_code(review.get("country")) else None,
         ),
-        campaign=_campaign(request),
+        campaign=empty_campaign(),
         deduplication=DeduplicationBlock(content_hash=content_hash, canonical_record_id=record_id),
         provenance=ProvenanceBlock(
             collection_run_id=run_id,
             connector_name=CONNECTOR_NAME,
             connector_version=CONNECTOR_VERSION,
             normalizer_version=NORMALIZER_VERSION,
-            ingestion_timestamp=_now_iso(),
+            ingestion_timestamp=now_iso(),
         ),
         quality=QualityBlock(),
         lifecycle=LifecycleBlock(
@@ -346,7 +318,7 @@ def _listing_record(
     return SocialMentionRecord(
         _id=record_id,
         record_type=RECORD_TYPE_LISTING,
-        tenant=_placeholder_tenant(),
+        tenant=placeholder_tenant(),
         source=SourceBlock(
             platform=PLATFORM,
             channel="ecommerce_listing",
@@ -354,7 +326,7 @@ def _listing_record(
             source_item_id=source_item_id,
             source_url=ctx.product_url,
             collected_at=ctx.scraped_at,
-            country_code=None,
+            country_code=ctx.supplier_country_code,
             marketplace=request.search.marketplace,
         ),
         content=ContentBlock(
@@ -362,7 +334,7 @@ def _listing_record(
             text=ctx.subject,
             language=detect_language(ctx.subject),
             content_type="product_listing",
-            media=_media_items(ctx.images, ctx.videos),
+            media=media_items(ctx.images, ctx.videos),
         ),
         entities=ctx.entities(include_seller=True),
         taxonomy=_taxonomy(request),
@@ -374,14 +346,14 @@ def _listing_record(
         ),
         author=AuthorBlock(),
         location=LocationBlock(),
-        campaign=_campaign(request),
+        campaign=empty_campaign(),
         deduplication=DeduplicationBlock(content_hash=content_hash, canonical_record_id=record_id),
         provenance=ProvenanceBlock(
             collection_run_id=run_id,
             connector_name=CONNECTOR_NAME,
             connector_version=CONNECTOR_VERSION,
             normalizer_version=NORMALIZER_VERSION,
-            ingestion_timestamp=_now_iso(),
+            ingestion_timestamp=now_iso(),
         ),
         quality=QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),

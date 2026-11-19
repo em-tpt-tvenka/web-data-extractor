@@ -8,6 +8,26 @@ from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 
+from app.platforms import common
+
+# Colour vocabulary used to recover a colour from a product title or URL slug
+# when the specification table does not expose one. Base colours only; marketing
+# compound names (e.g. "Mystic White") resolve to their base colour here, while
+# an explicit specification value is preferred verbatim in the mapper.
+_COLOR_WORDS = {
+    "black", "white", "silver", "gold", "blue", "green", "red", "pink", "purple",
+    "grey", "gray", "graphite", "titanium", "cream", "beige", "navy", "lavender",
+    "mint", "bronze", "copper", "yellow", "orange", "brown", "violet", "burgundy",
+    "charcoal", "sand", "ivory", "rose", "teal", "platinum", "amber", "coral",
+    "khaki", "onyx", "sapphire",
+}
+
+# Values that must never be accepted as a model number regardless of their source.
+_BAD_MODEL_VALUES = {
+    "purchase price", "price", "mrp", "available", "unavailable", "in stock",
+    "out of stock", "yes", "no", "true", "false", "n/a", "na", "none", "model",
+}
+
 NON_SAMSUNG_BRANDS = [
     "apple", "macbook", "mac", "iphone", "ipad", "airpods", "imac", "apple watch",
     "hp", "hewlett packard", "pavilion", "spectre", "envy", "omen", "victus",
@@ -339,6 +359,8 @@ def _specifications(soup: BeautifulSoup, products: list[dict]) -> dict:
         v = re.sub(r"\s+", " ", str(v or "")).strip()
         if not (2 <= len(k) <= 75 and 1 <= len(v) <= 240) or "{{" in k or "{{" in v:
             return
+        if re.search(r"\b(price|purchase|offer|emi|cart|checkout|coupon|cashback|wishlist|buy now|add to)\b", k.lower()):
+            return
         specs.setdefault(section or "General", {}).setdefault(k, v)
 
     for p in products:
@@ -424,7 +446,9 @@ def _reviews_from_json_ld(products: list[dict]) -> tuple[list[dict], dict]:
             author = rev.get("author")
             name = author.get("name") if isinstance(author, dict) else (str(author) if author else None)
             posted = rev.get("datePublished")
+            rid = rev.get("@id") or rev.get("identifier")
             reviews.append({
+                "review_id": str(rid) if rid else None,
                 "rating": _to_number(val),
                 "title": rev.get("name") or rev.get("headline"),
                 "review_text": rev.get("reviewBody") or rev.get("description"),
@@ -440,10 +464,110 @@ def _reviews_from_json_ld(products: list[dict]) -> tuple[list[dict], dict]:
 def _norm_date(raw) -> str | None:
     if not raw:
         return None
+    s = str(raw).split("T")[0].strip()
     try:
-        return date.fromisoformat(str(raw).split("T")[0]).isoformat()
+        return date.fromisoformat(s).isoformat()
     except ValueError:
+        return common.iso_date(raw)
+
+
+def _flat_find(flat: dict, *names) -> str | None:
+    for want in names:
+        for k, v in (flat or {}).items():
+            if k.split(" | ", 1)[-1].strip().lower() == want.lower() and v:
+                return v
+    return None
+
+
+def _valid_model_number(raw) -> str | None:
+    if raw is None or isinstance(raw, bool):
         return None
+    s = re.sub(r"\s+", " ", str(raw)).strip()
+    if not s or s.lower() in _BAD_MODEL_VALUES or s.lower() in _COLOR_WORDS:
+        return None
+    if s[0] in "₹$€£" or re.fullmatch(r"[\d,]+(?:\.\d+)?%?", s):
+        return None
+    if not re.search(r"\d", s):
+        return None
+    if len(s) > 40 or len(s.split()) > 4:
+        return None
+    return s
+
+
+def _model_number(html: str, url: str, products: list[dict], flat: dict) -> str | None:
+    m = re.search(r'digitalData\.product\.model_code\s*=\s*["\']([^"\']+)["\']', html)
+    if m:
+        v = _valid_model_number(m.group(1))
+        if v:
+            return v
+    for key in ("mpn", "sku", "productID", "gtin13"):
+        for p in products:
+            v = _valid_model_number(p.get(key))
+            if v:
+                return v
+    path = url.split("?")[0]
+    # Samsung codes often span two slug segments, e.g. "...-sm-r410nzkainu".
+    m = re.search(r"-([a-z]{2,4}-[a-z0-9]*\d[a-z0-9]*)/?$", path, re.I)
+    if not m:
+        m = re.search(r"-([a-z]{1,4}\d{1,4}[a-z0-9]+)/?$", path, re.I)
+    if m:
+        v = _valid_model_number(m.group(1).upper())
+        if v:
+            return v
+    return _valid_model_number(_flat_find(flat, "Model Number", "Model Code", "Model Name", "Model"))
+
+
+def _color_from_text(text: str | None) -> str | None:
+    if not text:
+        return None
+    words = re.findall(r"[A-Za-z]+", text)
+    found = [w for w in words if w.lower() in _COLOR_WORDS]
+    return found[-1].capitalize() if found else None
+
+
+def _color(flat: dict, title: str | None, url: str | None) -> str | None:
+    spec = _flat_find(flat, "Colour", "Color", "Finish")
+    if spec and not common.is_blank(spec):
+        return common.clean_text(spec)
+    return _color_from_text(title) or _color_from_text((url or "").replace("-", " "))
+
+
+def _source_country(url: str | None) -> str | None:
+    m = re.search(r"https?://[^/]+/([a-z]{2})(?:/|$)", url or "", re.I)
+    return common.country_code(m.group(1)) if m else None
+
+
+def _breadcrumbs(soup: BeautifulSoup) -> list[str]:
+    for script in soup.find_all("script", type="application/ld+json"):
+        raw = (script.string or script.get_text() or "").strip()
+        if not raw:
+            continue
+        try:
+            data = json.loads(raw)
+        except Exception:
+            continue
+        for node in data if isinstance(data, list) else [data]:
+            if not isinstance(node, dict):
+                continue
+            graph = node.get("@graph") if isinstance(node.get("@graph"), list) else [node]
+            for g in graph:
+                if not isinstance(g, dict):
+                    continue
+                t = g.get("@type")
+                types = [t] if isinstance(t, str) else (t if isinstance(t, list) else [])
+                if "BreadcrumbList" not in types:
+                    continue
+                names: list[str] = []
+                for it in g.get("itemListElement") or []:
+                    if not isinstance(it, dict):
+                        continue
+                    nm = it.get("name") or (it.get("item") or {}).get("name") if isinstance(it.get("item"), dict) else it.get("name")
+                    nm = common.clean_text(nm)
+                    if nm and nm.lower() not in ("home", "samsung"):
+                        names.append(nm)
+                if names:
+                    return names
+    return []
 
 
 def parse_product(html: str, url: str) -> dict:
@@ -460,18 +584,26 @@ def parse_product(html: str, url: str) -> dict:
         md = soup.find("meta", attrs={"name": "description"}) or soup.find("meta", property="og:description")
         if md and md.get("content"):
             desc = md["content"].strip()
+    desc = common.clean_text(desc)
     media = _media(html, soup)
+    flat = flatten_specs(specs)
+    name = _product_name(html, soup, products)
     return {
         "url": url,
         "product_id": _product_id(html, url, products),
-        "product_name": _product_name(html, soup, products),
+        "model_number": _model_number(html, url, products, flat),
+        "product_name": name,
         "brand": "Samsung",
         "category": _category(url, products),
+        "color": _color(flat, name, url),
+        "source_country": _source_country(url),
+        "breadcrumbs": _breadcrumbs(soup),
+        "warranty_text": _flat_find(flat, "Warranty", "Warranty Period", "Warranty Information"),
         "description": desc,
         "price": _price(html, soup, products),
         "ratings": agg,
         "specifications": specs,
-        "specifications_flat": flatten_specs(specs),
+        "specifications_flat": flat,
         "images": media["images"],
         "videos": media["videos"],
         "introduced_date": _introduced_date(html, soup, products),
@@ -494,7 +626,9 @@ def parse_bazaarvoice(data: dict, product_id: str) -> list[dict]:
             country = locale[1].upper()
         badges = r.get("Badges") or {}
         badge_low = " ".join(str(b).lower() for b in (badges.keys() if isinstance(badges, dict) else []))
+        rid = r.get("Id") or r.get("ReviewId")
         out.append({
+            "review_id": str(rid) if rid else None,
             "rating": _to_number(r.get("Rating")),
             "title": r.get("Title"),
             "review_text": r.get("ReviewText"),

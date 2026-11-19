@@ -186,7 +186,7 @@ def _source_item_id(review: dict, asin: str) -> str:
     if not is_blank(review.get("review_id")):
         return str(review["review_id"])
     return "gen:" + sha_hash(asin, review.get("reviewer_name") or "", review.get("date") or "",
-                             (review.get("text") or "")[:80])
+                             review.get("text") or "")
 
 
 def _review_record(ctx: _ProductContext, review: dict, request: ScrapeJobRequest,
