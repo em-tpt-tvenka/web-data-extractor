@@ -32,7 +32,10 @@ _BLOCK_MARKERS = (
 # ── Generic helpers ──────────────────────────────────────────────────────────
 
 def soup_of(html: str) -> BeautifulSoup:
-    return BeautifulSoup(html or "", "lxml")
+    try:
+        return BeautifulSoup(html or "", "lxml")
+    except Exception:
+        return BeautifulSoup(html or "", "html.parser")
 
 
 def _text(el) -> str | None:

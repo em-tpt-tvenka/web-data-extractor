@@ -12,10 +12,11 @@ REL_RE = re.compile(r"\b(?:(\d+)|an?)\s*(second|minute|hour|day|week|month|year)
 
 SPEC_HEADERS = {
     "general", "dimensions", "warranty", "connectivity", "display", "camera",
-    "battery", "processor", "multimedia", "sound", "other", "in the box",
+    "battery", "processor", "multimedia", "sound", "other",
     "network & connectivity", "memory & storage", "os & processor",
     "performance", "design", "platform", "storage", "ports", "software",
-    "sensors", "features", "audio", "video",
+    "sensors", "audio", "video", "product details", "key features",
+    "additional features", "composition", "usage details", "safety information",
 }
 SPEC_NOISE = {
     "specifications", "read more", "read less", "view more", "view less",
@@ -168,11 +169,57 @@ def parse_posted_date(text: str):
         return None
 
 
+SPEC_STOP_PATTERNS = [
+    re.compile(r"^similar products\b", re.I),
+    re.compile(r"^trending\b", re.I),
+    re.compile(r"^more about\b", re.I),
+    re.compile(r"^ratings?\s*(?:&|and)\s*reviews\b", re.I),
+    re.compile(r"^customer ratings\b", re.I),
+    re.compile(r"^questions?\s*(?:&|and)\s*answers\b", re.I),
+    re.compile(r"^safe and secure\b", re.I),
+    re.compile(r"^about us\b", re.I),
+    re.compile(r"^contact us\b", re.I),
+    re.compile(r"^flipkart internet\b", re.I),
+    re.compile(r"^terms of use\b", re.I),
+    re.compile(r"^privacy\b", re.I),
+    re.compile(r"^hang on, loading content\b", re.I),
+    re.compile(r"^consumer policy\b", re.I),
+    re.compile(r"^group companies\b", re.I),
+    re.compile(r"^help center\b", re.I),
+    re.compile(r"^become a seller\b", re.I),
+    re.compile(r"^©\s*\d{4}", re.I),
+    re.compile(r"^ad\b", re.I),
+]
+
+SPEC_GARBAGE_KEYS = {
+    "similar products", "trending", "ad", "hang on, loading content",
+    "contact us", "about us", "careers", "flipkart stories", "help",
+    "payments", "shipping", "faq", "security", "privacy", "sitemap",
+    "karnataka, india", "registered office address:", "become a seller",
+    "gift cards", "telephone", "mail us:", "cin : u51109ka2012ptc066107",
+    "group companies", "consumer policy", "epr compliance", "myntra", "shopsy", "cleartrip"
+}
+
+SPEC_ROW_KEYS_NOT_HEADERS = {
+    "in the box", "primary camera features", "secondary camera features",
+    "other display features", "other details", "smart phone", "smartphone"
+}
+
 def is_spec_header(line: str) -> bool:
     l = line.strip().lower()
+    if l in SPEC_ROW_KEYS_NOT_HEADERS:
+        return False
     if l in SPEC_HEADERS:
         return True
-    return bool(re.fullmatch(r"[a-z0-9 &/\-]+ features", l))
+    return bool(re.fullmatch(r"(?:general|display|camera|processor|os & processor|memory & storage|connectivity|call|multimedia|battery & power|audio|video|dimensions|warranty|additional)\s+(?:features|details|specifications)", l))
+
+
+def _is_valid_spec_key(k: str) -> bool:
+    if not k or len(k) <= 1 or len(k) > 80:
+        return False
+    if k.isdigit() or k in {"₹", "•", "a", "t"} or k.lower() in SPEC_GARBAGE_KEYS:
+        return False
+    return True
 
 
 def parse_spec_text(block: str) -> dict:
@@ -181,6 +228,8 @@ def parse_spec_text(block: str) -> dict:
 
     sections, current, buf = [], "General", []
     for l in lines:
+        if any(p.search(l) for p in SPEC_STOP_PATTERNS):
+            break
         if is_spec_header(l):
             sections.append((current, buf))
             current, buf = l.title(), []
@@ -196,13 +245,19 @@ def parse_spec_text(block: str) -> dict:
             line = items[i]
             if ":" in line and not line.endswith(":"):
                 k, _, v = line.partition(":")
-                rows[k.strip()] = v.strip()
+                k_clean = k.strip()
+                if _is_valid_spec_key(k_clean):
+                    rows[k_clean] = v.strip()
                 i += 1
             elif i + 1 < len(items):
-                rows[line] = items[i + 1]
+                k_clean = line
+                if _is_valid_spec_key(k_clean):
+                    rows[k_clean] = items[i + 1]
                 i += 2
             else:
-                rows[line] = ""
+                k_clean = line
+                if _is_valid_spec_key(k_clean):
+                    rows[k_clean] = ""
                 i += 1
         if rows:
             specs.setdefault(name, {}).update(rows)
@@ -333,18 +388,14 @@ def parse_reviews(text: str) -> list:
         body = clean(" ".join(l for l in body_lines if l.lower() not in ("more", "read more", "...")))
 
         reviews.append({
+            "reviewer_name": name,
             "rating": rating,
             "title": title,
             "review_text": body,
-            "variant_reviewed": variant,
-            "variant_reviewed_raw": variant_raw,
-            "reviewer_name": name,
-            "reviewer_location": location,
             "verified_purchase": bool(re.search(r"verified purchase|certified buyer", meta_text, re.I)),
-            "posted_relative": posted_rel,
             "posted_date": posted_date,
+            "posted_relative": posted_rel,
             "helpful_count": helpful,
-            "second_reaction_count": second,
         })
     return reviews
 
@@ -390,49 +441,75 @@ def price_from_text(text: str) -> dict:
     nums = [to_number(x) for x in re.findall(r"₹\s*([\d,]{3,})", window)]
     nums = sorted({n for n in nums if n})
     if len(nums) >= 2:
-        out["mrp"], out["selling"] = nums[-1], nums[0]
+        mrp = nums[-1]
+        # Ignore add-ons/EMI fees that are tiny fractions (< 25%) of the MRP when a higher price exists
+        valid_selling = [n for n in nums[:-1] if n >= mrp * 0.25]
+        selling = valid_selling[0] if valid_selling else nums[0]
+        out["mrp"], out["selling"] = mrp, selling
     return out
 
 
-def extract_manufacturer(text: str, flat: dict) -> dict:
-    out = {k: None for k, _ in MFG_LABELS}
+def _is_invalid_mfg_val(val: str | None) -> bool:
+    if not val:
+        return True
+    v = str(val).strip().lower()
+    if len(v) < 3 or v in SPEC_NOISE:
+        return True
+    if any(s in v for s in ("show more", "read more", "view all", "view more", "all details",
+                            "know more", "details", "manufacturer info", "description",
+                            "features", "dimensions", "display", "camera", "battery", "general")):
+        return True
+    return False
+
+
+def extract_manufacturer(text: str, flat: dict, brand: str | None = None) -> dict | None:
+    out = {}
     for k, names in MFG_SPEC_KEYS.items():
         v = find_spec(flat, *names)
-        if v:
+        if v and not _is_invalid_mfg_val(v):
             out[k] = clean(v)
 
-    lines = [clean(l) for l in text.splitlines() if l.strip()]
-    label_only = re.compile(r"^(?:" + "|".join(rx for _, rx in MFG_LABELS) + r")\s*:?\s*$", re.I)
-    for i, l in enumerate(lines):
-        for key, rx in MFG_LABELS:
-            if out[key]:
-                continue
-            m = re.fullmatch(r"(?:" + rx + r")\s*[:\-]\s*(.+)", l, re.I)
-            if m:
-                val, j = m.group(1).strip(), i + 1
-                while val.endswith(",") and j < len(lines) and j < i + 3 and not label_only.match(lines[j]):
-                    val += " " + lines[j]
-                    j += 1
-                out[key] = val
-                break
-            if re.fullmatch(r"(?:" + rx + r")\s*:?", l, re.I) and i + 1 < len(lines):
-                val = lines[i + 1]
-                if label_only.match(val):
+    if not out:
+        lines = [clean(l) for l in text.splitlines() if l.strip()]
+        label_only = re.compile(r"^(?:" + "|".join(rx for _, rx in MFG_LABELS) + r")\s*:?\s*$", re.I)
+        for i, l in enumerate(lines):
+            for key, rx in MFG_LABELS:
+                if key in out:
                     continue
-                j = i + 2
-                while val.endswith(",") and j < len(lines) and j < i + 4 and not label_only.match(lines[j]):
-                    val += " " + lines[j]
-                    j += 1
-                out[key] = val
-                break
+                m = re.fullmatch(r"(?:" + rx + r")\s*[:\-]\s*(.+)", l, re.I)
+                if m:
+                    val = m.group(1).strip()
+                    if not _is_invalid_mfg_val(val):
+                        out[key] = val
+                        break
+                if re.fullmatch(r"(?:" + rx + r")\s*:?", l, re.I) and i + 1 < len(lines):
+                    val = lines[i + 1]
+                    if not label_only.match(val) and not _is_invalid_mfg_val(val):
+                        out[key] = val
+                        break
 
-    raw = section(
-        text,
-        r"^(?:Manufacturing,?\s*Packaging\s*(?:and|&)\s*Import\s*Info|Manufacturer\s*(?:Info|Details))\s*$",
-        [r"^Ratings & Reviews", r"^Questions and Answers", r"^Safe and Secure"])
-    out["raw_text"] = raw[:1500] or None
-    out["details"] = out["manufactured_by"]
-    out["name"] = out["manufactured_by"].split(",")[0].strip() if out["manufactured_by"] else None
+    # Clean any invalid values that might have slipped through
+    for k in list(out.keys()):
+        if _is_invalid_mfg_val(out[k]):
+            out.pop(k, None)
+
+    if not out:
+        if brand:
+            return {"name": brand, "manufactured_by": brand}
+        return None
+
+    name = out.get("manufactured_by") or out.get("marketed_by")
+    if _is_invalid_mfg_val(name):
+        name = None
+    if not name:
+        name = brand
+    if name:
+        out["name"] = name.split(",")[0].strip()
+    if _is_invalid_mfg_val(out.get("manufactured_by")):
+        if brand:
+            out["manufactured_by"] = brand
+        else:
+            out.pop("manufactured_by", None)
     return out
 
 
@@ -443,8 +520,12 @@ def parse_capacity(s):
     if not m:
         return None
     unit = m.group(2).lower()
-    unit = {"l": "litre", "ltr": "litre", "litres": "litre", "liter": "litre", "liters": "litre",
-            "litre": "litre"}.get(unit, unit)
+    unit = {
+        "l": "litre", "ltr": "litre", "litres": "litre", "liter": "litre", "liters": "litre",
+        "litre": "litre", "gb": "GB", "tb": "TB", "mb": "MB",
+        "ml": "ml", "g": "g", "gm": "g", "grams": "g", "gram": "g",
+        "kg": "kg", "kgs": "kg", "oz": "oz",
+    }.get(unit, unit)
     return {"value": to_number(m.group(1)), "unit": unit}
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import date, datetime, timezone
 
 from app.core import identifiers
@@ -86,14 +87,48 @@ class _ProductContext:
         self.offers = model.get("offers", {}) or {}
         self.policies = model.get("warranty_and_policies", {}) or {}
         self.delivery = model.get("delivery", {}) or {}
+        self.breadcrumbs = model.get("breadcrumbs") or []
 
-        self.model_number = parsing.find_spec(self.flat, "Model Number", "Model Name", "Model")
-        self.color = parsing.find_spec(self.flat, "Color", "Colour")
-        self.capacity = parsing.parse_capacity(
-            parsing.find_spec(self.flat, "Capacity", "Total Capacity", "Refrigerator Capacity"))
+        # Robust extraction for model_number, color, capacity
+        model_num = parsing.find_spec(self.flat, "Model Number", "Model Name", "Model", "Shade Name", "Shade Number", "Shade")
+        if not model_num and self.subject:
+            m = re.search(r"\b(Galaxy\s+[A-Za-z0-9]+|[A-Za-z0-9]+-[A-Za-z0-9]+)\b", self.subject, re.I)
+            if m:
+                model_num = m.group(1).strip()
+            else:
+                m2 = re.search(r"(?:Superstay|Liquid|Matte|Vinyl)\s+([A-Za-z0-9\s]+?)(?:\s+Lipstick|\s+Liquid|\s*$)", self.subject, re.I)
+                if m2:
+                    model_num = m2.group(1).strip()
+        self.model_number = model_num
+
+        color = parsing.find_spec(self.flat, "Color", "Colour", "Shade", "Shade Name")
+        if not color and self.subject:
+            m = re.search(r"\(([^,)]+)(?:,\s*[^)]+)?\)", self.subject)
+            if m:
+                potential_color = m.group(1).strip()
+                if not re.search(r"\d+\s*(?:gb|tb|mb|ram|rom|ml|g|kg)\b", potential_color, re.I):
+                    color = potential_color
+        self.color = color
+
+        capacity_spec = parsing.find_spec(
+            self.flat,
+            "Internal Storage", "Storage", "Capacity", "Total Capacity", "ROM",
+            "Hard Disk Capacity", "SSD Capacity", "Refrigerator Capacity",
+            "Quantity", "Net Quantity", "Volume", "Weight"
+        )
+        if not capacity_spec and self.subject:
+            m = re.search(r"\b(\d+(?:\.\d+)?)\s*(GB|TB|MB|ml|g|gm|kg|ltr|l)\b", self.subject, re.I)
+            if m:
+                capacity_spec = f"{m.group(1)} {m.group(2)}"
+        self.capacity = parsing.parse_capacity(capacity_spec)
+
         self.energy_rating = parsing.parse_energy_rating(
             parsing.find_spec(self.flat, "Energy Rating", "Star Rating", "BEE Rating"))
         self.warranty_months, self.warranty_type = parsing.parse_warranty(model)
+        self.highlights = model.get("features", []) or []
+        raw_variants = model.get("variants")
+        self.variants = raw_variants if raw_variants else []
+        self.manufacturer = model.get("manufacturer") if model.get("manufacturer") else None
 
     def entities(self) -> EntitiesBlock:
         brands = [BrandEntity(brand_name=self.brand)] if self.brand else []
@@ -107,19 +142,62 @@ class _ProductContext:
         )
 
     def product_attributes(self) -> ProductAttributesBlock:
+        specs = dict(self.model.get("specifications", {}) or {})
+
+        # Clean up any non-warranty garbage in Warranty section
+        if "Warranty" in specs and isinstance(specs["Warranty"], dict):
+            clean_warranty = {}
+            for k, v in specs["Warranty"].items():
+                k_lower = k.lower()
+                if any(w in k_lower for w in ("warranty", "service", "covered", "domestic", "international", "period")):
+                    clean_warranty[k] = v
+            if clean_warranty:
+                specs["Warranty"] = clean_warranty
+            else:
+                specs.pop("Warranty", None)
+
+        # Include variants in specification if present (as requested)
+        if self.variants:
+            variant_summary = {}
+            for var_name, var_list in self.variants.items():
+                if isinstance(var_list, list):
+                    opts = [
+                        v.get("option", str(v)) if isinstance(v, dict) else str(v)
+                        for v in var_list
+                    ]
+                    variant_summary[var_name] = ", ".join(opts)
+                elif isinstance(var_list, dict):
+                    variant_summary[var_name] = ", ".join(f"{k}: {v}" for k, v in var_list.items())
+                else:
+                    variant_summary[var_name] = str(var_list)
+            if variant_summary:
+                specs["Available Variants"] = variant_summary
+
         return ProductAttributesBlock(
             model_number=self.model_number,
             capacity=Capacity(**self.capacity) if self.capacity else None,
             color=self.color,
             energy_rating=self.energy_rating,
-            specifications=self.model.get("specifications", {}) or {},
+            highlights=self.highlights,
+            variants=self.variants,
+            manufacturer=self.manufacturer,
+            specifications=specs,
         )
 
     def commercial(self) -> CommercialBlock:
         price = self.price
-        listed = price.get("selling_price")
+        selling = price.get("selling_price")
         original = price.get("mrp")
-        final_selling = price.get("special_deal_price") or listed
+        special = price.get("special_deal_price")
+
+        if special and selling and special < (selling * 0.5):
+            special = None
+
+        final_selling = special or selling
+        listed = original or selling or final_selling
+        if listed and final_selling and listed < final_selling:
+            listed = final_selling
+
         disc_amt = disc_pct = None
         if original and final_selling and original > final_selling:
             disc_amt = round(original - final_selling, 2)
@@ -130,6 +208,11 @@ class _ProductContext:
         is_promo = bool(disc_amt or disc_pct or offers.get("bank_offers"))
         free_delivery = self.delivery.get("free_delivery")
 
+        min_p = final_selling
+        max_p = original if (original and min_p and original >= min_p) else final_selling
+        if min_p is not None and max_p is not None and min_p > max_p:
+            min_p, max_p = max_p, min_p
+
         return CommercialBlock(
             price=PriceBlock(
                 listed_price=_money(listed, self.currency),
@@ -139,8 +222,15 @@ class _ProductContext:
                 discount_percentage=disc_pct,
                 price_type="promotional" if is_promo else "regular",
                 price_observed_at=self.scraped_at,
+                lowest_price_with_offers=_money(special, self.currency) if special else None,
+                offer_discount_amount=price.get("offer_discount_amount"),
+                extra_discount_amount=price.get("extra_discount_amount"),
             ),
-            price_range=PriceRangeBlock(currency=self.currency),
+            price_range=PriceRangeBlock(
+                minimum=min_p,
+                maximum=max_p,
+                currency=self.currency,
+            ),
             promotion=PromotionBlock(
                 is_promotional=is_promo,
                 promotion_type=("discount" if (disc_amt or disc_pct)
@@ -161,13 +251,87 @@ class _ProductContext:
             ),
             warranty=WarrantyBlock(duration_months=self.warranty_months, warranty_type=self.warranty_type)
             if (self.warranty_months or self.warranty_type) else None,
+            offers_detail=offers if offers else None,
         )
 
     def taxonomy(self, request: ScrapeJobRequest) -> TaxonomyBlock:
-        category = request.search.category
-        has = bool(category)
+        crumbs = [c for c in self.breadcrumbs if c and c.lower() != "home"]
+
+        def _infer_industry(text: str) -> str:
+            t = (text or "").lower()
+            if any(w in t for w in ["mobile", "phone", "laptop", "computer", "tv", "television", "headphone", "audio", "camera", "electronic", "gadget", "tablet"]):
+                return "Electronics"
+            if any(w in t for w in ["refrigerator", "washing machine", "air conditioner", "microwave", "appliance"]):
+                return "Home Appliances"
+            if any(w in t for w in ["shirt", "dress", "clothing", "shoe", "footwear", "jeans", "fashion", "apparel"]):
+                return "Fashion"
+            if any(w in t for w in ["beauty", "cosmetic", "perfume", "skincare", "hair", "lipstick", "makeup", "lip", "kajal", "mascara", "foundation", "eyeliner", "nail", "shampoo", "lotion", "cream", "serum"]):
+                return "Beauty & Personal Care"
+            if any(w in t for w in ["furniture", "kitchen", "home decor", "bed"]):
+                return "Home & Kitchen"
+            return "Consumer Goods"
+
+        if crumbs:
+            cat = crumbs[0]
+            subcat = crumbs[1] if len(crumbs) > 1 else None
+            ptype = crumbs[-1] if len(crumbs) > 2 else (subcat or cat)
+            industry = _infer_industry(f"{cat} {subcat or ''} {ptype}")
+            return TaxonomyBlock(
+                industry=industry,
+                category=cat,
+                subcategory=subcat,
+                product_type=ptype,
+                mapping_method="source_breadcrumb",
+                mapping_status="mapped",
+            )
+
+        gen_name = (self.manufacturer or {}).get("generic_name") if self.manufacturer else None
+        search_cat = request.search.category or ""
+        search_query = request.search.product or request.search.search_text or self.subject or ""
+
+        hint = gen_name or search_cat or search_query
+        industry = _infer_industry(hint)
+
+        hint_lower = hint.lower()
+        if "mobile" in hint_lower or "phone" in hint_lower:
+            cat = "Mobiles & Accessories"
+            subcat = "Mobiles"
+            ptype = "Smartphones"
+        elif "laptop" in hint_lower or "computer" in hint_lower:
+            cat = "Computers"
+            subcat = "Laptops"
+            ptype = "Laptops"
+        elif "tv" in hint_lower or "television" in hint_lower:
+            cat = "Televisions"
+            subcat = "Smart TVs"
+            ptype = "Televisions"
+        elif "refrigerator" in hint_lower or "fridge" in hint_lower:
+            cat = "Large Appliances"
+            subcat = "Refrigerators"
+            ptype = "Refrigerators"
+        elif any(w in hint_lower for w in ["lipstick", "makeup", "lip ", "lip gloss", "lip balm", "kajal", "mascara", "foundation", "cosmetic", "beauty"]):
+            cat = "Beauty and Grooming"
+            subcat = "Makeup"
+            ptype = "Lipstick" if ("lipstick" in hint_lower or "lip" in hint_lower) else "Cosmetics"
+        elif gen_name:
+            cat = gen_name
+            subcat = gen_name
+            ptype = gen_name
+        elif search_cat:
+            cat = search_cat
+            subcat = None
+            ptype = search_query or search_cat
+        else:
+            cat = search_query
+            subcat = None
+            ptype = search_query
+
+        has = bool(cat)
         return TaxonomyBlock(
-            category=category,
+            industry=industry if has else None,
+            category=cat if has else None,
+            subcategory=subcat,
+            product_type=ptype,
             mapping_method="search_derived" if has else "unmapped",
             mapping_status="mapped" if has else "unmapped",
         )
@@ -256,6 +420,9 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
     content_hash = identifiers.content_hash(ctx.product_id, ctx.subject or "")
     record_id = identifiers.record_id(PLATFORM)
     rating = ctx.ratings.get("average_rating")
+    total_ratings = ctx.ratings.get("total_ratings")
+    total_reviews = ctx.ratings.get("total_reviews")
+    breakdown = ctx.ratings.get("breakdown") or {}
 
     return SocialMentionRecord(
         _id=record_id,
@@ -268,7 +435,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
             source_item_id=ctx.product_id,
             source_url=ctx.product_url,
             collected_at=ctx.scraped_at,
-            country_code=None,
+            country_code="IN",
             marketplace=request.search.marketplace,
         ),
         content=ContentBlock(
@@ -285,38 +452,39 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         commercial=ctx.commercial(),
         metrics=MetricsBlock(
             rating=RatingMetric(value=rating) if rating is not None else None,
-            review_count=ctx.ratings.get("total_reviews"),
+            review_count=total_reviews,
+            overall_rating=rating,
+            total_ratings=total_ratings,
+            total_reviews=total_reviews,
+            rating_distribution=breakdown,
         ),
         author=AuthorBlock(),
-        location=LocationBlock(),
+        location=None,
         campaign=CampaignBlock(),
         deduplication=DeduplicationBlock(content_hash=content_hash, canonical_record_id=record_id),
         provenance=_provenance(run_id),
         quality=QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
+        review_summary=ctx.model.get("review_summary") or None,
+        reviews=[
+            {
+                "reviewer_name": r.get("reviewer_name"),
+                "rating": r.get("rating"),
+                "title": r.get("title"),
+                "review_text": r.get("review_text"),
+                "verified_purchase": r.get("verified_purchase"),
+                "posted_date": r.get("posted_date"),
+                "posted_relative": r.get("posted_relative"),
+                "helpful_count": r.get("helpful_count"),
+            }
+            for r in (ctx.model.get("reviews") or [])
+        ],
     )
 
 
 def build_records(model: dict, request: ScrapeJobRequest, run_id: str) -> list[SocialMentionRecord]:
     ctx = _ProductContext(model, request)
-    records: list[SocialMentionRecord] = []
-    window = resolve_window(request.scraping_options.date_range)
-
-    for review in model.get("reviews", []) or []:
-        posted = review.get("posted_date")
-        pd = None
-        if posted:
-            try:
-                pd = date.fromisoformat(posted)
-            except ValueError:
-                pd = None
-        if not in_window(pd, window):
-            continue
-        try:
-            records.append(_review_record(ctx, review, request, run_id))
-        except Exception as exc:
-            _log.warning("event=review_map_failed product=%s error=%s", ctx.product_id, exc)
-
-    if not records:
-        records.append(_listing_record(ctx, request, run_id))
-    return records
+    # Always return 1 master product listing record containing in-detail offers,
+    # clean specifications with variants, review summary, and attached customer reviews.
+    # This prevents duplicate record flooding (e.g. 20 copies of product details for 20 reviews).
+    return [_listing_record(ctx, request, run_id)]

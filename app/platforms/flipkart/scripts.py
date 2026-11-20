@@ -142,31 +142,110 @@ JS_HIGHLIGHTS = """
 JS_SPECS_TABLES = """
 () => {
   const specs = {};
+
+  // 1. Check for standard table elements
   document.querySelectorAll('table').forEach(t => {
     const rows = [...t.querySelectorAll('tr')]
-        .map(tr => [...tr.querySelectorAll('td')].map(td => td.innerText.trim()))
+        .map(tr => [...tr.querySelectorAll('td,th')].map(td => td.innerText.trim()))
         .filter(r => r.length >= 2 && r[0]);
     if (!rows.length) return;
     let title = 'General';
     const p = t.previousElementSibling || (t.parentElement && t.parentElement.previousElementSibling);
-    if (p && p.innerText) title = p.innerText.trim().split('\\n')[0] || title;
-    specs[title] = Object.assign(specs[title] || {}, Object.fromEntries(rows.map(r => [r[0], r.slice(1).join(' ')])));
+    if (p && p.innerText) {
+      const line = p.innerText.trim().split('\\n')[0].trim();
+      if (line && line.length < 50) title = line;
+    }
+    for (const r of rows) {
+      const k = r[0];
+      const v = r.slice(1).join(' ').trim();
+      if (k.toLowerCase() === 'description' && v.toLowerCase().includes('manufacturer info')) continue;
+      if (k && v && k.length < 80) {
+        if (!specs[title]) specs[title] = {};
+        specs[title][k] = v;
+      }
+    }
   });
+
+  const totalTableRows = Object.values(specs).reduce((sum, sec) => sum + Object.keys(sec).length, 0);
+  if (totalTableRows >= 2) return specs;
+
+  // 2. Check for modern Flipkart div-based specification rows
+  const heads = [...document.querySelectorAll('div,span,h2,h3,p')]
+      .filter(e => /^(Specifications|Product Details|Specifications & Features|Product Information)$/i.test(e.innerText.trim()));
+
+  for (const h of heads) {
+    let container = h.parentElement;
+    for (let i = 0; i < 7 && container; i++, container = container.parentElement) {
+      const rowCandidates = [...container.querySelectorAll('div.row, div[class*="_1s_Smc"], div[class*="_3k-BhJ"] tr, div[class*="_3k-BhJ"] > div, tr')];
+      if (rowCandidates.length >= 2) {
+        let currentSection = 'General';
+        for (const row of rowCandidates) {
+          const cells = [...row.children].filter(c => c.innerText && c.innerText.trim());
+          if (cells.length === 1 && cells[0].innerText.trim().length < 40) {
+            currentSection = cells[0].innerText.trim();
+          } else if (cells.length >= 2) {
+            const k = cells[0].innerText.trim();
+            const v = cells.slice(1).map(c => c.innerText.trim()).join(' ');
+            if (k.toLowerCase() === 'description' && v.toLowerCase().includes('manufacturer info')) continue;
+            if (k && v && k.length < 80 && !k.toLowerCase().includes('specifications')) {
+              if (!specs[currentSection]) specs[currentSection] = {};
+              specs[currentSection][k] = v;
+            }
+          }
+        }
+        const totalDivRows = Object.values(specs).reduce((sum, sec) => sum + Object.keys(sec).length, 0);
+        if (totalDivRows >= 2) return specs;
+      }
+    }
+  }
+
   return specs;
 }
 """
 
 JS_SPECS_TEXT = """
 () => {
-  const heads = [...document.querySelectorAll('div,span,h2,h3')]
-      .filter(e => e.children.length === 0 && /^Specifications$/i.test(e.textContent.trim()));
+  const heads = [...document.querySelectorAll('div,span,h2,h3,p')]
+      .filter(e => /^(Specifications|Product Details)$/i.test(e.innerText.trim()));
   for (const h of heads) {
     let node = h;
-    for (let i = 0; i < 8 && node; i++, node = node.parentElement) {
-      if (node.innerText && node.innerText.length > 400) return node.innerText;
+    for (let i = 0; i < 7 && node; i++, node = node.parentElement) {
+      let txt = node.innerText || '';
+      if (txt.length > 200) {
+        const specIdx = txt.search(/^(Specifications|Product Details)$/im);
+        if (specIdx !== -1) {
+          txt = txt.slice(specIdx);
+        }
+        const stopIdx = txt.search(/\\n\\s*(Similar Products|Trending|More about|Ratings & Reviews|Customer Ratings|Questions & Answers|Safe and Secure|ABOUT US|Flipkart Internet)/i);
+        if (stopIdx !== -1) {
+          txt = txt.slice(0, stopIdx);
+        }
+        if (txt.length > 100) return txt;
+      }
     }
   }
   return '';
+}
+"""
+
+JS_BREADCRUMBS = """
+() => {
+  const selectors = [
+    'div._75nlfW a',
+    'div._2WhKao a',
+    'div.r2CdBx a',
+    'a._3GIHBu',
+    'a._2whkao',
+    'nav a'
+  ];
+  for (const sel of selectors) {
+    const els = [...document.querySelectorAll(sel)];
+    if (els.length >= 2) {
+      const texts = els.map(e => e.innerText.trim()).filter(t => t && t.toLowerCase() !== 'home' && !t.includes('>'));
+      if (texts.length) return texts;
+    }
+  }
+  return [];
 }
 """
 
@@ -174,20 +253,32 @@ JS_VARIANTS = """
 () => {
   const labels = ['Color','Colour','Storage','RAM','Size','Variant','Pack of','Capacity','Model'];
   const out = {};
-  const leaves = [...document.querySelectorAll('div,span')].filter(e => e.children.length === 0);
+  const leaves = [...document.querySelectorAll('div,span,h2,h3')].filter(e => e.children.length === 0);
   for (const label of labels) {
     const el = leaves.find(e => new RegExp('^' + label + '\\\\s*:?$', 'i').test(e.textContent.trim()));
     if (!el) continue;
     let node = el.parentElement;
-    for (let i = 0; i < 4 && node; i++, node = node.parentElement) {
-      const links = [...node.querySelectorAll('a[href*="/p/itm"]')];
-      if (links.length) {
-        out[label] = links.map(a => ({
-          option: (a.innerText || a.getAttribute('title') || a.querySelector('img')?.alt || '').trim().replace(/\\n+/g, ' '),
-          url: a.href,
-          product_id: (a.href.match(/[?&]pid=([^&]+)/) || [])[1] || null
-        }));
-        break;
+    for (let i = 0; i < 5 && node; i++, node = node.parentElement) {
+      const items = [...node.querySelectorAll('li, a[href*="/p/itm"], div[class*="swatch"], div[class*="Swatch"]')];
+      if (items.length) {
+        const seenOpts = new Set();
+        const opts = [];
+        items.forEach(item => {
+          const a = item.tagName === 'A' ? item : item.querySelector('a');
+          const optText = (item.innerText || item.getAttribute('title') || item.querySelector('img')?.alt || '').trim().replace(/\\n+/g, ' ');
+          if (optText && !seenOpts.has(optText.toLowerCase()) && optText.length < 50) {
+            seenOpts.add(optText.toLowerCase());
+            opts.push({
+              option: optText,
+              url: a ? a.href : null,
+              product_id: a ? ((a.href.match(/[?&]pid=([^&]+)/) || [])[1] || null) : null
+            });
+          }
+        });
+        if (opts.length > 0) {
+          out[label] = opts;
+          break;
+        }
       }
     }
   }
@@ -199,11 +290,12 @@ JS_CLICK_MORE = """
 () => {
   let n = 0;
   document.querySelectorAll('span,a,div,button').forEach(e => {
-    if (e.children.length === 0 && /^(more|read more)$/i.test(e.textContent.trim())) {
-      const a = e.closest('a');
-      const href = a && a.getAttribute('href');
+    const t = (e.innerText || '').trim();
+    if (/^(more|read more|view all|view all specifications|all details|show more|view details)$/i.test(t)) {
+      const target = e.closest('button, a') || e;
+      const href = target.getAttribute && target.getAttribute('href');
       if (href && !href.startsWith('#') && !href.startsWith('javascript')) return;
-      e.click(); n++;
+      try { target.click(); n++; } catch(err) {}
     }
   });
   return n;
