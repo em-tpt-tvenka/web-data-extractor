@@ -98,21 +98,25 @@ class AmazonAdapter(PlatformAdapter):
 
     @staticmethod
     def _passes_filters(model: dict, request: ScrapeJobRequest, options: AmazonOptions) -> bool:
-        detail = model["detail"]
+        price_block = model.get("price", {}) or {}
         # The price refinement is also sent to Amazon; re-check the actual buy-box
         # price because search refinements can admit off-range offers. Products
         # whose price is not shown are kept (cannot be verified either way).
-        price = detail["pricing"]["current_price"]
+        price = price_block.get("special_deal_price") or price_block.get("selling_price")
         f = request.filters
         # Only compare when the page shows the marketplace currency; Amazon can
         # display converted prices, and we never convert to compare.
-        same_currency = detail["pricing"]["currency"] == resolve_marketplace(model["marketplace"]).currency
+        same_currency = price_block.get("currency") == resolve_marketplace(model["marketplace"]).currency
         if price is not None and same_currency:
             if f.min_price is not None and price < float(f.min_price):
                 return False
             if f.max_price is not None and price > float(f.max_price):
                 return False
-        if options.fulfilled_by_amazon_only and detail["seller"].get("fulfilled_by_amazon") is not True:
+        # exclude_keywords are applied by the engine on the search-result title
+        # only. Amazon's full product titles embed the spec list ("16GB RAM/512GB
+        # SSD/..."), so re-checking them would drop every product when keywords
+        # such as "RAM" or "SSD" are used to exclude accessories.
+        if options.fulfilled_by_amazon_only and (model.get("seller") or {}).get("fulfilled_by_amazon") is not True:
             return False  # unknown fulfilment is excluded rather than guessed
         return True
 
@@ -140,7 +144,7 @@ class AmazonAdapter(PlatformAdapter):
                 "verified_reviews_only": options.verified_reviews_only,
             },
             "actual": {
-                "products_extracted": len(models),
+                "products_discovered": len(models),
                 "products_kept": len(kept),
                 "search_pages_processed": engine.pages_processed,
                 "product_failures": engine.failures,

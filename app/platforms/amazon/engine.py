@@ -264,7 +264,10 @@ class AmazonEngine:
     # ── Product + reviews ────────────────────────────────────────────────
 
     async def _collect_review_pages(self, page: Page, asin: str) -> dict:
-        out = {"reviews": [], "pages_checked": 0, "total_reviews": None, "login_required": False}
+        """Paginate /product-reviews/ (Amazon-specific URL and sign-in handling),
+        de-duplicating across pages the way Flipkart's review loop does."""
+        out = {"reviews": [], "pages_checked": 0, "total_reviews": None,
+               "login_required": False, "stop_reason": "reached max pages"}
         seen: set = set()
         for n in range(1, self.cfg.review_pages + 1):
             html = await self._goto(page, build_review_url(self.cfg, asin, n),
@@ -272,18 +275,81 @@ class AmazonEngine:
                                     scroll_steps=2)
             if parsing.is_signin_page(html, page.url):
                 out["login_required"] = True
+                out["stop_reason"] = f"sign-in required on page {n}"
                 break
             out["pages_checked"] += 1
             parsed = await asyncio.to_thread(parsing.parse_review_page, html)
             if out["total_reviews"] is None:
                 out["total_reviews"] = parsed["total_reviews"]
-            fresh = [r for r in parsed["reviews"]
-                     if (r["review_id"] or id(r)) not in seen]
-            seen.update(r["review_id"] or id(r) for r in fresh)
+            fresh = []
+            for r in parsed["reviews"]:
+                key = parsing.review_key(r)
+                if key not in seen:
+                    seen.add(key)
+                    fresh.append(r)
             out["reviews"] += fresh
-            if not fresh or not parsed["has_next"]:
+            if not fresh:
+                out["stop_reason"] = f"no new reviews on page {n}"
+                break
+            if not parsed["has_next"]:
+                out["stop_reason"] = f"last review page ({n})"
                 break
         return out
+
+    async def _scrape_reviews(self, page: Page, data: dict) -> tuple[dict, list[dict]]:
+        """Flipkart-style review step: returns ``(review_summary, reviews)``.
+        Product-page reviews are merged with review-page reviews; review pages
+        need a signed-in session, so without one only product-page reviews remain."""
+        cfg, asin = self.cfg, data["product_id"]
+        ratings = data["ratings"]
+        info = {"reviews": [], "pages_checked": 0, "total_reviews": None,
+                "login_required": False, "stop_reason": "review pages not requested"}
+        has_reviews = bool(data["reviews"]) or bool(ratings["total_ratings"])
+        # Once Amazon has asked an unsigned session to sign in, don't keep
+        # loading review pages for every product; just report it.
+        login_known_required = self.review_login_required > 0 and not self.signed_in
+        if not has_reviews:
+            info["stop_reason"] = "product has no ratings"
+        elif login_known_required:
+            self.review_login_required += 1
+            info.update(login_required=True, stop_reason="sign-in required (known from earlier product)")
+        elif cfg.review_pages > 0:
+            try:
+                info = await self._collect_review_pages(page, asin)
+            except BrowserClosedError:
+                raise
+            except Exception as exc:  # reviews are best-effort; keep the product
+                _log.warning("event=review_pages_failed asin=%s error=%s", asin, exc)
+                info["stop_reason"] = f"error: {exc.__class__.__name__}"
+                info["error"] = str(exc)[:300]
+            if info["login_required"]:
+                self.review_login_required += 1
+
+        reviews = parsing.merge_reviews(info["reviews"], data["reviews"])
+        if cfg.verified_reviews_only:
+            reviews = [r for r in reviews if r["verified_purchase"]]
+
+        if info["total_reviews"] is not None:
+            ratings["total_reviews"] = info["total_reviews"]
+        summary = {
+            "total_ratings": ratings["total_ratings"],
+            "total_reviews": ratings["total_reviews"],
+            "average_rating": ratings["average_rating"],
+            "rating_breakdown": ratings["breakdown"],
+            "rating_breakdown_percent": ratings["breakdown_percent"],
+            "positive_feedback_percent": None,
+            "negative_feedback_percent": None,
+            "aspect_ratings": data.get("aspect_ratings") or {},
+            "customers_say": data.get("customers_say"),
+            "review_url": build_review_url(cfg, asin, 1),
+            "pages_scraped": info["pages_checked"],
+            "stop_reason": info["stop_reason"],
+            "sort_used": cfg.review_sort,
+            "login_required": info["login_required"],
+        }
+        if info.get("error"):
+            summary["error"] = info["error"]
+        return summary, reviews
 
     async def _scrape_product(self, ctx: BrowserContext, card: dict) -> dict | None:
         asin = card["asin"]
@@ -293,55 +359,36 @@ class AmazonEngine:
             page = await ctx.new_page()
             html = await self._goto(page, url, wait_for="#productTitle", scroll_steps=random.randint(7, 10))
             try:
-                detail = await asyncio.to_thread(
+                parsed = await asyncio.to_thread(
                     parsing.parse_product_page, html, asin,
                     self.cfg.marketplace.base_url, self.cfg.marketplace.currency)
             except ValueError:
                 self._save_debug(f"dp_{asin}", html)
                 raise
-            scraped_at = datetime.now(timezone.utc).isoformat()
 
-            review_info = {"reviews": [], "pages_checked": 0, "total_reviews": None,
-                           "login_required": False}
-            has_reviews = bool(detail["reviews"]) or bool(detail["rating"]["total_ratings"])
-            # Once Amazon has asked an unsigned session to sign in, don't keep
-            # loading review pages for every product; just report it.
-            login_known_required = self.review_login_required > 0 and not self.signed_in
-            if login_known_required and has_reviews:
-                self.review_login_required += 1
-            elif self.cfg.review_pages > 0 and has_reviews:
-                try:
-                    review_info = await self._collect_review_pages(page, asin)
-                except BrowserClosedError:
-                    raise
-                except Exception as exc:  # reviews are best-effort; keep the product
-                    _log.warning("event=review_pages_failed asin=%s error=%s", asin, exc)
-                    review_info["error"] = str(exc)
-                if review_info["login_required"]:
-                    self.review_login_required += 1
-
-            reviews = parsing.merge_reviews(review_info["reviews"], detail["reviews"])
-            if self.cfg.verified_reviews_only:
-                reviews = [r for r in reviews if r["verified_purchase"]]
-            detail["reviews"] = reviews
-
-            _log.info("event=product_extracted asin=%s price=%s %s specs=%d images=%d reviews=%d title=%r",
-                      asin, detail["pricing"]["currency"], detail["pricing"]["current_price"],
-                      len(detail["specifications"]), len(detail["media"]["images"]),
-                      len(reviews), detail["title"][:60])
-            return {
-                "product_details": {
-                    "product_id": asin,
-                    "product_name": detail["title"],
-                    "product_detail_url": url,
-                    "scraped_at": scraped_at,
-                },
+            # Flat product model, same top-level shape as Flipkart's engine output.
+            data: dict = {
+                "url": url,
+                "product_id": asin,
+                "is_sponsored": bool(card["is_sponsored"]),
+                "scraped_at": datetime.now(timezone.utc).isoformat(),
                 "marketplace": self.cfg.marketplace.domain,
-                "is_sponsored": card["is_sponsored"],
+                **parsed,
                 "search_card": card,
-                "detail": detail,
-                "review_collection": {k: v for k, v in review_info.items() if k != "reviews"},
             }
+            # Kept so the orchestrator's product de-duplication (keyed on
+            # product_details.product_id) still applies to Amazon.
+            data["product_details"] = {
+                "product_id": asin, "product_name": data["product_name"],
+                "product_detail_url": url, "scraped_at": data["scraped_at"],
+            }
+            data["review_summary"], data["reviews"] = await self._scrape_reviews(page, data)
+
+            _log.info("event=product_extracted asin=%s price=%s %s specs=%d images=%d videos=%d "
+                      "reviews=%d title=%r", asin, data["price"]["currency"], data["price"]["selling_price"],
+                      len(data["specifications_flat"]), len(data["images"]), len(data["videos"]),
+                      len(data["reviews"]), data["product_name"][:60])
+            return data
         except Exception as exc:
             if isinstance(exc, (BrowserClosedError, BlockedError)) or _is_closed_error(exc):
                 # Fatal for the whole run: stop cleanly and keep what we have.

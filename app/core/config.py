@@ -23,8 +23,8 @@ class Settings(BaseSettings):
 
     job_executor: str = "celery"
 
-    celery_broker_url: str = "redis://localhost:6379/0"
-    celery_result_backend: str = "redis://localhost:6379/1"
+    celery_broker_url: str = "redis://localhost:6380/0"
+    celery_result_backend: str = "redis://localhost:6380/1"
 
     browser_headless: bool = False
     browser_channel: str = "chrome"
@@ -78,6 +78,9 @@ class Settings(BaseSettings):
     amazon_max_retries: int = 3
     amazon_min_delay_seconds: float = 2.0
     amazon_max_delay_seconds: float = 4.5
+
+    # Alibaba engine: navigation retries with backoff (as Amazon).
+    alibaba_max_retries: int = 3
 
     debug_dir: str = str(PROJECT_ROOT / "local_data" / "debug")
 

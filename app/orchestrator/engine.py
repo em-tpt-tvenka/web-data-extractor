@@ -11,6 +11,7 @@ from app.processing import normalizer, quality_checker
 from app.schemas.record import SocialMentionRecord
 from app.schemas.scraping import JobStatus, ScrapeJobRequest
 from app.storage.local_storage import LocalStorage
+from app.storage.repositories.collections_repository import CollectionsRepository
 from app.storage.repositories.job_repository import JobRepository
 from app.storage.repositories.provisioning_repository import ProvisioningRepository
 from app.storage.repositories.record_repository import RecordRepository
@@ -26,6 +27,7 @@ class Orchestrator:
         self.records = RecordRepository()
         self.local = LocalStorage()
         self.provisioning = ProvisioningRepository()
+        self.collections = CollectionsRepository()
 
     async def run_job(self, job_id: str) -> None:
         job = await self.jobs.get(job_id)
@@ -46,6 +48,7 @@ class Orchestrator:
             await self._assign_identity(records, request)
             normalizer.finalize(records)
             written = await self.records.upsert_many(records)
+            collections = await self._save_collections(job_id, records)
             summary = quality_checker.summarize(records)
 
             exports = self.local.export_records(
@@ -56,7 +59,7 @@ class Orchestrator:
                 job_id, JobStatus.completed, finished_at=_now(),
                 products_scraped=len(result.raw_products),
                 records_written=written, quality=summary, exports=exports,
-                execution_meta=result.run_meta,
+                execution_meta=result.run_meta, collections=collections,
             )
             _log.info("event=job_completed job_id=%s products=%d records=%d",
                       job_id, len(result.raw_products), written)
@@ -65,6 +68,16 @@ class Orchestrator:
             await self.jobs.mark_status(
                 job_id, JobStatus.failed, finished_at=_now(), error=str(exc)
             )
+
+    async def _save_collections(self, job_id: str, records: list[SocialMentionRecord]) -> dict:
+        """Also store the records split into products / retailers / reviews.
+        Additive and isolated: a failure here is logged on the job and never
+        fails the job or changes the records collection and exports."""
+        try:
+            return await self.collections.save_scraped_data(records)
+        except Exception as exc:
+            _log.exception("event=collections_save_failed job_id=%s", job_id)
+            return {"error": str(exc)[:300]}
 
     async def _assign_identity(
         self, records: list[SocialMentionRecord], request: ScrapeJobRequest

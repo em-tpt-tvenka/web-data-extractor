@@ -120,50 +120,135 @@ def parse_search_page(html: str, base_url: str) -> tuple[list[dict], str | None]
 
 # ── Product page: specifications ─────────────────────────────────────────────
 
-_SPEC_TABLE_ROWS = (
-    "#productDetails_techSpec_section_1 tr", "#productDetails_techSpec_section_2 tr",
-    "#technicalSpecifications_section_1 tr", "#productDetails_detailBullets_sections1 tr",
-    "#productDetails_expanderTables_depthLeftSections tr",
-    "#productDetails_expanderTables_depthRightSections tr",
-    "[id^='productDetails_expanderSectionTables'] tr", "table.prodDetTable tr",
-    "#prodDetails table tr", "#tech table tr", "#productOverview_feature_div table tr",
-    "#poExpander table tr",
+# (section label, row selectors) in precedence order: the first table that
+# yields a key wins. Rows inside an Amazon expander take the expander's own
+# header ("Display", "Item details", ...) as their section instead.
+_SPEC_TABLE_SECTIONS = (
+    ("Technical Details", ("#productDetails_techSpec_section_1 tr", "#productDetails_techSpec_section_2 tr",
+                           "#technicalSpecifications_section_1 tr")),
+    ("Additional Information", ("#productDetails_detailBullets_sections1 tr",)),
+    ("Product Details", ("#productDetails_expanderTables_depthLeftSections tr",
+                         "#productDetails_expanderTables_depthRightSections tr",
+                         "[id^='productDetails_expanderSectionTables'] tr")),
+    ("Technical Details", ("table.prodDetTable tr", "#prodDetails table tr", "#tech table tr")),
+    ("Product Overview", ("#productOverview_feature_div table tr", "#poExpander table tr")),
 )
 _SKIP_SPEC_KEYS = {"customer reviews", "best sellers rank"}
 
 
-def extract_specifications(soup) -> dict[str, str]:
-    raw: dict[str, str] = {}
+def _expander_section(el) -> str | None:
+    box = el.find_parent(class_=re.compile(r"\ba-expander-container\b"))
+    head = box.select_one(".a-expander-header, .a-expander-prompt") if box else None
+    return _text(head)
 
-    def put(k, v):
+
+def extract_spec_sections(soup) -> dict[str, dict[str, str]]:
+    """Specifications grouped by the page's own sections (Flipkart-style
+    ``{"Section": {"Key": "Value"}}``). A key is kept once, in the first
+    section it appears in."""
+    sections: dict[str, dict[str, str]] = {}
+    seen: set[str] = set()
+
+    def put(section, k, v):
         k, v = clean_text(k), clean_text(v)
         if k:
             k = k.rstrip(":").strip()
-        if k and v and k not in raw and k.lower() not in _SKIP_SPEC_KEYS:
-            raw[k] = v
+        if k and v and k not in seen and k.lower() not in _SKIP_SPEC_KEYS:
+            seen.add(k)
+            sections.setdefault(section, {})[k] = v
 
-    for sel in _SPEC_TABLE_ROWS:
-        for tr in soup.select(sel):
-            cells = tr.find_all(["th", "td"], recursive=False)
-            if len(cells) >= 2:
-                put(_text(cells[0]), _text(cells[-1]))
+    for label, selectors in _SPEC_TABLE_SECTIONS:
+        for sel in selectors:
+            for tr in soup.select(sel):
+                cells = tr.find_all(["th", "td"], recursive=False)
+                if len(cells) >= 2:
+                    put(_expander_section(tr) or label, _text(cells[0]), _text(cells[-1]))
     for li in soup.select("#detailBullets_feature_div li span.a-list-item"):
         key_el = li.select_one("span.a-text-bold")
         full = _text(li)
         if key_el and full:
             key = _text(key_el) or ""
-            put(key, full[len(key):].lstrip(" :"))
+            put("Product Details", key, full[len(key):].lstrip(" :"))
     for cell in soup.select("#glance_icons_div td, #glance_icons_div .a-column"):
         k = cell.select_one("span.a-text-bold")
         v = cell.select_one("span.handle-overflow:not(.a-text-bold), span.a-size-base:not(.a-text-bold)")
         if k and v:
-            put(_text(k), _text(v))
-    return raw
+            put("Product Overview", _text(k), _text(v))
+    return sections
+
+
+def extract_specifications(soup) -> dict[str, str]:
+    """All specification rows as one ``{key: value}`` map (no sections)."""
+    return {k: v for rows in extract_spec_sections(soup).values() for k, v in rows.items()}
+
+
+def flatten_specs(sections: dict) -> dict[str, str]:
+    """Same shape as Flipkart's ``specifications_flat``: ``"Section | Key"``."""
+    return {f"{sec} | {k}": v for sec, rows in sections.items() for k, v in rows.items()}
 
 
 def spec_get(specs: dict, *keys: str) -> str | None:
     lower = {k.lower(): v for k, v in specs.items()}
     return next((lower[k.lower()] for k in keys if lower.get(k.lower())), None)
+
+
+_MFG_SPEC_KEYS = {
+    "manufactured_by": ("Manufacturer", "Manufacturer Name", "Manufacturer Details", "Manufactured By"),
+    "marketed_by": ("Marketed By", "Marketer"),
+    "packed_by": ("Packer", "Packed By", "Packer Details"),
+    "imported_by": ("Importer", "Imported By", "Importer Details"),
+    "country_of_origin": ("Country of Origin",),
+    "generic_name": ("Generic Name",),
+    "net_quantity": ("Net Quantity",),
+    "manufacturing_date": ("Manufacturing Date", "Date First Available"),
+}
+
+
+def extract_manufacturer(specs: dict, brand: str | None = None) -> dict | None:
+    """Manufacturer / packer / importer details in Flipkart's ``manufacturer``
+    shape, read only from Amazon's specification rows."""
+    out: dict[str, str] = {}
+    for key, names in _MFG_SPEC_KEYS.items():
+        v = spec_get(specs, *names)
+        if v:
+            # Amazon often repeats the entity ("Lenovo, Lenovo"); keep each part once.
+            out[key] = ", ".join(dedupe([x.strip() for x in v.split(",")])) if key.endswith("_by") else v
+    if not out:
+        return None
+    name = out.get("manufactured_by") or out.get("marketed_by") or brand
+    if name:
+        out["name"] = name.split(",")[0].strip()
+    return out
+
+
+def extract_variants(html: str, base_url: str) -> dict[str, list[dict]]:
+    """Twister variations in Flipkart's ``variants`` shape:
+    ``{"Colour": [{"option": "Grey", "url": ".../dp/ASIN", "product_id": "ASIN"}]}``.
+    Read from the page's embedded twister data, never guessed."""
+    out: dict[str, list[dict]] = {}
+    labels = _decode_after(html, r'"dimensionsDisplay"\s*:\s*')
+    by_asin = _decode_after(html, r'"dimensionValuesDisplayData"\s*:\s*')
+    if isinstance(labels, list) and isinstance(by_asin, dict):
+        for asin, values in by_asin.items():
+            if not ASIN_RE.match(str(asin)) or not isinstance(values, list):
+                continue
+            for label, value in zip(labels, values):
+                label, value = clean_text(label), clean_text(value)
+                if not label or not value:
+                    continue
+                opts = out.setdefault(label, [])
+                if all(o["option"] != value for o in opts):
+                    opts.append({"option": value, "url": f"{base_url}/dp/{asin}", "product_id": asin})
+    if not out:
+        values = _decode_after(html, r'"variationValues"\s*:\s*')
+        if isinstance(values, dict):
+            for key, vals in values.items():
+                label = re.sub(r"_name$", "", str(key)).replace("_", " ").title()
+                opts = [{"option": clean_text(v), "url": None, "product_id": None}
+                        for v in dedupe(vals if isinstance(vals, list) else []) if isinstance(v, str)]
+                if opts:
+                    out[label] = opts
+    return {k: v for k, v in out.items() if v}
 
 
 # ── Product page: pricing ────────────────────────────────────────────────────
@@ -328,6 +413,27 @@ def extract_badges(soup) -> list[str]:
     return dedupe([b for b in out if b and len(b) < 120])
 
 
+def group_offers(offers: list[dict], payment: dict, promotion: dict, exchange_text: str | None) -> dict:
+    """Amazon offer cards grouped into Flipkart's ``offers`` structure.
+    Each entry is ``"<offer type> | <offer details>"``."""
+    def line(o):
+        return f"{o['offer_type']} | {o['offer_details']}"
+
+    bank = [line(o) for o in offers if re.search(r"\bbank\b", o["offer_type"], re.I)]
+    emi = [line(o) for o in offers if re.search(r"\bEMI\b", o["offer_type"], re.I)]
+    used = set(bank) | set(emi)
+    return {
+        "bank_offers": bank,
+        "emi_offers": emi,
+        "instant_loan_offers": [],
+        "exchange_offer": exchange_text or "",
+        "additional_benefits": [line(o) for o in offers if line(o) not in used],
+        "no_cost_emi_mentioned": bool(payment.get("no_cost_emi")),
+        "coupon_mentioned": bool(promotion.get("coupon_available")),
+        "all_offers": offers,
+    }
+
+
 def payment_signals(offers: list[dict], badges: list[str], soup) -> dict:
     """True only on explicit page evidence; None when the page says nothing."""
     blob = " | ".join([f"{o['offer_type']} {o['offer_details']}" for o in offers] + badges)
@@ -452,6 +558,39 @@ def extract_rating_summary(soup) -> dict:
             "distribution": dict(sorted(dist.items(), reverse=True))}
 
 
+def breakdown_counts(percentages: dict[str, int], total_ratings: int | None) -> dict[str, int]:
+    """Amazon shows the star histogram as percentages of ``total_ratings``;
+    Flipkart's ``breakdown`` holds counts. Derive counts (``1_star`` .. ``5_star``)
+    when the total is known, else return {} rather than guess."""
+    if not percentages or not total_ratings:
+        return {}
+    return {k: int(round(percentages[k] * total_ratings / 100)) for k in sorted(percentages)}
+
+
+def extract_aspects(soup) -> tuple[dict, str | None]:
+    """Amazon's "Customers say" block: per-aspect mention counts in Flipkart's
+    ``aspect_ratings`` shape, plus the AI summary text. Empty when absent."""
+    aspects: dict[str, dict] = {}
+    for el in soup.select("[data-hook='cr-insights-widget-aspects'] [aria-label], "
+                          "#cr-dp-insights-aspects [aria-label]"):
+        label = clean_text(el.get("aria-label")) or ""
+        m = re.match(r"^(.+?),\s*(\d[\d,]*)\s+customers?\s+mention", label, re.I)
+        if not m:
+            continue
+        name, mentions = m.group(1).strip(), to_int(m.group(2))
+        pos = re.search(r"(\d[\d,]*)\s+positive", label, re.I)
+        neg = re.search(r"(\d[\d,]*)\s+negative", label, re.I)
+
+        def pct(hit):
+            return int(round(to_int(hit.group(1)) * 100 / mentions)) if hit and mentions else None
+
+        aspects[name] = {"rating": None, "mentions": mentions,
+                         "positive_feedback_percent": pct(pos), "negative_feedback_percent": pct(neg)}
+    summary = _first_text(soup, "[data-hook='cr-insights-widget-summary'] p",
+                          "#product-summary p span", "#product-summary p")
+    return aspects, summary
+
+
 _REVIEW_TITLE_SEL = ("[data-hook='review-title']", "[data-hook='reviewTitle']",
                      ".review-title-content", ".review-title")
 _REVIEW_BODY_SEL = ("[data-hook='reviewRichContentContainer']", "[data-hook='review-body']",
@@ -500,28 +639,32 @@ def parse_reviews(soup) -> list[dict]:
         rating = to_number(_first_text(
             r, "[data-hook='review-star-rating'] .a-icon-alt", "[data-hook='cmps-review-star-rating'] .a-icon-alt",
             "i.review-rating .a-icon-alt", "i[class*='a-star'] .a-icon-alt"))
-        country = date = None
+        country = date = date_text = None
         dm = re.search(r"Reviewed in (.+?) on (.+)$", _text(r.select_one("[data-hook='review-date']")) or "")
         if dm:
-            country, date = dm.group(1), iso_date(dm.group(2))
+            country, date_text = dm.group(1), clean_text(dm.group(2))
+            date = iso_date(date_text)
         helpful_txt = _text(r.select_one("[data-hook='helpful-vote-statement']"))
         if helpful_txt:
             helpful = 1 if helpful_txt.lower().startswith("one") else to_int(helpful_txt)
         else:
             helpful = None
         whole = _text(r) or ""
+        # Same review keys as Flipkart (reviewer_name .. helpful_count), followed
+        # by the Amazon-only fields.
         reviews.append({
-            "review_id": _review_id(r),
             "reviewer_name": _first_text(r, ".a-profile-name", "[data-hook='genome-widget'] .a-profile-content"),
-            "title": _review_part(r, _REVIEW_TITLE_SEL),
-            "text": _review_part(r, _REVIEW_BODY_SEL),
             "rating": rating if rating is not None and 0 < rating <= 5 else None,
-            "date": date,
-            "country": country,
-            "country_code": country_code(country),
+            "title": _review_part(r, _REVIEW_TITLE_SEL),
+            "review_text": _review_part(r, _REVIEW_BODY_SEL),
             "verified_purchase": bool(r.select_one("[data-hook='avp-badge'], [data-hook='avp-badge-linkless']"))
             or "Verified Purchase" in whole,
-            "helpful_votes": helpful,
+            "posted_date": date,
+            "posted_relative": date_text,
+            "helpful_count": helpful,
+            "review_id": _review_id(r),
+            "reviewer_location": country,
+            "country_code": country_code(country),
             "variant": _text(r.select_one("[data-hook='format-strip']")),
             "images": dedupe([full_size_image(i.get("src")) for i in
                               r.select("img[data-hook='review-image-tile'], img.review-image-tile, "
@@ -543,6 +686,13 @@ def parse_review_page(html: str) -> dict:
     }
 
 
+def review_key(r: dict):
+    """Duplicate key for a review: Amazon's own id, else a Flipkart-style
+    composite of the visible fields."""
+    return r.get("review_id") or (r.get("reviewer_name"), r.get("rating"), r.get("title"),
+                                  (r.get("review_text") or "")[:80], r.get("posted_date"))
+
+
 def merge_reviews(*lists: list[dict]) -> list[dict]:
     """The same review can appear on the product page (often truncated) and on a
     review page (complete). Keep one copy per review, filling empty fields from
@@ -551,8 +701,7 @@ def merge_reviews(*lists: list[dict]) -> list[dict]:
     order: list = []
     for lst in lists:
         for r in lst:
-            key = r.get("review_id") or (r.get("reviewer_name"), r.get("date"), r.get("rating"),
-                                         (r.get("text") or "")[:40])
+            key = review_key(r)
             if key not in merged:
                 merged[key] = dict(r)
                 order.append(key)
@@ -562,7 +711,7 @@ def merge_reviews(*lists: list[dict]) -> list[dict]:
                 if v in (None, [], "", False):
                     continue
                 if cur.get(f) in (None, [], "", False) or \
-                        (f == "text" and len(v) > len(cur.get(f) or "")):
+                        (f == "review_text" and len(v) > len(cur.get(f) or "")):
                     cur[f] = v
     return [merged[k] for k in order]
 
@@ -596,14 +745,19 @@ def parse_energy_rating(*texts) -> str | None:
 
 
 def parse_product_page(html: str, asin: str, base_url: str, default_currency: str) -> dict:
-    """Everything the product page shows. Raises ValueError if this is not a
-    product page (no title), so the engine can record a clean failure."""
+    """Everything the product page shows, as a Flipkart-shaped product model
+    (``product_name, price{}, ratings{}, offers{}, delivery{}, seller{},
+    warranty_and_policies{}, features, specifications{section: {..}},
+    specifications_flat, manufacturer{}, images, videos, variants, reviews``)
+    plus Amazon-only fields. Raises ValueError if this is not a product page
+    (no title), so the engine can record a clean failure."""
     soup = soup_of(html)
     title = _text(soup.select_one("#productTitle"))
     if not title:
         raise ValueError("no #productTitle on page (not a product page or layout changed)")
 
-    specs = extract_specifications(soup)
+    sections = extract_spec_sections(soup)
+    specs = {k: v for rows in sections.values() for k, v in rows.items()}
     bullets = [t for t in (_text(li) for li in soup.select("#feature-bullets ul li span.a-list-item"))
                if t and not re.match(r"(see more product details|from the manufacturer)", t, re.I)]
 
@@ -637,37 +791,93 @@ def parse_product_page(html: str, asin: str, base_url: str, default_currency: st
     energy_spec = spec_get(specs, "Energy Efficiency", "Energy Rating", "Energy Star Rating",
                            "Star Rating", "BEE Star Rating")
 
-    manufacturer = spec_get(specs, "Manufacturer")
-    if manufacturer:
-        manufacturer = ", ".join(dedupe([x.strip() for x in manufacturer.split(",")])) or None
+    pricing = extract_pricing(soup, default_currency)
+    seller = extract_seller(soup)
+    delivery = extract_delivery(soup)
+    promotion = extract_promotion(soup, offers)
+    payment = payment_signals(offers, badges, soup)
+    media = extract_media(soup, html)
+    rating = extract_rating_summary(soup)
+    aspects, customers_say = extract_aspects(soup)
+    exchange_text = _text(soup.select_one("#buyBackAccordionRow, #tradeInBuyboxFeature_feature_div"))
+    warranty_lines = dedupe([t for t in [warranty_text] + badges + bullets
+                             if t and "warranty" in t.lower()])[:8]
 
     return {
-        "asin": asin,
+        # ── identity (Flipkart: product_id / product_name / sku / brand / description)
+        "product_id": asin,
+        "sku": asin,
         "url": f"{base_url}/dp/{asin}",
-        "title": title,
+        "product_name": title,
         "brand": brand,
-        "manufacturer": manufacturer,
+        "description": description,
+        "breadcrumbs": breadcrumbs,
+        "features": bullets,
+        # ── commerce blocks (Flipkart: price / ratings / offers / delivery / seller / policies)
+        "price": {
+            "currency": pricing["currency"],
+            "selling_price": pricing["current_price"],
+            "mrp": pricing["original_price"],
+            "discount_percent": pricing["discount_percentage"],
+            "discount_amount": pricing["discount_amount"],
+            "special_deal_price": None,
+            "extra_discount_amount": None,
+            "availability": availability_text,
+            "price_display": pricing["price_display"],
+            "original_price_display": pricing["original_price_display"],
+            "price_source": "dom" if pricing["current_price"] is not None else "none",
+        },
+        "ratings": {
+            "average_rating": rating["overall_rating"],
+            "total_ratings": rating["total_ratings"],
+            "total_reviews": None,  # written-review count comes from the review pages
+            "breakdown": breakdown_counts(rating["distribution"], rating["total_ratings"]),
+            "breakdown_percent": rating["distribution"],
+        },
+        "offers": group_offers(offers, payment, promotion, exchange_text),
+        "delivery": {
+            "estimate": delivery["estimated_delivery"],
+            "address_line": _text(soup.select_one("#glow-ingress-line2")),
+            "free_delivery": delivery["delivery_cost"] == 0,
+            "delivery_cost": delivery["delivery_cost"],
+        },
+        "seller": {
+            "name": seller["seller_name"],
+            "rating": None,
+            "seller_id": seller["seller_id"],
+            "ships_from": seller["ships_from"],
+            "fulfilled_by_amazon": seller["fulfilled_by_amazon"],
+        },
+        "warranty_and_policies": {
+            "warranty": warranty_lines,
+            "return_or_replacement": [b for b in badges if re.search(r"return|replacement", b, re.I)][:2],
+            "cash_on_delivery": payment["cash_on_delivery"],
+            "fulfilled_by_amazon": seller["fulfilled_by_amazon"],
+        },
+        # ── specifications (Flipkart: sectioned + "Section | Key" flat map)
+        "specifications": sections,
+        "specifications_flat": flatten_specs(sections),
+        "specifications_parsed_from": "table" if sections else "none",
+        "manufacturer": extract_manufacturer(specs, brand),
+        # ── media + variants
+        "images": media["images"],
+        "thumbnails": media["thumbnails"],
+        "videos": media["videos"],
+        "variants": extract_variants(html, base_url),
+        # ── attributes Amazon exposes directly
         "model_number": spec_get(specs, "Item model number", "Model Number", "Model Name", "Model"),
         "color": spec_get(specs, "Colour", "Color"),
         "capacity": parse_capacity(capacity_spec, title),
         "energy_rating": parse_energy_rating(energy_spec, title),
-        "breadcrumbs": breadcrumbs,
-        "description": description,
-        "feature_bullets": bullets,
         "condition": "Renewed" if re.search(r"\b(renewed|refurbished)\b", title, re.I) else None,
-        "availability_text": availability_text,
-        "availability": parse_availability(availability_text),
-        "warranty_text": warranty_text,
         "country_of_origin": spec_get(specs, "Country of Origin"),
-        "specifications": specs,
-        "pricing": extract_pricing(soup, default_currency),
-        "seller": extract_seller(soup),
-        "delivery": extract_delivery(soup),
-        "offers": offers,
+        "warranty_text": warranty_text,
+        "availability": parse_availability(availability_text),
+        "promotion": promotion,
+        "payment": payment,
         "badges": badges,
-        "promotion": extract_promotion(soup, offers),
-        "payment": payment_signals(offers, badges, soup),
-        "media": extract_media(soup, html),
-        "rating": extract_rating_summary(soup),
+        "aspect_ratings": aspects,
+        "customers_say": customers_say,
+        # Reviews shown on the product page; the engine merges review-page reviews in.
         "reviews": parse_reviews(soup),
     }

@@ -109,6 +109,29 @@ def empty_campaign() -> CampaignBlock:
     return CampaignBlock()
 
 
+_INDUSTRY_WORDS = (
+    ("Electronics", ("mobile", "phone", "laptop", "computer", "tv", "television", "headphone", "audio",
+                     "camera", "electronic", "tablet", "monitor", "wearable", "smartwatch")),
+    ("Home Appliances", ("refrigerator", "washing machine", "air conditioner", "microwave", "appliance",
+                         "vacuum", "water purifier")),
+    ("Fashion", ("shirt", "dress", "clothing", "shoe", "footwear", "jeans", "fashion", "apparel",
+                 "jewellery", "jewelry", "watch")),
+    ("Beauty & Personal Care", ("beauty", "cosmetic", "perfume", "skincare", "skin care", "hair", "lipstick",
+                                "makeup", "personal care", "grooming", "shampoo", "lotion", "serum")),
+    ("Home & Kitchen", ("furniture", "kitchen", "home", "bed", "decor", "drinkware", "bottle", "cookware")),
+)
+
+
+def infer_industry(text: str | None) -> str:
+    """Coarse industry from category / product words (same table the Amazon
+    mapper uses, plus a few B2B words); "Consumer Goods" when nothing matches."""
+    t = (text or "").lower()
+    for industry, words in _INDUSTRY_WORDS:
+        if any(w in t for w in words):
+            return industry
+    return "Consumer Goods"
+
+
 def warranty_months(text) -> int | None:
     """Duration in months from text like '1 Year', '18 months', '2 yrs'."""
     if is_blank(text):

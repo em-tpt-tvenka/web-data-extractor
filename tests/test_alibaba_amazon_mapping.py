@@ -36,8 +36,11 @@ def test_amazon_native_review_id_preferred():
 
 
 def test_amazon_gen_id_full_text():
-    a = amz._source_item_id({"review_id": None, "reviewer_name": "Jo", "date": "2025-01-01", "text": LONG_A}, "ASIN")
-    b = amz._source_item_id({"review_id": None, "reviewer_name": "Jo", "date": "2025-01-01", "text": LONG_B}, "ASIN")
+    # Amazon reviews use Flipkart's review keys (review_text / posted_date).
+    a = amz._source_item_id({"review_id": None, "reviewer_name": "Jo", "posted_date": "2025-01-01",
+                             "review_text": LONG_A}, "ASIN")
+    b = amz._source_item_id({"review_id": None, "reviewer_name": "Jo", "posted_date": "2025-01-01",
+                             "review_text": LONG_B}, "ASIN")
     assert a != b and a.startswith("gen:")
 
 

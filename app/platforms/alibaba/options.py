@@ -25,6 +25,7 @@ class AlibabaOptions(BaseModel):
     supplier_country: list[str] = Field(default_factory=list)
     supplier_type: SupplierType = SupplierType.all
     include_sponsored: bool = False
+    verified_reviews_only: bool = False
 
     model_config = {"extra": "forbid"}
 
@@ -96,6 +97,13 @@ def config_schema() -> PlatformConfigSchema:
             type=FieldType.boolean,
             default=False,
             description="Include sponsored/ad listings in results.",
+        ),
+        ConfigField(
+            name="verified_reviews_only",
+            label="Verified purchase reviews only",
+            type=FieldType.boolean,
+            default=False,
+            description="Collect only reviews and supplier feedback marked 'Verified Purchase'.",
         ),
     ]
     return PlatformConfigSchema(platform="alibaba", fields=fields)
