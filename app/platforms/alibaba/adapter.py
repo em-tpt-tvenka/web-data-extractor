@@ -51,6 +51,12 @@ class AlibabaAdapter(PlatformAdapter):
         if engine.aborted:
             warnings.append(f"run stopped early ({engine.aborted}); partial results kept")
         skipped = sum(1 for m in models if m.get("detail_status") == "skipped_run_stopped")
+        if engine.reviews_incomplete:
+            warnings.append(
+                f"{engine.reviews_incomplete} product(s) have fewer extracted reviews than Alibaba reports; "
+                "see review_summary.coverage_percent / incomplete_reason (product reviews) and "
+                "review_summary.store_reviews (supplier feedback)"
+            )
         if skipped:
             warnings.append(f"{skipped} product(s) kept with search-card data only "
                             "(detail page not visited after the run stopped)")
@@ -93,6 +99,7 @@ class AlibabaAdapter(PlatformAdapter):
                 "max_order_quantity": options.max_order_quantity,
                 "include_sponsored": options.include_sponsored,
                 "verified_reviews_only": options.verified_reviews_only,
+                "collect_all_reviews": options.collect_all_reviews,
             },
             "actual": {
                 "products_discovered": len(models),
@@ -102,7 +109,13 @@ class AlibabaAdapter(PlatformAdapter):
                 "search_cards_skipped": engine.skipped,
                 "detail_pages": detail_status,
                 "stopped_early_reason": engine.aborted,
-                "review_pages_per_source": engine.cfg.feedback_max_pages,
+                "review_pages_per_source": "all" if engine.cfg.collect_all_reviews and
+                engine.cfg.feedback_max_pages > 0 else engine.cfg.feedback_max_pages,
+                "product_reviews_available": sum((m.get("review_summary") or {}).get("reviews_available") or 0
+                                                 for m in kept),
+                "product_reviews_extracted": sum((m.get("review_summary") or {}).get("reviews_extracted") or 0
+                                                 for m in kept),
+                "products_reviews_incomplete": engine.reviews_incomplete,
             },
             "filters_applied": {
                 "price_range": "applied_at_source_and_verified_on_product_page"
@@ -169,9 +182,15 @@ class AlibabaAdapter(PlatformAdapter):
             fetch_reviews=True,
             review_concurrency=settings.review_concurrency,
             feedback_concurrency=settings.feedback_concurrency,
-            feedback_max_pages=min(opts.review_pages_per_product, settings.feedback_max_pages),
+            # With collect_all_reviews the page count only switches review pages
+            # on (> 0) or off (0); every source is then loaded to its last page.
+            feedback_max_pages=(opts.review_pages_per_product if options.collect_all_reviews
+                                else min(opts.review_pages_per_product, settings.feedback_max_pages)),
+            collect_all_reviews=options.collect_all_reviews,
             verified_reviews_only=options.verified_reviews_only,
             max_retries=settings.alibaba_max_retries,
+            min_delay_seconds=settings.alibaba_min_delay_seconds,
+            max_delay_seconds=settings.alibaba_max_delay_seconds,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
             chrome_profile_dir=settings.profile_for("alibaba"),

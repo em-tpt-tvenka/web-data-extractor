@@ -74,13 +74,42 @@ class Settings(BaseSettings):
     # once in this profile to allow full review pages (/product-reviews/), which
     # Amazon only serves to signed-in sessions; sign-in is never automated.
     amazon_profile_dir: str | None = str(PROJECT_ROOT / "local_data" / "chrome_amazon_profile")
-    amazon_detail_concurrency: int = 1
+    amazon_detail_concurrency: int = 2
     amazon_max_retries: int = 3
     amazon_min_delay_seconds: float = 2.0
     amazon_max_delay_seconds: float = 4.5
+    # Review collection: pause between "Show 10 more reviews" clicks, and how
+    # many keyword listings in a row may add no new review before a star
+    # group is considered exhausted (stops on no progress, not on a count).
+    amazon_review_click_min_delay: float = 0.8
+    amazon_review_click_max_delay: float = 1.8
+    amazon_review_keyword_stall_limit: int = 15
+    amazon_review_keyword_yield_window: int = 8
+    amazon_review_keyword_min_yield: int = 3
+    # Amazon's HTTP 503 "rush hour" throttling page: back off 30 / 60 / 120 s
+    # (+ jitter) and slow the request budget; stop the run after 3 refusals.
+    amazon_throttle_backoff_seconds: float = 30.0
+    amazon_throttle_retries: int = 3
+    # Overall cap on Amazon requests (page loads + "show more") per minute,
+    # across all concurrent products. Live blocks followed ~40/min sustained.
+    amazon_max_requests_per_minute: float = 20.0
+    # After Amazon throttles / refuses a run, later jobs within this many
+    # minutes stop immediately instead of hitting the block again (0 = off).
+    amazon_cooldown_minutes: float = 60.0
 
-    # Alibaba engine: navigation retries with backoff (as Amazon).
+    # Incremental storage (all platforms that emit products as they finish):
+    # records / products / retailers / reviews are bulk-upserted in batches
+    # while the run continues, and progress is checkpointed for resume.
+    storage_batch_size: int = 500
+    # Processes for review language detection on large batches (None = CPUs-1, max 4; 0 = in-process).
+    language_workers: int | None = None
+    resume_completed_within_hours: float = 24.0
+
+    # Alibaba engine: navigation retries with backoff and a polite randomized
+    # gap between navigations shared across workers (as Amazon).
     alibaba_max_retries: int = 3
+    alibaba_min_delay_seconds: float = 1.2
+    alibaba_max_delay_seconds: float = 2.5
 
     debug_dir: str = str(PROJECT_ROOT / "local_data" / "debug")
 

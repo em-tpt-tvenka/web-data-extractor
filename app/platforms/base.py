@@ -16,6 +16,9 @@ class ScrapeResult:
 
 class PlatformAdapter(ABC):
     name: str
+    # True when ``scrape`` accepts ``hooks=`` (app.storage.incremental.IncrementalStore)
+    # for incremental storage and resume while the run is in progress.
+    supports_incremental: bool = False
 
     @abstractmethod
     def config_schema(self) -> PlatformConfigSchema: ...

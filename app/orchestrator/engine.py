@@ -1,15 +1,20 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime, timezone
 
+from app.core.config import settings
 from app.core.exceptions import ScrapingError
 from app.core.logging import get_logger
 from app.core.periods import report_scope_ids
 from app.orchestrator import result_aggregator
+from app.platforms.base import ScrapeResult
 from app.platforms.registry import get_adapter
 from app.processing import normalizer, quality_checker
 from app.schemas.record import SocialMentionRecord
 from app.schemas.scraping import JobStatus, ScrapeJobRequest
+from app.storage.database import get_db
+from app.storage.incremental import IncrementalStore
 from app.storage.local_storage import LocalStorage
 from app.storage.repositories.collections_repository import CollectionsRepository
 from app.storage.repositories.job_repository import JobRepository
@@ -41,19 +46,41 @@ class Orchestrator:
             adapter = get_adapter(request.platform.value)
             options = adapter.validate_options(request.options_for_platform())
 
-            result = await adapter.scrape(request, options, run_id=job_id)
+            store = await self._incremental_store(adapter, request, job_id)
+            try:
+                if store is not None:
+                    result = await adapter.scrape(request, options, run_id=job_id, hooks=store)
+                else:
+                    result = await adapter.scrape(request, options, run_id=job_id)
+            finally:
+                storage = await store.close() if store is not None else None
             result.raw_products = result_aggregator.dedupe_products(result.raw_products)
 
-            records = adapter.to_records(result, request, run_id=job_id)
+            if store is not None:
+                records, todo = store.records_for(result.raw_products)
+                if todo:  # e.g. products whose incremental mapping did not happen
+                    records += await asyncio.to_thread(
+                        adapter.to_records, ScrapeResult(raw_products=todo, warnings=result.warnings,
+                                                         run_meta=result.run_meta), request, job_id)
+            else:
+                records = await asyncio.to_thread(adapter.to_records, result, request, job_id)
             await self._assign_identity(records, request)
             normalizer.finalize(records)
-            written = await self.records.upsert_many(records)
-            collections = await self._save_collections(job_id, records)
+            # Products the incremental store already wrote are not written twice.
+            pending = [r for r in records if store is None or r.source.source_item_id not in store.flushed]
+            written = await self.records.upsert_many(pending) if pending else 0
+            collections = await self._save_collections(job_id, pending) if pending else {}
+            if store is not None:
+                written += len(store.flushed)
+                collections = {"incremental": storage, "final": collections}
+                self._merge_storage_stats(result.run_meta, store, storage)
             summary = quality_checker.summarize(records)
 
             exports = self.local.export_records(
                 request.platform.value, job_id, records, label=request.search.product
             )
+            if store is not None and exports.get("reviews"):
+                store.discard_partial_file()
 
             await self.jobs.mark_status(
                 job_id, JobStatus.completed, finished_at=_now(),
@@ -68,6 +95,37 @@ class Orchestrator:
             await self.jobs.mark_status(
                 job_id, JobStatus.failed, finished_at=_now(), error=str(exc)
             )
+
+    async def _incremental_store(self, adapter, request: ScrapeJobRequest, job_id: str):
+        """Incremental storage + resume for platforms that support it. A store
+        that cannot start (e.g. MongoDB unreachable) falls back to the
+        end-of-run write instead of failing the job."""
+        if not getattr(adapter, "supports_incremental", False):
+            return None
+        store = IncrementalStore(
+            adapter, request, job_id, db=get_db(), records_repo=self.records,
+            collections_repo=self.collections, assign_identity=self._assign_identity,
+            export_dir=self.local.platform_dir(request.platform.value),
+            batch_size=settings.storage_batch_size, resume_hours=settings.resume_completed_within_hours,
+        )
+        try:
+            await store.start()
+        except Exception as exc:
+            _log.warning("event=incremental_store_unavailable job_id=%s error=%s", job_id, exc)
+            return None
+        return store
+
+    @staticmethod
+    def _merge_storage_stats(run_meta: dict, store: IncrementalStore, storage: dict) -> None:
+        perf = (run_meta or {}).get("performance")
+        if not perf:
+            return
+        for p in perf.get("per_product") or []:
+            if p.get("product_id") in store.unique_stored:
+                p["unique_reviews_stored"] = store.unique_stored[p["product_id"]]
+        perf["unique_reviews_stored"] = storage.get("unique_reviews_stored")
+        perf["storage_batches"] = storage.get("batches_written")
+        perf["storage_errors"] = storage.get("write_errors")
 
     async def _save_collections(self, job_id: str, records: list[SocialMentionRecord]) -> dict:
         """Also store the records split into products / retailers / reviews.

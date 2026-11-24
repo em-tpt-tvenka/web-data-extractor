@@ -29,10 +29,26 @@ class FlipkartAdapter(PlatformAdapter):
         kept = [m for m in models if self._passes_filters(m, request, options)]
         _log.info("event=scrape_done extracted=%d kept_after_filters=%d pages=%d",
                   len(models), len(kept), engine.pages_processed)
-        return ScrapeResult(
-            raw_products=kept,
-            run_meta=self._run_meta(request, options, models, kept, engine.pages_processed),
-        )
+        warnings: list[str] = []
+        if engine.reviews_incomplete:
+            warnings.append(
+                f"{engine.reviews_incomplete} product(s) have fewer extracted reviews than Flipkart reports; "
+                "see review_summary.coverage_percent / incomplete_reason"
+            )
+        if engine.review_listings_failed:
+            warnings.append(f"{engine.review_listings_failed} review listing(s) kept redirecting to login "
+                            "and were skipped; see review_summary.failed_listings")
+        run_meta = self._run_meta(request, options, models, kept, engine.pages_processed)
+        summaries = [m.get("review_summary") or {} for m in kept]
+        run_meta["actual"].update({
+            "review_pages_per_product": "all" if engine.cfg.collect_all_reviews
+            and engine.cfg.review_pages_per_product > 0 else engine.cfg.review_pages_per_product,
+            "reviews_available": sum(s.get("reviews_available") or 0 for s in summaries),
+            "reviews_extracted": sum(s.get("reviews_extracted") or 0 for s in summaries),
+            "products_reviews_incomplete": engine.reviews_incomplete,
+            "review_listings_failed": engine.review_listings_failed,
+        })
+        return ScrapeResult(raw_products=kept, warnings=warnings, run_meta=run_meta)
 
     def to_records(
         self, result: ScrapeResult, request: ScrapeJobRequest, run_id: str
@@ -66,6 +82,7 @@ class FlipkartAdapter(PlatformAdapter):
             review_sort=options.review_sort.value,
             review_pages_per_product=opts.review_pages_per_product,
             verified_purchase_only=options.verified_purchase_only,
+            collect_all_reviews=options.collect_all_reviews,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
             chrome_profile_dir=settings.profile_for("flipkart"),
@@ -105,6 +122,7 @@ class FlipkartAdapter(PlatformAdapter):
                 "review_sort": options.review_sort.value,
                 "verified_purchase_only": options.verified_purchase_only,
                 "include_sponsored": options.include_sponsored,
+                "collect_all_reviews": options.collect_all_reviews,
             },
             "actual": {
                 "products_discovered": len(models),

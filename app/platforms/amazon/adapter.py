@@ -15,6 +15,7 @@ _log = get_logger("amazon.adapter")
 
 class AmazonAdapter(PlatformAdapter):
     name = "amazon"
+    supports_incremental = True
 
     def config_schema(self) -> PlatformConfigSchema:
         return config_schema()
@@ -32,9 +33,12 @@ class AmazonAdapter(PlatformAdapter):
             )
 
     async def scrape(
-        self, request: ScrapeJobRequest, options: AmazonOptions, run_id: str
+        self, request: ScrapeJobRequest, options: AmazonOptions, run_id: str, hooks=None
     ) -> ScrapeResult:
         engine = AmazonEngine(self._engine_config(request, options))
+        engine.hooks = hooks
+        # Only products this adapter keeps are stored incrementally.
+        engine.emit_filter = lambda m: self._passes_filters(m, request, options)
         models = await engine.run()
         kept = [m for m in models if self._passes_filters(m, request, options)]
         _log.info("event=scrape_done extracted=%d kept_after_filters=%d pages=%d failures=%d",
@@ -46,6 +50,23 @@ class AmazonAdapter(PlatformAdapter):
             warnings.append(
                 f"review pages required sign-in for {engine.review_login_required} product(s); "
                 "only product-page reviews were collected"
+            )
+        if engine.throttle_events:
+            warnings.append(
+                f"Amazon returned its 503 'rush hour' throttling page {engine.throttle_events} time(s); the "
+                "scraper backed off and slowed down. Repeated throttling means this session/IP is "
+                "rate-limited - wait before the next run."
+            )
+        if engine.products_reviews_blocked:
+            warnings.append(
+                f"Amazon refused review pages ('Page Not Found' on valid review URLs) for "
+                f"{engine.products_reviews_blocked} product(s) - this session is rate-limited for reviews. "
+                "Product details and reviews collected before the block are kept; wait before the next run."
+            )
+        if engine.reviews_incomplete:
+            warnings.append(
+                f"{engine.reviews_incomplete} product(s) have fewer extracted reviews than Amazon reports; "
+                "see review_summary.coverage_percent / incomplete_reason"
             )
         return ScrapeResult(
             raw_products=kept,
@@ -67,7 +88,15 @@ class AmazonAdapter(PlatformAdapter):
     def _search_text(request: ScrapeJobRequest) -> str:
         s = request.search
         terms = [s.product, s.brand, *s.keywords]
-        return " ".join(t.strip() for t in terms if t and t.strip())
+        # Amazon matches every word of the query, so a repeated word ("Lenovo"
+        # in each of 36 keywords) adds nothing but length; keep each word once.
+        words, seen = [], set()
+        for t in terms:
+            for w in (t or "").split():
+                if w.lower() not in seen:
+                    seen.add(w.lower())
+                    words.append(w)
+        return " ".join(words)
 
     def _engine_config(self, request: ScrapeJobRequest, options: AmazonOptions) -> AmazonEngineConfig:
         filters, opts = request.filters, request.scraping_options
@@ -84,6 +113,16 @@ class AmazonAdapter(PlatformAdapter):
             review_pages=opts.review_pages_per_product,
             review_sort=options.review_sort.value,
             verified_reviews_only=options.verified_reviews_only,
+            collect_all_reviews=options.collect_all_reviews,
+            review_click_min_delay=settings.amazon_review_click_min_delay,
+            review_click_max_delay=settings.amazon_review_click_max_delay,
+            keyword_stall_limit=settings.amazon_review_keyword_stall_limit,
+            keyword_yield_window=settings.amazon_review_keyword_yield_window,
+            keyword_min_yield=settings.amazon_review_keyword_min_yield,
+            throttle_backoff_seconds=settings.amazon_throttle_backoff_seconds,
+            throttle_retries=settings.amazon_throttle_retries,
+            max_requests_per_minute=settings.amazon_max_requests_per_minute,
+            cooldown_minutes=settings.amazon_cooldown_minutes,
             detail_concurrency=settings.amazon_detail_concurrency,
             max_retries=settings.amazon_max_retries,
             min_delay_seconds=settings.amazon_min_delay_seconds,
@@ -142,6 +181,7 @@ class AmazonAdapter(PlatformAdapter):
                 "fulfilled_by_amazon_only": options.fulfilled_by_amazon_only,
                 "review_sort": options.review_sort.value,
                 "verified_reviews_only": options.verified_reviews_only,
+                "collect_all_reviews": options.collect_all_reviews,
             },
             "actual": {
                 "products_discovered": len(models),
@@ -152,6 +192,22 @@ class AmazonAdapter(PlatformAdapter):
                 "signed_in": engine.signed_in,
                 "stopped_early_reason": engine.aborted,
                 "review_pages_login_required": engine.review_login_required,
+                "reviews_available": sum((m.get("review_summary") or {}).get("reviews_available") or 0
+                                         for m in kept),
+                "reviews_extracted": sum(len(m.get("reviews") or []) for m in kept),
+                "products_reviews_incomplete": engine.reviews_incomplete,
+                "throttle_events": engine.throttle_events,
+                "review_page_refusals": engine.review_block_events,
+                "products_reviews_blocked": engine.products_reviews_blocked,
+            },
+            "performance": {
+                **engine.stats.summary(engine.requests_sent),
+                "settings": {"product_concurrency": engine.cfg.detail_concurrency,
+                             "page_delay_seconds": [engine.cfg.min_delay_seconds, engine.cfg.max_delay_seconds],
+                             "show_more_delay_seconds": [engine.cfg.review_click_min_delay,
+                                                         engine.cfg.review_click_max_delay],
+                             "max_retries": engine.cfg.max_retries,
+                             "request_timeout_ms": engine.cfg.nav_timeout_ms},
             },
             "filters_applied": {
                 "price_range": "applied_at_source_and_verified_on_product_page"
@@ -168,5 +224,10 @@ class AmazonAdapter(PlatformAdapter):
                 "date_range": "reviews without a parseable date are kept",
                 "reviews": "Amazon serves review pages only to signed-in sessions; sign-in is never "
                            "automated. Without it, only reviews shown on the product page are collected.",
+                "review_coverage": "Amazon shows at most 100 reviews per review listing; with "
+                                   "collect_all_reviews the listings are partitioned (star, sort, media, "
+                                   "format, verified, keyword) to reach every accessible review. Each "
+                                   "product's review_summary compares reviews_available with "
+                                   "reviews_extracted; reviews_extracted counts before the date_range filter.",
             },
         }

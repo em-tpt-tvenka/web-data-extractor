@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import itertools
 import random
 import re
 from dataclasses import dataclass, field
@@ -59,6 +60,11 @@ class EngineConfig:
     review_sort: str = "recent"
     review_pages_per_product: int = 1
     verified_purchase_only: bool = False
+    # Load every review listing (all sort orders) to its last page instead of
+    # review_pages_per_product pages (as Amazon / Alibaba).
+    collect_all_reviews: bool = False
+    review_retries: int = 3           # retries of a page Flipkart redirected to /login
+    review_retry_backoff: float = 4.0  # seconds, doubled per retry
     headless: bool = False
     browser_channel: str = "chrome"
     chrome_profile_dir: str | None = None
@@ -70,6 +76,8 @@ class FlipkartEngine:
     def __init__(self, cfg: EngineConfig) -> None:
         self.cfg = cfg
         self.pages_processed = 0
+        self.reviews_incomplete = 0
+        self.review_listings_failed = 0
 
     async def run(self) -> list[dict]:
         cfg = self.cfg
@@ -393,6 +401,9 @@ class FlipkartEngine:
         summary["aspect_ratings"] = await self._scrape_aspects(page)
         summary["review_url"] = review_url
 
+        if cfg.collect_all_reviews and cfg.review_pages_per_product > 0:
+            return await self._scrape_all_reviews(page, review_url, summary)
+
         await self._load_review_page(page, review_url)
         base = await self._apply_sort(page, review_url)
 
@@ -441,7 +452,107 @@ class FlipkartEngine:
         summary["pages_scraped"] = pages_done
         summary["stop_reason"] = stop_reason
         summary["sort_used"] = cfg.review_sort
+        summary.update(parsing.review_coverage(summary.get("total_reviews"), len(seen), False, []))
+        summary["collection_mode"] = "pages"
         return summary, all_reviews
+
+    async def _scrape_all_reviews(self, page: Page, review_url: str, summary: dict):
+        """Every review Flipkart lists: each sort order (the requested one
+        first) is loaded page by page until its last page; reviews are
+        de-duplicated across listings. Stops early only when the reported
+        review count is reached or Flipkart blocks the session."""
+        cfg = self.cfg
+        total = summary.get("total_reviews")
+        sorts = [cfg.review_sort] + [s for s in parsing.REVIEW_SORT_ORDERS if s != cfg.review_sort]
+        seen: set = set()          # every review found (before verified filter)
+        kept: list = []
+        listings: list[dict] = []
+        pages_done = 0
+        blocked = False
+        stop_reason = "all sort orders loaded to their last page"
+
+        for sort in sorts:
+            if total is not None and len(seen) >= total:
+                stop_reason = "collected all reported reviews"
+                break
+            base = parsing.review_listing_url(review_url, sort)
+            info = {"sort": sort, "pages": 0, "found": 0, "new": 0, "stop": None, "failed": False}
+            listings.append(info)
+            for p in itertools.count(1):
+                url = parsing.with_page(base, p)
+                page_text = await self._open_review_page(page, url)
+                if page_text is None:
+                    info["failed"], info["stop"] = True, f"redirected to login on page {p}"
+                    self.review_listings_failed += 1
+                    break
+                if _BLOCK_RE.search(page_text):
+                    blocked, info["stop"] = True, f"blocked on page {p}"
+                    break
+                got = parsing.parse_reviews(page_text)
+                if not got:
+                    await page.wait_for_timeout(3000)
+                    got = parsing.parse_reviews(await self._inner_text(page))
+                if not got:
+                    info["stop"] = f"last page {p - 1}"
+                    break
+                info["pages"] = p
+                pages_done += 1
+                for r in got:
+                    k = parsing.review_key(r)
+                    info["found"] += 1
+                    if k in seen:
+                        continue
+                    seen.add(k)
+                    info["new"] += 1
+                    if cfg.verified_purchase_only and not r.get("verified_purchase"):
+                        continue
+                    kept.append(r)
+                if total is not None and len(seen) >= total:
+                    info["stop"] = "collected all reported reviews"
+                    break
+                await asyncio.sleep(random.uniform(1.0, 2.0))
+            _log.info("event=review_listing_done sort=%s pages=%d found=%d new=%d total_unique=%d stop=%s",
+                      sort, info["pages"], info["found"], info["new"], len(seen), info["stop"])
+            if blocked:
+                stop_reason = info["stop"]
+                break
+
+        coverage = parsing.review_coverage(total, len(seen), True, listings, blocked)
+        if coverage["complete"] is False:
+            self.reviews_incomplete += 1
+            _log.warning("event=reviews_incomplete url=%s available=%s extracted=%d reason=%s",
+                         review_url[:90], total, len(seen), coverage["incomplete_reason"])
+        summary.update({
+            "pages_scraped": pages_done,
+            "stop_reason": stop_reason,
+            "sort_used": cfg.review_sort,
+            **coverage,
+            "collection_mode": "all_sort_orders",
+            "listing_cap": parsing.LISTING_CAP,
+            "listings_scraped": len(listings),
+            "failed_listings": [l["sort"] for l in listings if l["failed"]],
+            "listings": listings,
+        })
+        return summary, kept
+
+    async def _open_review_page(self, page: Page, url: str) -> str | None:
+        """Load a review page, retrying with back-off when Flipkart redirects
+        it to /login (intermittent; the same page loads on retry). Returns the
+        page text, or None when every attempt was redirected."""
+        for attempt in range(self.cfg.review_retries + 1):
+            try:
+                await self._load_review_page(page, url)
+            except Exception as exc:  # aborted navigation = redirect in flight
+                _log.debug("event=review_page_goto_error url=%s error=%s", url[-60:], exc)
+                await page.wait_for_timeout(1500)
+            if not parsing.is_login_redirect(page.url):
+                return await self._inner_text(page)
+            if attempt < self.cfg.review_retries:
+                delay = self.cfg.review_retry_backoff * (2 ** attempt)
+                _log.info("event=review_login_redirect url=%s retry_in=%.0fs", url[-60:], delay)
+                await asyncio.sleep(delay)
+        _log.warning("event=review_page_login_required url=%s", url[-60:])
+        return None
 
     async def _apply_sort(self, page: Page, review_url: str) -> str:
         sort = self.cfg.review_sort

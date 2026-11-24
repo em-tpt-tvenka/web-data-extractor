@@ -2,10 +2,13 @@
 from __future__ import annotations
 
 import asyncio
+import json
+import math
 import random
+import re
 import urllib.parse
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from playwright.async_api import BrowserContext, Page, async_playwright
@@ -14,6 +17,7 @@ from app.core.logging import get_logger
 from app.platforms.amazon import parsing
 from app.platforms.browser import proxy_settings, random_user_agent
 from app.platforms.amazon.options import Marketplace
+from app.platforms.perf import RateLimiter, RunStats
 
 _log = get_logger("amazon.engine")
 
@@ -34,6 +38,24 @@ _EXPANDER_SELS = (
 
 class BlockedError(Exception):
     """CAPTCHA could not be cleared (headless, or nobody solved it in time)."""
+
+
+class ThrottledError(BlockedError):
+    """Amazon kept answering with its 503 "rush hour" throttling page after
+    every back-off. Fatal for the run (later pages would be refused too);
+    partial results are kept."""
+
+
+class RateLimitCooldown(Exception):
+    """A previous run was rate-limited by Amazon less than ``cooldown_minutes``
+    ago; this run stops before sending any request (sending more would only
+    extend the block)."""
+
+
+class ReviewPagesBlocked(Exception):
+    """Amazon answers valid review-listing URLs with its 404 "not a functioning
+    page" page even after back-off: review pages are refused to this session.
+    Ends review collection for the product (product data is kept)."""
 
 
 class PageLoadError(Exception):
@@ -63,6 +85,19 @@ class AmazonEngineConfig:
     review_pages: int = 1
     review_sort: str = "recent"
     verified_reviews_only: bool = False
+    collect_all_reviews: bool = True
+    review_click_min_delay: float = 0.8
+    review_click_max_delay: float = 1.8
+    keyword_stall_limit: int = 15
+    # Keyword phase also ends when the last ``keyword_yield_window`` keyword
+    # listings together found fewer than ``keyword_min_yield`` new reviews.
+    keyword_yield_window: int = 8
+    keyword_min_yield: int = 3
+    # Amazon's 503 "rush hour" throttling: waits of 30, 60, 120 s (+ jitter).
+    throttle_backoff_seconds: float = 30.0
+    throttle_retries: int = 3
+    max_requests_per_minute: float = 20.0  # all requests combined; 0 = no overall cap
+    cooldown_minutes: float = 60.0
 
     detail_concurrency: int = 1
     max_retries: int = 3
@@ -92,12 +127,26 @@ def build_search_url(cfg: AmazonEngineConfig, page: int) -> str:
     return f"{cfg.marketplace.base_url}/s?{urllib.parse.urlencode(params)}"
 
 
-def build_review_url(cfg: AmazonEngineConfig, asin: str, page: int) -> str:
-    params = {
+_STARS = (("five_star", 5), ("four_star", 4), ("three_star", 3), ("two_star", 2), ("one_star", 1))
+# Amazon shows at most this many reviews per review listing (verified live:
+# "Show 10 more reviews" disappears after 100 even when thousands exist).
+LISTING_CAP = 100
+
+
+def base_review_filters(cfg: AmazonEngineConfig) -> dict[str, str]:
+    return {
         "reviewerType": "avp_only_reviews" if cfg.verified_reviews_only else "all_reviews",
         "sortBy": "helpful" if cfg.review_sort == "helpful" else "recent",
-        "pageNumber": str(page),
     }
+
+
+def build_review_url(cfg: AmazonEngineConfig, asin: str, page: int = 1,
+                     filters: dict[str, str] | None = None) -> str:
+    """Review listing URL. Amazon ignores ``pageNumber`` (further reviews load
+    in place via "Show 10 more reviews"); it is kept so the URL stays stable.
+    ``filters`` narrows the listing (filterByStar, sortBy, mediaType,
+    formatType, reviewerType, filterByKeyword)."""
+    params = {**base_review_filters(cfg), **(filters or {}), "pageNumber": str(page)}
     return f"{cfg.marketplace.base_url}/product-reviews/{asin}/?{urllib.parse.urlencode(params)}"
 
 
@@ -109,10 +158,62 @@ class AmazonEngine:
         self.failures: list[dict] = []
         self.skipped: dict[str, int] = {"sponsored": 0, "excluded_keyword": 0, "duplicate": 0}
         self.review_login_required = 0
+        self.reviews_incomplete = 0  # products whose extracted reviews < the reported count
         self.aborted: str | None = None  # why the run stopped early, if it did
         self._closed = False
-        self._nav_lock = asyncio.Lock()
-        self._last_nav = 0.0
+        # One request budget per run, shared by every concurrent product worker:
+        # page loads and "Show 10 more reviews" requests each keep their own
+        # randomized minimum gap, so concurrency never raises the request rate
+        # Amazon sees (live runs showed a CAPTCHA wall after sustained traffic).
+        self._nav = RateLimiter(cfg.min_delay_seconds, cfg.max_delay_seconds)
+        self._click = RateLimiter(cfg.review_click_min_delay, cfg.review_click_max_delay)
+        # Overall budget shared by page loads and "show more" (max_requests_per_minute).
+        gap = 60.0 / cfg.max_requests_per_minute if cfg.max_requests_per_minute > 0 else 0.0
+        self._budget = RateLimiter(gap, gap * 1.3)
+        self.stats = RunStats()
+        self.throttle_events = 0  # Amazon 503 "rush hour" responses seen this run
+        self._last_status: dict[int, int | None] = {}  # id(page) -> HTTP status of its last load
+        # Review pages refused with Amazon's 404 page (soft block of this session).
+        self.review_block_events = 0
+        self.review_pages_blocked = False  # confirmed: later products probe once, no back-off
+        self.products_reviews_blocked = 0
+        # Optional orchestrator hooks (incremental storage / resume); see app.storage.incremental.
+        self.hooks = None
+        self.emit_filter = None  # adapter post-filter: products it would drop are not stored
+
+    @property
+    def requests_sent(self) -> int:
+        return self._nav.requests + self._click.requests
+
+    # ── cool-down between runs after Amazon rate-limits this session ─────
+
+    def _cooldown_file(self) -> Path | None:
+        return Path(self.cfg.profile_dir) / ".amazon_cooldown.json" if self.cfg.profile_dir else None
+
+    def cooldown_remaining(self) -> tuple[datetime, datetime] | None:
+        """``(limited_at, allowed_after)`` while a recorded rate limit is still
+        cooling down, else None."""
+        f = self._cooldown_file()
+        if f is None or self.cfg.cooldown_minutes <= 0 or not f.exists():
+            return None
+        try:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            limited_at = datetime.fromisoformat(data["limited_at"])
+        except Exception:
+            return None
+        allowed = limited_at + timedelta(minutes=self.cfg.cooldown_minutes)
+        return (limited_at, allowed) if datetime.now(timezone.utc) < allowed else None
+
+    def _record_rate_limit(self, reason: str) -> None:
+        f = self._cooldown_file()
+        if f is None:
+            return
+        try:
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text(json.dumps({"limited_at": datetime.now(timezone.utc).isoformat(), "reason": reason[:300]}),
+                         encoding="utf-8")
+        except Exception as exc:
+            _log.warning("event=cooldown_record_failed error=%s", exc)
 
     # ── Browser helpers ──────────────────────────────────────────────────
 
@@ -128,13 +229,16 @@ class AmazonEngine:
         )
         _log.info("event=browser_launching channel=%s headless=%s profile=%s",
                   cfg.browser_channel, cfg.headless, cfg.profile_dir)
+        # Keep Chrome's sandbox on: Playwright otherwise passes --no-sandbox,
+        # which shows "unsupported command-line flag" and weakens isolation.
         if cfg.profile_dir:
             Path(cfg.profile_dir).mkdir(parents=True, exist_ok=True)
             ctx = await pw.chromium.launch_persistent_context(
-                cfg.profile_dir, channel=cfg.browser_channel, **opts)
+                cfg.profile_dir, channel=cfg.browser_channel, chromium_sandbox=True, **opts)
         else:
             browser = await pw.chromium.launch(
-                headless=cfg.headless, channel=cfg.browser_channel, args=opts.pop("args"))
+                headless=cfg.headless, channel=cfg.browser_channel, chromium_sandbox=True,
+                args=opts.pop("args"))
             ctx = await browser.new_context(**{k: v for k, v in opts.items() if k != "headless"})
         await ctx.add_init_script(
             "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
@@ -142,14 +246,10 @@ class AmazonEngine:
         return ctx
 
     async def _throttle(self) -> None:
-        """Polite, randomized gap between navigations, shared across workers."""
-        async with self._nav_lock:
-            loop = asyncio.get_event_loop()
-            gap = random.uniform(self.cfg.min_delay_seconds, self.cfg.max_delay_seconds)
-            wait = gap - (loop.time() - self._last_nav)
-            if wait > 0:
-                await asyncio.sleep(wait)
-            self._last_nav = loop.time()
+        """Polite, randomized gap between navigations, shared across workers,
+        within the overall requests-per-minute budget."""
+        await self._nav.acquire()
+        await self._budget.acquire()
 
     async def _is_blocked(self, page: Page) -> bool:
         if "/errors/validateCaptcha" in page.url:
@@ -202,14 +302,24 @@ class AmazonEngine:
 
     async def _goto(self, page: Page, url: str, wait_for: str | None = None,
                     scroll_steps: int = 0) -> str:
-        """Load a page with retries and backoff; returns its HTML."""
+        """Load a page with retries and backoff; returns its HTML. Amazon's 503
+        "rush hour" throttling page is retried after progressively longer
+        pauses (see ``_back_off_throttled``) instead of being parsed as an
+        empty result; it does not use up the retries for network errors."""
         last_err: Exception | None = None
-        for attempt in range(1, self.cfg.max_retries + 1):
+        attempt, throttled = 0, 0
+        while attempt < self.cfg.max_retries:
             if self._closed or page.is_closed():
                 raise BrowserClosedError("browser was closed")
             await self._throttle()
             try:
-                await page.goto(url, wait_until="domcontentloaded", timeout=self.cfg.nav_timeout_ms)
+                resp = await page.goto(url, wait_until="domcontentloaded", timeout=self.cfg.nav_timeout_ms)
+                status = resp.status if resp is not None else None
+                self._last_status[id(page)] = status
+                if status in (429, 503) or parsing.looks_throttled(await page.content()):
+                    throttled += 1
+                    await self._back_off_throttled(url, throttled, status)
+                    continue
                 await self._resolve_captcha(page)
                 if wait_for:
                     try:
@@ -221,18 +331,45 @@ class AmazonEngine:
                 html = await page.content()
                 if parsing.looks_blocked(html):
                     raise BlockedError("CAPTCHA page")
+                if parsing.looks_throttled(html):
+                    throttled += 1
+                    await self._back_off_throttled(url, throttled, status)
+                    continue
                 return html
             except (BlockedError, BrowserClosedError):
                 raise
             except Exception as exc:
                 if _is_closed_error(exc) or page.is_closed():
                     raise BrowserClosedError("browser was closed") from exc
+                attempt += 1
                 last_err = exc
                 backoff = 5 * attempt + random.uniform(0, 3)
                 _log.warning("event=load_failed attempt=%d/%d retry_in=%.0fs url=%s error=%s",
                              attempt, self.cfg.max_retries, backoff, url[:100], exc.__class__.__name__)
                 await asyncio.sleep(backoff)
         raise PageLoadError(f"giving up on {url}: {last_err}")
+
+    async def _back_off_throttled(self, url: str, n: int, status: int | None = None) -> None:
+        """Amazon answered with its throttling page (HTTP 503 "It's rush hour and
+        traffic is piling up ... try again in a short while"). Wait
+        ``throttle_backoff_seconds`` x 2^(n-1) (+ jitter) and slow the shared
+        request budget for the rest of the run; after ``throttle_retries``
+        consecutive refusals stop the run with a clear reason."""
+        cfg = self.cfg
+        self.throttle_events += 1
+        if n > cfg.throttle_retries:
+            msg = (f"Amazon kept returning its HTTP 503 'rush hour' throttling page ({n - 1} retries with "
+                   f"back-off); this session/IP is rate-limited - wait before running again")
+            self._record_rate_limit(msg)
+            raise ThrottledError(msg)
+        base = cfg.throttle_backoff_seconds * 2 ** (n - 1)
+        wait = base + random.uniform(0, base / 3)
+        self._nav.slow_down(1.5, cap=4.0)
+        self._click.slow_down(1.5, cap=4.0)
+        _log.warning("event=amazon_throttled status=%s attempt=%d/%d wait=%.0fs page_gap=%.1f-%.1fs url=%s",
+                     status, n, cfg.throttle_retries, wait, self._nav.min_interval, self._nav.max_interval,
+                     url[:100])
+        await asyncio.sleep(wait)
 
     async def _open_home(self, page: Page) -> None:
         await self._goto(page, self.cfg.marketplace.base_url + "/")
@@ -263,37 +400,271 @@ class AmazonEngine:
 
     # ── Product + reviews ────────────────────────────────────────────────
 
+    async def _show_more(self, page: Page, asin: str, label: str) -> tuple[int, str]:
+        """Load the rest of the open review listing with "Show 10 more reviews"
+        (Amazon appends each batch in place; URL page numbers are ignored).
+        Returns ``(batches_loaded, stop_reason)``. Each click is retried; a
+        CAPTCHA is handled as on page loads. Stops when the button is gone (the
+        listing is exhausted), never on a review count - unless the caller
+        asked for a fixed number of pages (collect_all_reviews off)."""
+        cfg = self.cfg
+        limit = None if cfg.collect_all_reviews else max(1, cfg.review_pages)
+        review_count_js = "n => document.querySelectorAll(\"[data-hook='review']\").length > n"
+        batches, throttled = 1, 0
+        while True:
+            if limit is not None and batches >= limit:
+                return batches, f"reached review_pages_per_product ({limit})"
+            btn = page.locator(parsing.SHOW_MORE_SEL).first
+            if await btn.count() == 0 or not await btn.is_visible():
+                return batches, "listing exhausted"
+            before = await page.locator("[data-hook='review']").count()
+            for attempt in range(1, cfg.max_retries + 1):
+                await self._click.acquire()  # shared request budget across workers
+                await self._budget.acquire()  # overall requests-per-minute cap
+                try:
+                    await btn.scroll_into_view_if_needed(timeout=5_000)
+                    async with page.expect_response(lambda r: "/ajax/reviews/get" in r.url,
+                                                    timeout=20_000) as resp_info:
+                        await btn.click(timeout=10_000)
+                    status = (await resp_info.value).status
+                    if status in (429, 503):  # throttled: back off, then click again
+                        throttled += 1
+                        await self._back_off_throttled(page.url, throttled, status)
+                        continue
+                    await page.wait_for_function(review_count_js, arg=before, timeout=20_000)
+                    break
+                except BlockedError:
+                    raise
+                except Exception as exc:
+                    if _is_closed_error(exc) or page.is_closed() or self._closed:
+                        raise BrowserClosedError("browser was closed") from exc
+                    await self._resolve_captcha(page)  # raises BlockedError if it can't be cleared
+                    _log.warning("event=review_batch_retry asin=%s listing=%s batch=%d attempt=%d/%d error=%s",
+                                 asin, label, batches + 1, attempt, cfg.max_retries, exc.__class__.__name__)
+                    btn = page.locator(parsing.SHOW_MORE_SEL).first
+                    if await btn.count() == 0:
+                        return batches, "listing exhausted"
+                    await asyncio.sleep(3 * attempt)
+            else:
+                return batches, f"show-more failed after {cfg.max_retries} attempts (batch {batches + 1})"
+            batches += 1
+            _log.debug("event=review_batch_loaded asin=%s listing=%s batch=%d", asin, label, batches)
+
+    async def _load_listing(self, page: Page, asin: str, filters: dict[str, str], label: str,
+                            have=None) -> dict:
+        """One review listing (one filter combination), loaded to its end.
+        ``have`` (optional callable) returns how many of this listing's reviews
+        are already collected; when the listing reports no more than that, its
+        further pages cannot hold anything new and are not requested."""
+        out = {"reviews": [], "total": None, "batches": 0, "stop_reason": None,
+               "login_required": False, "error": None}
+        url = build_review_url(self.cfg, asin, 1, filters)
+        refused = 0
+        while True:
+            html = await self._goto(page, url,
+                                    wait_for="[data-hook='review'], [data-hook='cr-filter-info-review-rating-count'], "
+                                             "#ap_email, #cm_cr-review_list",
+                                    scroll_steps=1)
+            if not parsing.looks_not_found(html, page.url, self._last_status.get(id(page))):
+                self.review_pages_blocked = False  # Amazon serves review pages (again)
+                break
+            # Valid review URL answered with "not a functioning page": Amazon
+            # refusing review pages to this session. Back off and retry; once
+            # confirmed, later products probe once without waiting.
+            refused += 1
+            self.review_block_events += 1
+            if self.review_pages_blocked or refused > self.cfg.throttle_retries:
+                msg = (f"Amazon answered review pages with 'Page Not Found' (HTTP "
+                       f"{self._last_status.get(id(page))}) {refused} time(s); review pages are refused to this "
+                       "session (rate-limited) - wait before running again")
+                if not self.review_pages_blocked:
+                    self._record_rate_limit(msg)
+                self.review_pages_blocked = True
+                raise ReviewPagesBlocked(msg)
+            base = self.cfg.throttle_backoff_seconds * 2 ** (refused - 1)
+            wait = base + random.uniform(0, base / 3)
+            self._nav.slow_down(1.5, cap=4.0)
+            self._click.slow_down(1.5, cap=4.0)
+            _log.warning("event=review_page_refused asin=%s listing=%s status=%s attempt=%d/%d wait=%.0fs",
+                         asin, label, self._last_status.get(id(page)), refused, self.cfg.throttle_retries, wait)
+            await asyncio.sleep(wait)
+        if parsing.is_signin_page(html, page.url):
+            out.update(login_required=True, stop_reason="sign-in required")
+            return out
+        try:
+            first = parsing.parse_review_page(html)
+            known = have() if have else None
+            if first["total_reviews"] is not None and known is not None and first["total_reviews"] <= known:
+                out["batches"], out["stop_reason"] = 1, "already collected"
+            elif 'data-hook="review"' in html or "data-hook='review'" in html:
+                out["batches"], out["stop_reason"] = await self._show_more(page, asin, label)
+            else:
+                out["stop_reason"] = "no reviews in listing"
+            html = await page.content()
+        except (BrowserClosedError, BlockedError):
+            raise
+        except Exception as exc:  # keep what this listing loaded before the failure
+            out["error"] = f"{exc.__class__.__name__}: {str(exc)[:200]}"
+            out["stop_reason"] = "error"
+            try:
+                html = await page.content()
+            except Exception:
+                pass
+        parsed = await asyncio.to_thread(parsing.parse_review_page, html)
+        out["reviews"], out["total"] = parsed["reviews"], parsed["total_reviews"]
+        return out
+
     async def _collect_review_pages(self, page: Page, asin: str) -> dict:
-        """Paginate /product-reviews/ (Amazon-specific URL and sign-in handling),
-        de-duplicating across pages the way Flipkart's review loop does."""
-        out = {"reviews": [], "pages_checked": 0, "total_reviews": None,
-               "login_required": False, "stop_reason": "reached max pages"}
-        seen: set = set()
-        for n in range(1, self.cfg.review_pages + 1):
-            html = await self._goto(page, build_review_url(self.cfg, asin, n),
-                                    wait_for="[data-hook='review'], #ap_email, #cm_cr-review_list",
-                                    scroll_steps=2)
-            if parsing.is_signin_page(html, page.url):
+        """Every review Amazon makes reachable for ``asin``.
+
+        Amazon shows at most ``LISTING_CAP`` (100) reviews per review listing,
+        but every filtered listing has its own window. So after the base listing
+        the reviews are partitioned by star rating; a star group larger than one
+        window is split further (other sort order, media-only, current format,
+        verified-only) and then by keyword, using words mined from the reviews
+        already collected, until the group's reported count is reached or
+        ``keyword_stall_limit`` keyword listings in a row add nothing new.
+        Reviews are de-duplicated by review id across all listings. There is no
+        review-count limit; completeness is measured and reported."""
+        cfg = self.cfg
+        out = {"reviews": [], "pages_checked": 0, "total_reviews": None, "login_required": False,
+               "stop_reason": None, "listings": [], "failed_listings": [], "star_coverage": {}}
+        found: dict = {}
+        tried: set = set()
+        base = base_review_filters(cfg)
+
+        class _LoginRequired(Exception):
+            pass
+
+        async def window(extra: dict[str, str], label: str, have=None) -> dict | None:
+            filters = {**base, **extra}
+            key = tuple(sorted(filters.items()))
+            if key in tried:
+                return None
+            tried.add(key)
+            try:
+                res = await self._load_listing(page, asin, filters, label, have)
+            except (BrowserClosedError, BlockedError):
+                raise
+            except ReviewPagesBlocked as exc:
+                out["failed_listings"].append({"listing": label, "error": f"ReviewPagesBlocked: {exc}"})
+                raise
+            except Exception as exc:  # page failed after retries: record it, try the next listing
+                err = f"{exc.__class__.__name__}: {str(exc)[:200]}"
+                out["failed_listings"].append({"listing": label, "error": err})
+                _log.warning("event=review_listing_failed asin=%s listing=%s error=%s", asin, label, err)
+                return None
+            if res["login_required"]:
                 out["login_required"] = True
-                out["stop_reason"] = f"sign-in required on page {n}"
-                break
-            out["pages_checked"] += 1
-            parsed = await asyncio.to_thread(parsing.parse_review_page, html)
-            if out["total_reviews"] is None:
-                out["total_reviews"] = parsed["total_reviews"]
-            fresh = []
-            for r in parsed["reviews"]:
-                key = parsing.review_key(r)
-                if key not in seen:
-                    seen.add(key)
-                    fresh.append(r)
-            out["reviews"] += fresh
-            if not fresh:
-                out["stop_reason"] = f"no new reviews on page {n}"
-                break
-            if not parsed["has_next"]:
-                out["stop_reason"] = f"last review page ({n})"
-                break
+                raise _LoginRequired(label)
+            new = 0
+            for r in res["reviews"]:
+                k = parsing.review_key(r)
+                if k in found:
+                    found[k] = parsing.merge_reviews([found[k]], [r])[0]
+                else:
+                    found[k] = r
+                    new += 1
+            res["new"] = new
+            out["pages_checked"] += res["batches"]
+            entry = {"listing": label, "available": res["total"], "loaded": len(res["reviews"]),
+                     "new": new, "pages": res["batches"], "stop_reason": res["stop_reason"]}
+            if res["error"]:
+                entry["error"] = res["error"]
+                out["failed_listings"].append({"listing": label, "error": res["error"]})
+            out["listings"].append(entry)
+            _log.info("event=review_listing_done asin=%s listing=%s available=%s loaded=%d new=%d "
+                      "unique_total=%d pages=%d stop=%s", asin, label, res["total"], len(res["reviews"]),
+                      new, len(found), res["batches"], res["stop_reason"])
+            return res
+
+        def capped(res: dict | None) -> bool:
+            """The listing may hold more than it showed (window full or cut short)."""
+            return bool(res) and (len(res["reviews"]) >= LISTING_CAP or res["error"] is not None)
+
+        def star_count(value: int) -> int:
+            return sum(1 for r in found.values() if r.get("rating") == value)
+
+        def keyword_count(value: int, kw: str) -> int:
+            rx = re.compile(rf"\b{re.escape(kw)}\b", re.I)
+            return sum(1 for r in found.values() if r.get("rating") == value
+                       and rx.search(f"{r.get('title') or ''} {r.get('review_text') or ''}"))
+
+        try:
+            first = await window({}, "all")
+            total = first["total"] if first else None
+            out["total_reviews"] = total
+            _log.info("event=review_total_found asin=%s available=%s mode=%s", asin, total,
+                      "all" if cfg.collect_all_reviews else f"pages({cfg.review_pages})")
+            if not cfg.collect_all_reviews:
+                out["stop_reason"] = (first or {}).get("stop_reason") or "listing failed"
+            elif (total is not None and len(found) < total) or \
+                    (total is None and (first is None or capped(first))):
+                # Partition whenever the base listing did not deliver everything it
+                # reports - full at 100, or cut short below it (seen live: 53 of 118).
+                for star, value in _STARS:
+                    s = await window({"filterByStar": star, "sortBy": "recent"}, f"{star}/recent",
+                                     have=lambda value=value: star_count(value))
+                    star_total = s["total"] if s else None
+
+                    def complete() -> bool:
+                        return star_total is not None and star_count(value) >= star_total
+
+                    if s is not None and s["stop_reason"] == "already collected":
+                        pass  # the base listing already held this whole star group
+                    elif s is None or capped(s):
+                        extras = [({"filterByStar": star, "sortBy": "helpful"}, f"{star}/helpful"),
+                                  ({"filterByStar": star, "mediaType": "media_reviews_only"}, f"{star}/media"),
+                                  ({"filterByStar": star, "formatType": "current_format"}, f"{star}/current_format")]
+                        if not cfg.verified_reviews_only:
+                            extras.append(({"filterByStar": star, "reviewerType": "avp_only_reviews"},
+                                           f"{star}/verified"))
+                        for extra, label in extras:
+                            if complete():
+                                break
+                            await window(extra, label)
+                        used: set[str] = set()
+                        stall = 0
+                        recent: list[int] = []  # new reviews per keyword listing, most recent last
+                        while not complete() and stall < cfg.keyword_stall_limit:
+                            if len(recent) >= cfg.keyword_yield_window > 0 and \
+                                    sum(recent[-cfg.keyword_yield_window:]) < cfg.keyword_min_yield:
+                                _log.info("event=keyword_phase_low_yield asin=%s star=%s last=%d new=%d",
+                                          asin, star, cfg.keyword_yield_window,
+                                          sum(recent[-cfg.keyword_yield_window:]))
+                                break
+                            words = parsing.review_keywords(
+                                [r for r in found.values() if r.get("rating") == value], used, limit=1)
+                            if not words:
+                                break
+                            kw = words[0]
+                            used.add(kw)
+                            w = await window({"filterByStar": star, "sortBy": "recent", "filterByKeyword": kw},
+                                             f"{star}/kw:{kw}",
+                                             have=lambda value=value, kw=kw: keyword_count(value, kw))
+                            gained = (w or {}).get("new", 0)
+                            if capped(w):  # keyword listing also full: its other sort order too
+                                w2 = await window({"filterByStar": star, "sortBy": "helpful",
+                                                   "filterByKeyword": kw}, f"{star}/kw:{kw}/helpful")
+                                gained += (w2 or {}).get("new", 0)
+                            recent.append(gained)
+                            stall = 0 if gained else stall + 1
+                    out["star_coverage"][star] = {"available": star_total, "extracted": star_count(value)}
+                out["stop_reason"] = "partitioned listings exhausted"
+            else:
+                out["stop_reason"] = (first or {}).get("stop_reason") or "listing failed"
+        except _LoginRequired as exc:
+            out["stop_reason"] = f"sign-in required ({exc})"
+        except ReviewPagesBlocked as exc:
+            out["review_pages_blocked"] = True
+            out["stop_reason"] = f"review pages refused by Amazon: {exc}"
+            self.products_reviews_blocked += 1
+            _log.error("event=review_pages_blocked asin=%s collected=%d reason=%s", asin, len(found), exc)
+
+        out["reviews"] = list(found.values())
+        _log.info("event=review_collection_done asin=%s available=%s extracted=%d listings=%d pages=%d "
+                  "failed_listings=%d", asin, out["total_reviews"], len(found), len(out["listings"]),
+                  out["pages_checked"], len(out["failed_listings"]))
         return out
 
     async def _scrape_reviews(self, page: Page, data: dict) -> tuple[dict, list[dict]]:
@@ -328,9 +699,21 @@ class AmazonEngine:
         reviews = parsing.merge_reviews(info["reviews"], data["reviews"])
         if cfg.verified_reviews_only:
             reviews = [r for r in reviews if r["verified_purchase"]]
+        for r in reviews:
+            r["asin"] = asin
+            r["marketplace"] = cfg.marketplace.domain
 
         if info["total_reviews"] is not None:
             ratings["total_reviews"] = info["total_reviews"]
+        coverage = self._coverage(info, len(reviews))
+        if coverage["complete"] is False:
+            self.reviews_incomplete += 1
+            _log.warning("event=reviews_incomplete asin=%s available=%s extracted=%d coverage=%s%% reason=%s",
+                         asin, coverage["reviews_available"], len(reviews), coverage["coverage_percent"],
+                         coverage["incomplete_reason"])
+        _log.info("event=reviews_done asin=%s available=%s extracted=%d pages=%d listings=%d",
+                  asin, coverage["reviews_available"], len(reviews), info["pages_checked"],
+                  len(info.get("listings") or []))
         summary = {
             "total_ratings": ratings["total_ratings"],
             "total_reviews": ratings["total_reviews"],
@@ -346,15 +729,53 @@ class AmazonEngine:
             "stop_reason": info["stop_reason"],
             "sort_used": cfg.review_sort,
             "login_required": info["login_required"],
+            # Completeness: what the review listing reports vs. what was extracted.
+            **coverage,
+            "collection_mode": "all" if cfg.collect_all_reviews else "pages",
+            "listing_cap": LISTING_CAP,
+            "listings_scraped": len(info.get("listings") or []),
+            "star_coverage": info.get("star_coverage") or {},
+            "failed_listings": info.get("failed_listings") or [],
+            "review_pages_blocked": bool(info.get("review_pages_blocked")),
+            "listings": info.get("listings") or [],
         }
         if info.get("error"):
             summary["error"] = info["error"]
         return summary, reviews
 
+    def _coverage(self, info: dict, extracted: int) -> dict:
+        """Reported review count vs. unique reviews extracted. ``complete`` is
+        None when Amazon reported no count or review pages were not loaded."""
+        total = info.get("total_reviews")
+        out = {"reviews_available": total, "reviews_extracted": extracted,
+               "coverage_percent": round(min(extracted, total) / total * 100, 1) if total else None,
+               "complete": None, "incomplete_reason": None}
+        if total is None:
+            return out
+        out["complete"] = extracted >= total
+        if out["complete"]:
+            return out
+        if info.get("review_pages_blocked"):
+            reason = ("Amazon stopped serving review pages to this session ('Page Not Found' on valid "
+                      "review URLs = rate limit); reviews collected before that are kept")
+        elif info.get("login_required"):
+            reason = "review pages need a signed-in Amazon session"
+        elif not self.cfg.collect_all_reviews:
+            reason = "collect_all_reviews is off; only review_pages_per_product pages were loaded"
+        elif info.get("failed_listings"):
+            reason = f"{len(info['failed_listings'])} review listing(s) failed to load"
+        else:
+            reason = (f"Amazon shows at most {LISTING_CAP} reviews per listing; the remaining reviews "
+                      "were not reachable through any star / sort / media / format / keyword listing")
+        out["incomplete_reason"] = reason
+        return out
+
     async def _scrape_product(self, ctx: BrowserContext, card: dict) -> dict | None:
         asin = card["asin"]
         url = f"{self.cfg.marketplace.base_url}/dp/{asin}"
         page = None
+        ps = self.stats.product(asin)
+        requests_before = self.requests_sent
         try:
             page = await ctx.new_page()
             html = await self._goto(page, url, wait_for="#productTitle", scroll_steps=random.randint(7, 10))
@@ -384,12 +805,25 @@ class AmazonEngine:
             }
             data["review_summary"], data["reviews"] = await self._scrape_reviews(page, data)
 
+            s = data["review_summary"]
+            ps.reviews_available = s.get("reviews_available")
+            ps.pages_total = math.ceil(ps.reviews_available / 10) if ps.reviews_available else None
+            ps.pages_processed = s.get("pages_scraped") or 0
+            ps.listings_processed = s.get("listings_scraped") or 0
+            ps.reviews_extracted = len(data["reviews"])
+            ps.failed_pages = len(s.get("failed_listings") or [])
+            ps.requests = self.requests_sent - requests_before  # approximate when products overlap
+            ps.finish("done")
+            data["scrape_stats"] = ps.as_dict()
+
             _log.info("event=product_extracted asin=%s price=%s %s specs=%d images=%d videos=%d "
-                      "reviews=%d title=%r", asin, data["price"]["currency"], data["price"]["selling_price"],
-                      len(data["specifications_flat"]), len(data["images"]), len(data["videos"]),
-                      len(data["reviews"]), data["product_name"][:60])
+                      "reviews=%d available=%s seconds=%s title=%r", asin, data["price"]["currency"],
+                      data["price"]["selling_price"], len(data["specifications_flat"]), len(data["images"]),
+                      len(data["videos"]), len(data["reviews"]), ps.reviews_available, ps.seconds,
+                      data["product_name"][:60])
             return data
         except Exception as exc:
+            ps.finish("failed")
             if isinstance(exc, (BrowserClosedError, BlockedError)) or _is_closed_error(exc):
                 # Fatal for the whole run: stop cleanly and keep what we have.
                 self.aborted = self.aborted or f"{exc.__class__.__name__}: {exc}"
@@ -420,12 +854,47 @@ class AmazonEngine:
             return False
         return True
 
+    # ── Incremental storage / resume hooks ───────────────────────────────
+
+    async def _already_completed(self, asin: str) -> bool:
+        """Resume: a product an earlier run finished (recently) is not scraped
+        again; its data is already stored."""
+        if self.hooks is None:
+            return False
+        try:
+            done = await self.hooks.product_completed("amazon", asin)
+        except Exception as exc:
+            _log.warning("event=resume_check_failed asin=%s error=%s", asin, exc)
+            return False
+        if done:
+            self.stats.product(asin).finish("skipped_completed")
+            _log.info("event=product_skipped_completed asin=%s", asin)
+        return bool(done)
+
+    async def _emit(self, model: dict) -> None:
+        """Hand a finished product to incremental storage; never fails the run."""
+        if self.hooks is None:
+            return
+        try:
+            if self.emit_filter is not None and not self.emit_filter(model):
+                return
+            await self.hooks.product_scraped("amazon", model)
+        except Exception as exc:
+            _log.warning("event=incremental_store_failed asin=%s error=%s", model.get("product_id"), exc)
+
     # ── Orchestration ────────────────────────────────────────────────────
 
     async def run(self) -> list[dict]:
         cfg = self.cfg
         models: list[dict] = []
         page_limit = cfg.max_pages if cfg.max_pages > 0 else 50
+        cooling = self.cooldown_remaining()
+        if cooling:
+            limited_at, allowed = cooling
+            raise RateLimitCooldown(
+                f"Amazon rate-limited this session at {limited_at:%Y-%m-%d %H:%M} UTC; to avoid extending the "
+                f"block, the next run is allowed after {allowed:%Y-%m-%d %H:%M} UTC "
+                f"(amazon_cooldown_minutes={cfg.cooldown_minutes:g}; set 0 to disable)")
         _log.info("event=engine_start marketplace=%s search=%r sort=%s max_pages=%s max_products=%s "
                   "review_pages=%s", cfg.marketplace.domain, cfg.search_text, cfg.sort_by,
                   cfg.max_pages, cfg.max_products, cfg.review_pages)
@@ -471,9 +940,12 @@ class AmazonEngine:
                         async with sem:
                             if len(models) >= cfg.max_products or self.aborted:
                                 return
+                            if await self._already_completed(card["asin"]):
+                                return
                             m = await self._scrape_product(ctx, card)
                             if m and len(models) < cfg.max_products:
                                 models.append(m)
+                                await self._emit(m)
 
                     await asyncio.gather(*[_one(c) for c in candidates])
                     _log.info("event=page_done page=%d total=%d", page_num, len(models))
@@ -489,5 +961,10 @@ class AmazonEngine:
                     pass
                 _log.info("event=browser_closed")
 
-        _log.info("event=engine_done products=%d failures=%d", len(models), len(self.failures))
+        run = self.stats.summary(self.requests_sent)
+        _log.info("event=engine_done products=%d failures=%d reviews_available=%d reviews_scraped=%d "
+                  "requests=%d seconds=%s reviews_per_minute=%s avg_seconds_per_product=%s",
+                  len(models), len(self.failures), run["reviews_available"], run["reviews_scraped"],
+                  self.requests_sent, run["execution_seconds"], run["reviews_per_minute"],
+                  run["avg_seconds_per_product"])
         return models

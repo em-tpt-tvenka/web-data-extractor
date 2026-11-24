@@ -1,11 +1,4 @@
-"""Pure, side-effect-free parsers for Amazon HTML.
 
-Every function takes page HTML (or a parsed soup) and returns plain dicts: no
-browser, no network, no I/O, so all of it is unit-testable against saved pages.
-Rule carried over from the Alibaba parsers: never fabricate a value. If a field
-cannot be read from the page it is None (or an empty list), and boolean signals
-such as "cash on delivery" are True only on explicit page evidence, else None.
-"""
 
 from __future__ import annotations
 
@@ -82,6 +75,34 @@ def _decode_after(html: str, pattern: str):
 
 def looks_blocked(html: str) -> bool:
     return any(marker in (html or "") for marker in _BLOCK_MARKERS)
+
+
+# Amazon's throttling page ("Oops! It's rush hour and traffic is piling up on
+# that page. Please try again in a short while.", HTTP 503) - a rate limit for
+# this session / IP, not a CAPTCHA and not an empty result.
+_THROTTLE_MARKERS = (
+    "It's rush hour and traffic is piling up", "It&#39;s rush hour and traffic is piling up",
+    "rush hour and traffic is piling up", "503 - Service Unavailable Error",
+)
+
+
+_NOT_FOUND_MARKERS = ("not a functioning page on our site", "Looking for something?")
+
+
+def looks_not_found(html: str | None, url: str = "", status: int | None = None) -> bool:
+    """Amazon's "Page Not Found" page ("We're sorry. The Web address you entered
+    is not a functioning page on our site."). On a valid review-listing URL this
+    is how Amazon refuses review pages to a rate-limited session (directly or
+    via a redirect to ``/ref=cs_404_link``)."""
+    if status == 404 or "cs_404" in (url or ""):
+        return True
+    return any(marker in (html or "") for marker in _NOT_FOUND_MARKERS)
+
+
+def looks_throttled(html: str | None, status: int | None = None) -> bool:
+    if status in (429, 503):
+        return True
+    return any(marker in (html or "") for marker in _THROTTLE_MARKERS)
 
 
 def is_signin_page(html: str, url: str = "") -> bool:
@@ -674,16 +695,65 @@ def parse_reviews(soup) -> list[dict]:
     return reviews
 
 
+_REVIEW_TOTAL_RES = (
+    re.compile(r"([\d,]+)\s+with reviews", re.I),
+    # "269 customer reviews", "108 matching customer reviews", "1 global review"
+    re.compile(r"([\d,]+)\s+(?:matching\s+)?(?:customer|global)\s+reviews?", re.I),
+)
+SHOW_MORE_SEL = "[data-hook='show-more-button']"
+
+
+def review_total(info: str | None) -> int | None:
+    """Review count a review listing reports for its current filters."""
+    for rx in _REVIEW_TOTAL_RES:
+        m = rx.search(info or "")
+        if m:
+            return to_int(m.group(1))
+    return None
+
+
 def parse_review_page(html: str) -> dict:
+    """Reviews currently in a review listing, the count Amazon reports for the
+    listing's filters, and whether more can be loaded. Amazon's review listing
+    no longer paginates by URL (``pageNumber`` is ignored): more reviews are
+    appended in place by the "Show 10 more reviews" button (``has_more``); the
+    old numbered pager is still recognised (``has_next``)."""
     soup = soup_of(html)
-    info = _text(soup.select_one("[data-hook='cr-filter-info-review-rating-count']")) or ""
-    m = re.search(r"([\d,]+)\s+with reviews", info) or \
-        re.search(r"([\d,]+)\s+(?:customer|global)\s+reviews?", info)
+    more = soup.select_one(SHOW_MORE_SEL)
+    has_more = bool(more) and not more.find_parent(class_="a-button-disabled")
     return {
         "reviews": parse_reviews(soup),
-        "total_reviews": to_int(m.group(1)) if m else None,
-        "has_next": bool(soup.select_one("li.a-last:not(.a-disabled) a")),
+        "total_reviews": review_total(_text(soup.select_one("[data-hook='cr-filter-info-review-rating-count']"))),
+        "has_more": has_more,
+        "has_next": bool(soup.select_one("li.a-last:not(.a-disabled) a")) or has_more,
     }
+
+
+# Words that never narrow a review search usefully.
+_KEYWORD_STOP = set("""
+a about above after again all also am an and any are as at be because been before being below between both
+but by can could did do does doing down during each few for from further had has have having he her here hers
+him his how i if in into is it its itself just me more most my no nor not now of off on once only or other our
+out over own same she should so some such than that the their them then there these they this those through to
+too under until up very was we were what when where which while who whom why will with would you your yours
+product item amazon one get got also really much even well like using use used buy bought purchase purchased
+good great nice best bad poor ok okay very quality price value money worth please dont didnt doesnt cant wont
+isnt wasnt ive its im youre thats per yet way new day now two lot
+""".split())
+
+
+def review_keywords(reviews: list[dict], exclude: set[str] = frozenset(), limit: int | None = None) -> list[str]:
+    """Words that occur in the given reviews' titles and text, most frequent
+    first, for narrowing a review listing with Amazon's keyword filter. Each
+    keyword listing has its own 100-review window, so keywords mined from the
+    reviews already collected reach reviews the capped listings could not."""
+    counts: dict[str, int] = {}
+    for r in reviews:
+        words = set(re.findall(r"[a-z]{3,}", f"{r.get('title') or ''} {r.get('review_text') or ''}".lower()))
+        for w in words - _KEYWORD_STOP:
+            counts[w] = counts.get(w, 0) + 1
+    ranked = [w for w, _ in sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])) if w not in exclude]
+    return ranked[:limit] if limit else ranked
 
 
 def review_key(r: dict):

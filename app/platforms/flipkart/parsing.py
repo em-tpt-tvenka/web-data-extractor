@@ -422,6 +422,66 @@ def build_review_url(page_url: str) -> str:
     return f"{u.scheme}://{u.netloc}{path}?{urlencode(q)}"
 
 
+# Each Flipkart review listing (one sort order) stops after 10 pages of 10
+# reviews (verified live: page 11+ is empty even when thousands are reported);
+# the four sort orders are separate listings, each with its own 100-review
+# window. Star, aspect (aid) and certifiedBuyer URL filters did not partition
+# the reviews (ignored / identical / empty when loaded by URL).
+LISTING_CAP = 100
+REVIEW_SORT_ORDERS = {
+    "helpful": "MOST_HELPFUL",
+    "recent": "MOST_RECENT",
+    "positive": "POSITIVE_FIRST",
+    "negative": "NEGATIVE_FIRST",
+}
+
+
+def review_listing_url(review_url: str, sort: str) -> str:
+    """Review listing for one sort order (``review_url`` from build_review_url)."""
+    u = urlparse(review_url)
+    qs = {k: v[0] for k, v in parse_qs(u.query).items() if k not in ("page", "sortOrder", "aid", "certifiedBuyer")}
+    qs.update({"aid": "overall", "certifiedBuyer": "false", "sortOrder": REVIEW_SORT_ORDERS[sort]})
+    return f"{u.scheme}://{u.netloc}{u.path}?{urlencode(qs)}"
+
+
+def is_login_redirect(url: str | None) -> bool:
+    """Flipkart intermittently redirects review pages to /login; a retry loads them."""
+    return "/login" in urlparse(url or "").path
+
+
+def review_key(r: dict) -> tuple:
+    """Identity of a parsed review across pages and sort orders."""
+    return (r.get("reviewer_name"), r.get("rating"), r.get("title"), (r.get("review_text") or "")[:80],
+            r.get("posted_relative"), r.get("helpful_count"))
+
+
+def review_coverage(available, extracted, collect_all: bool, listings: list[dict], blocked: bool = False) -> dict:
+    """Reported review count vs. reviews extracted (same keys as Amazon /
+    Alibaba). ``complete`` is None when Flipkart shows no review count."""
+    out = {"reviews_available": available, "reviews_extracted": extracted,
+           "coverage_percent": round(min(extracted, available) / available * 100, 1)
+           if available and extracted is not None else None,
+           "complete": None, "incomplete_reason": None}
+    if available is None or extracted is None:
+        return out
+    out["complete"] = extracted >= available
+    if out["complete"]:
+        return out
+    failed = [l for l in listings if l.get("failed")]
+    if blocked:
+        reason = "Flipkart blocked the review pages (captcha / access denied)"
+    elif not collect_all:
+        reason = "collect_all_reviews is off; only review_pages_per_product pages were loaded"
+    elif failed:
+        reason = (f"{len(failed)} review listing(s) could not be loaded (Flipkart kept redirecting "
+                  "to login); see review_summary.listings")
+    else:
+        reason = (f"Flipkart lists at most {LISTING_CAP} reviews per sort order; all "
+                  f"{len(listings)} sort orders were loaded to their last page")
+    out["incomplete_reason"] = reason
+    return out
+
+
 def with_page(url: str, p: int) -> str:
     u = urlparse(url)
     qs = {k: v[0] for k, v in parse_qs(u.query).items()}

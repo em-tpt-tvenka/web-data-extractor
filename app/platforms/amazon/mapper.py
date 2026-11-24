@@ -1,18 +1,4 @@
-"""Map raw Amazon engine models to the unified record schema.
 
-Same contract as the Flipkart mapper (the reference implementation): every
-product yields exactly ONE ``product_listing`` record that carries
-
-* the product (``entities.products`` + ``product_attributes``),
-* the retailer / seller (``entities.retailer``),
-* the customer reviews (``reviews``) and their aggregate (``review_summary``,
-  ``metrics``),
-
-so product details are never duplicated once per review. Amazon-specific
-behaviour kept from the previous mapper: native review ids (``R...``), the
-request's review date window, the marketplace's own country, and "never
-fabricate" (fields the page does not show stay null).
-"""
 
 from __future__ import annotations
 
@@ -32,7 +18,7 @@ from app.platforms.common import (
     sha_hash,
     warranty_months,
 )
-from app.processing.language import detect_language
+from app.processing.language import detect_language, detect_languages
 from app.schemas.record import (
     AuthorBlock,
     AvailabilityBlock,
@@ -72,7 +58,8 @@ RETAILER_ID = "RETAILER_AMAZON"
 # Keys of every embedded review: Flipkart's eight first, then Amazon-only ones.
 _REVIEW_KEYS = ("reviewer_name", "rating", "title", "review_text", "verified_purchase",
                 "posted_date", "posted_relative", "helpful_count")
-_AMAZON_REVIEW_KEYS = ("review_id", "reviewer_location", "country_code", "variant", "images", "videos")
+_AMAZON_REVIEW_KEYS = ("review_id", "reviewer_location", "country_code", "variant", "images", "videos",
+                       "asin", "marketplace")
 
 _INDUSTRY_WORDS = (
     ("Electronics", ("mobile", "phone", "laptop", "computer", "tv", "television", "headphone", "audio",
@@ -300,9 +287,11 @@ class _ProductContext:
         date window (undated reviews are kept) and de-duplicated by review id."""
         window = resolve_window(request.scraping_options.date_range)
         out, seen = [], set()
+        self.reviews_outside_window = 0
         for r in self.model.get("reviews") or []:
             try:
                 if not in_window(parse_date(r.get("posted_date")), window):
+                    self.reviews_outside_window += 1
                     continue
                 rid = _source_item_id(r, self.product_id or "")
                 if rid in seen:
@@ -314,11 +303,13 @@ class _ProductContext:
                 entry["verified_purchase"] = bool(entry["verified_purchase"])
                 entry.update({k: r.get(k) for k in _AMAZON_REVIEW_KEYS})
                 entry["review_id"] = rid
-                entry["language"] = detect_language(entry["review_text"] or entry["title"])
                 entry["reviewer_id_hash"] = sha_hash(r["reviewer_name"]) if r.get("reviewer_name") else None
                 out.append(entry)
             except Exception as exc:  # one malformed review must not drop the product
                 _log.warning("event=review_map_failed product=%s error=%s", self.product_id, exc)
+        # One batched detection per product (parallel for large review sets).
+        for entry, lang in zip(out, detect_languages([e["review_text"] or e["title"] for e in out])):
+            entry["language"] = lang
         return out
 
     def review_summary(self, kept_reviews: int) -> dict | None:
@@ -326,6 +317,8 @@ class _ProductContext:
         if not summary:
             return None
         summary["reviews_collected"] = kept_reviews
+        # Extracted reviews the request's date_range excluded (never silent).
+        summary["reviews_outside_date_range"] = getattr(self, "reviews_outside_window", 0)
         return summary
 
 
