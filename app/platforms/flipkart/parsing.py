@@ -214,10 +214,21 @@ def is_spec_header(line: str) -> bool:
     return bool(re.fullmatch(r"(?:general|display|camera|processor|os & processor|memory & storage|connectivity|call|multimedia|battery & power|audio|video|dimensions|warranty|additional)\s+(?:features|details|specifications)", l))
 
 
+# Tokens that are spec VALUES, never spec labels; if one lands in a key slot the
+# alternation has shifted and the "key" must be rejected.
+_SPEC_VALUE_TOKENS = {"yes", "no", "na", "n/a", "none", "true", "false"}
+
+
 def _is_valid_spec_key(k: str) -> bool:
     if not k or len(k) <= 1 or len(k) > 80:
         return False
     if k.isdigit() or k in {"₹", "•", "a", "t"} or k.lower() in SPEC_GARBAGE_KEYS:
+        return False
+    if k.strip().lower() in _SPEC_VALUE_TOKENS:
+        return False
+    # Lone all-caps "code" words (NANO, QWERTY) are values, not labels; short
+    # abbreviations that are real keys (GPU, RAM, NFC, OS) are kept by length.
+    if " " not in k and k.isalpha() and k.isupper() and len(k) >= 4:
         return False
     return True
 
@@ -249,15 +260,16 @@ def parse_spec_text(block: str) -> dict:
                 if _is_valid_spec_key(k_clean):
                     rows[k_clean] = v.strip()
                 i += 1
+            elif not _is_valid_spec_key(line):
+                # A value-shaped / unrecognized sub-header line is a section
+                # break, not a row: skip just this line so it does not consume
+                # the next line as a bogus value and shift every later pair.
+                i += 1
             elif i + 1 < len(items):
-                k_clean = line
-                if _is_valid_spec_key(k_clean):
-                    rows[k_clean] = items[i + 1]
+                rows[line] = items[i + 1]
                 i += 2
             else:
-                k_clean = line
-                if _is_valid_spec_key(k_clean):
-                    rows[k_clean] = ""
+                rows[line] = ""
                 i += 1
         if rows:
             specs.setdefault(name, {}).update(rows)

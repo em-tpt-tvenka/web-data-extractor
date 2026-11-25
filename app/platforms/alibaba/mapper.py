@@ -423,7 +423,26 @@ class _ProductContext:
                 except Exception as exc:  # one malformed review must not drop the product
                     _log.warning("event=review_map_failed product=%s kind=%s error=%s",
                                  self.offer_id, kind, exc)
-        return out
+
+        # Output-level dedup: a few store ("supplier_feedback") entries survive
+        # the cross-source pass with a different review_id yet IDENTICAL final
+        # review_text (the raw-text key above differs when only an appended
+        # supplier reply differed). Collapse entries whose normalized
+        # (reviewer_name + posted_date + review_text) match AND whose text is
+        # non-empty, keeping the first. Blank-text entries are distinct
+        # anonymized feedback and are always kept.
+        deduped, seen_out = [], set()
+        for entry in out:
+            text = (entry.get("review_text") or "").strip()
+            if text:
+                okey = (clean_text(entry.get("reviewer_name") or "").lower(),
+                        str(entry.get("posted_date") or "").strip(),
+                        clean_text(text).lower())
+                if okey in seen_out:
+                    continue
+                seen_out.add(okey)
+            deduped.append(entry)
+        return deduped
 
     def review_summary(self, reviews: list[dict], pq: dict, sq: dict,
                        request: ScrapeJobRequest) -> dict | None:

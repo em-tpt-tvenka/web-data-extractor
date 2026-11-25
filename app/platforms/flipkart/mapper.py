@@ -80,6 +80,42 @@ def _parse_review_date(value) -> date | None:
         return None
 
 
+# The variant chip text scraped from Flipkart often trails the real descriptor
+# with the discount arrow and prices (e.g. "128 GB + 4 GB  ↓22% 22,999
+# ₹17,999"). Keep only the descriptor by cutting at the first discount
+# arrow (↓) or the first price token (\d...₹ or ₹...\d).
+_VARIANT_OPTION_CUT = re.compile(r"↓|\d[\d,]*\s*₹|₹\s*\d")
+
+
+def _clean_variant_option(text):
+    if not isinstance(text, str) or not text:
+        return text
+    m = _VARIANT_OPTION_CUT.search(text)
+    if m:
+        text = text[:m.start()]
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _clean_variants(variants):
+    """Strip price/discount noise from each variant option's descriptor while
+    leaving url/product_id untouched. Non-dict variants pass through as-is."""
+    if not isinstance(variants, dict):
+        return variants
+    cleaned = {}
+    for name, opts in variants.items():
+        if isinstance(opts, list):
+            new_opts = []
+            for o in opts:
+                if isinstance(o, dict) and "option" in o:
+                    o = dict(o)
+                    o["option"] = _clean_variant_option(o.get("option"))
+                new_opts.append(o)
+            cleaned[name] = new_opts
+        else:
+            cleaned[name] = opts
+    return cleaned
+
+
 class _ProductContext:
     def __init__(self, model: dict, request: ScrapeJobRequest):
         self.model = model
@@ -138,7 +174,7 @@ class _ProductContext:
         self.warranty_months, self.warranty_type = parsing.parse_warranty(model)
         self.highlights = model.get("features", []) or []
         raw_variants = model.get("variants")
-        self.variants = raw_variants if raw_variants else []
+        self.variants = _clean_variants(raw_variants) if raw_variants else []
         self.manufacturer = model.get("manufacturer") if model.get("manufacturer") else None
 
     def entities(self) -> EntitiesBlock:
