@@ -288,7 +288,9 @@ class _ProductContext:
         window = resolve_window(request.scraping_options.date_range)
         out, seen = [], set()
         self.reviews_outside_window = 0
-        for r in self.model.get("reviews") or []:
+        raw_reviews = self.model.get("reviews") or []
+        self.reviews_before_filter = len(raw_reviews)
+        for r in raw_reviews:
             try:
                 if not in_window(parse_date(r.get("posted_date")), window):
                     self.reviews_outside_window += 1
@@ -312,13 +314,17 @@ class _ProductContext:
             entry["language"] = lang
         return out
 
-    def review_summary(self, kept_reviews: int) -> dict | None:
+    def review_summary(self, kept_reviews: int, request: ScrapeJobRequest) -> dict | None:
         summary = dict(self.model.get("review_summary") or {})
         if not summary:
             return None
         summary["reviews_collected"] = kept_reviews
         # Extracted reviews the request's date_range excluded (never silent).
         summary["reviews_outside_date_range"] = getattr(self, "reviews_outside_window", 0)
+        # Reconcile counts so embedded reviews[] length matches the summary.
+        summary["reviews_before_date_filter"] = getattr(self, "reviews_before_filter", kept_reviews)
+        summary["reviews_in_output"] = kept_reviews
+        summary["date_window"] = request.scraping_options.date_range.type.value
         return summary
 
 
@@ -339,7 +345,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
     total_ratings = ctx.ratings.get("total_ratings")
     total_reviews = ctx.ratings.get("total_reviews")
     breakdown = ctx.ratings.get("breakdown") or {}
-    body = ctx.description or (" | ".join(ctx.highlights) if ctx.highlights else None) or ctx.subject
+    body = ctx.description or ctx.subject
     reviews = ctx.reviews(request)
 
     return SocialMentionRecord(
@@ -363,7 +369,9 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
             language=detect_language(body),
             content_type="product_listing",
             media=media_items(ctx.model.get("images"), ctx.model.get("videos")),
-            keywords=ctx.highlights,
+            # keywords are NOT the highlight bullets (that duplicated
+            # product_attributes.highlights); left empty unless real tags exist.
+            keywords=[],
         ),
         entities=ctx.entities(),
         taxonomy=ctx.taxonomy(request),
@@ -384,7 +392,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         provenance=_provenance(run_id),
         quality=QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
-        review_summary=ctx.review_summary(len(reviews)),
+        review_summary=ctx.review_summary(len(reviews), request),
         reviews=reviews,
     )
 

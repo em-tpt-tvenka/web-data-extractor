@@ -13,7 +13,6 @@ from pydantic import BaseModel
 
 from app.core.config import settings
 from app.core.logging import get_logger
-from app.processing.collection_splitter import split_records
 from app.schemas.record import SocialMentionRecord
 
 _log = get_logger("local_storage")
@@ -142,16 +141,14 @@ class LocalStorage:
         dicts = [r.to_mongo() for r in records]
 
         if settings.export_json:
-            # A single JSON file per job holding the three collections exactly as
-            # stored in MongoDB, keyed by collection:
-            # {"products": [...], "retailers": [...], "reviews": [...]}.
-            # The DB still writes each collection to its own table; only this
-            # on-disk export is combined into one file.
+            # A single JSON file per job: the full normalized records (the
+            # "full-record array" reference format) with embedded reviews.
+            # The DB still writes products/retailers/reviews to their own tables
+            # via the splitter; this on-disk export keeps the complete records.
             try:
-                paths["json"] = self._write_json(
-                    target / f"{stem}.json", split_records(dicts))
+                paths["json"] = self._write_json(target / f"{stem}.json", dicts)
             except Exception as exc:
-                _log.error("event=export_collections_failed platform=%s run_id=%s error=%s",
+                _log.error("event=export_json_failed platform=%s run_id=%s error=%s",
                            platform, run_id, exc)
 
         if settings.export_excel:

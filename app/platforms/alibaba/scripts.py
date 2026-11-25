@@ -78,7 +78,7 @@ REVIEWS_JS = r"""
         return null;
     }
 
-    const reviews = cards.slice(0, 300).map(card => {
+    const reviews = cards.slice(0, 2000).map(card => {
         const raw   = (card.innerText || card.textContent || '').trim();
         const lines = raw.split('\n').map(s => s.trim()).filter(Boolean);
 

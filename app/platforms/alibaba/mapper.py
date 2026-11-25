@@ -395,28 +395,48 @@ class _ProductContext:
         shared embedded shape, restricted to the request's date window
         (undated reviews are kept) and de-duplicated by review id."""
         window = resolve_window(request.scraping_options.date_range)
-        out, seen = [], set()
+        out, seen, seen_content = [], set(), set()
         for kind, items in ((MentionKind.CUSTOMER_REVIEW, pq["items"]),
                             (MentionKind.SUPPLIER_FEEDBACK, sq["items"])):
             for r in items:
                 try:
                     if not in_window(parsing.parse_posted_date(r.get("date")), window):
                         continue
+                    # Cross-source dedup: the SAME physical review can surface in
+                    # both the product-review tab and the store-feedback tab and
+                    # would otherwise be emitted twice with a different
+                    # review_type. De-dupe on a content key (reviewer + date +
+                    # text) BEFORE the type is assigned; keep the first occurrence.
+                    ckey = (clean_text(r.get("reviewer") or "").lower(),
+                            str(r.get("date") or "").strip(),
+                            clean_text(r.get("text") or "").lower())
+                    if any(ckey) and ckey in seen_content:
+                        continue
                     entry = self._embedded(r, kind)
                     key = (entry["review_type"], entry["review_id"])
                     if key in seen:
                         continue
                     seen.add(key)
+                    if any(ckey):
+                        seen_content.add(ckey)
                     out.append(entry)
                 except Exception as exc:  # one malformed review must not drop the product
                     _log.warning("event=review_map_failed product=%s kind=%s error=%s",
                                  self.offer_id, kind, exc)
         return out
 
-    def review_summary(self, reviews: list[dict], pq: dict, sq: dict) -> dict | None:
+    def review_summary(self, reviews: list[dict], pq: dict, sq: dict,
+                       request: ScrapeJobRequest) -> dict | None:
         summary = dict(self.model.get("review_summary") or {})
         if not summary:
             return None
+        # Reconcile the embedded reviews[] (the windowed, de-duplicated set) with
+        # the summary: the candidate count before the date filter, the count
+        # remaining in the output, and the window that was applied. Keep existing
+        # keys intact.
+        summary["reviews_before_date_filter"] = len(pq["items"]) + len(sq["items"])
+        summary["reviews_in_output"] = len(reviews)
+        summary["date_window"] = request.scraping_options.date_range.type.value
         summary["reviews_collected"] = len(reviews)
         summary["product_reviews_collected"] = sum(r["review_type"] == "review" for r in reviews)
         summary["store_feedback_collected"] = sum(r["review_type"] == "supplier_feedback" for r in reviews)
@@ -471,7 +491,9 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
             language=detect_language(body),
             content_type="product_listing",
             media=media_items(ctx.images, ctx.videos),
-            keywords=ctx.highlights,
+            # keywords are NOT the highlight bullets (those already populate
+            # product_attributes.highlights); left empty unless real tags exist.
+            keywords=[],
         ),
         entities=ctx.entities(),
         taxonomy=ctx.taxonomy(request),
@@ -492,7 +514,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         provenance=_provenance(run_id),
         quality=QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
-        review_summary=ctx.review_summary(reviews, pq, sq),
+        review_summary=ctx.review_summary(reviews, pq, sq, request),
         reviews=reviews,
     )
 

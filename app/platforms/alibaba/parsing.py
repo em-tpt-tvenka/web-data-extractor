@@ -269,6 +269,11 @@ _MODEL_JUNK = {
     "n/a", "na", "-", "null", "none", "",
 }
 _MODEL_LABELS = ("model number", "model no.", "model no", "model")
+# A label is a model-number label when it contains the word "model" (optionally
+# followed by "no"/"number"/"#"). Matched by regex/substring rather than an exact
+# equality to _MODEL_LABELS so "Model No.", "Model Number", "Phone Model", etc.
+# all qualify.
+_MODEL_LABEL_RE = re.compile(r"\bmodel(\s*(no\.?|number|#))?\b", re.I)
 _CPU_LIKE_RE = re.compile(
     r"^(i[3579][\s-]?\d{2,5}[a-z]*|celeron|pentium|atom|ryzen|athlon|"
     r"core\s*(i|ultra|m)|xeon|snapdragon|mediatek|mt\d|"
@@ -291,6 +296,9 @@ def sanitize_model_number(v):
 def _norm_ident(s) -> str:
     return re.sub(r"\s+", " ", str(s or "").strip()).lower()
 
+def _is_model_label(name) -> bool:
+    return bool(_MODEL_LABEL_RE.search(_norm_ident(name)))
+
 def _cpu_spec_values(specs: dict) -> list[str]:
     out = []
     for k, v in (specs or {}).items():
@@ -301,30 +309,34 @@ def _cpu_spec_values(specs: dict) -> list[str]:
 
 def _model_candidates(ex: dict) -> list[tuple[str, str]]:
     cands: list[tuple[str, str]] = []
+    # The scraper already extracts a model number (scripts.py: variantModel or a
+    # "model number"/"model" attribute pick); use it as the authoritative
+    # candidate instead of discarding it.
+    pre = ex.get("model_number")
+    if pre not in (None, "", "N/A"):
+        cands.append(("extracted", str(pre).strip()))
     for v in ex.get("variants") or []:
-        if _norm_ident(v.get("name")) in _MODEL_LABELS:
+        if _is_model_label(v.get("name")):
             vals = [x for x in (v.get("values") or []) if x]
             if vals:
                 cands.append(("variant", str(vals[0]).strip()))
                 break
     for k, val in (ex.get("specifications") or {}).items():
-        if _norm_ident(k) in _MODEL_LABELS and val not in (None, "", "N/A"):
+        if _is_model_label(k) and val not in (None, "", "N/A"):
             cands.append(("specification", str(val).strip()))
             break
     return cands
 
 def _is_cpu_value(model: str, cpu_values: list[str]) -> str | None:
+    """Flags a model code ONLY when it is IDENTICAL to a processor/CPU spec value
+    on the page. A merely CPU-shaped code (one that looks like a chip name but
+    does not equal any CPU spec) is a legitimate model number and is kept."""
     nm = _norm_ident(model)
     if not nm:
         return None
     for cv in cpu_values:
         if _norm_ident(cv) == nm:
             return cv
-    if _CPU_LIKE_RE.match(model.strip()) and " " not in nm:
-        for cv in cpu_values:
-            toks = set(re.findall(r"[a-z0-9][a-z0-9\-]*", cv.lower()))
-            if nm in toks and _norm_ident(cv) != nm:
-                return cv
     return None
 
 def validate_model_number(ex: dict) -> dict:
@@ -900,12 +912,18 @@ def review_coverage(available, extracted, stop: str | None, collect_all: bool | 
         return out
     stop = stop or ""
     if failed:
-        reason = "detail page failed to load"
-    elif collect_all is False:
+        out["incomplete_reason"] = "detail page failed to load"
+        return out
+    # A natural end to pagination (no further page / nothing new -- next_disabled,
+    # no_new_reviews, last page, ...) means the source listed every review it
+    # exposes. Alibaba's displayed count can exceed what its pages actually list
+    # (store feedback is text-only and never reaches the product-tab total), so a
+    # natural end is complete coverage, not an incomplete collection.
+    if any(s in stop for s in _NATURAL_END):
+        out["complete"] = True
+        return out
+    if collect_all is False:
         reason = "collect_all_reviews is off; only review_pages_per_product pages were loaded"
-    elif any(s in stop for s in _NATURAL_END):
-        reason = (f"Alibaba's review pages ended ({stop}); its displayed count includes reviews "
-                  "it does not list on those pages")
     else:
         reason = f"review pagination stopped early ({stop or 'unknown'})"
     out["incomplete_reason"] = reason

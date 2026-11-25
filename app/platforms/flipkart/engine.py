@@ -259,9 +259,10 @@ class FlipkartEngine:
         data["offers"] = self._build_offers(text)
         data["delivery"], data["seller"], data["warranty_and_policies"] = self._build_logistics(text)
 
+        # Real product-highlight bullets only. Do NOT fall back to the marketing
+        # description here: that paragraph already lives in content.text, and
+        # copying it into features duplicated it into highlights + keywords.
         features = await self._ev(page, scripts.JS_HIGHLIGHTS, []) or []
-        if not features and prod.get("description"):
-            features = [l.strip() for l in prod["description"].splitlines() if l.strip()]
         data["features"] = features
 
         data.update(await self._build_specs(page, text))

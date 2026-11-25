@@ -69,6 +69,17 @@ def _placeholder_tenant():
     return TenantBlock(tenant_id=_UNASSIGNED, project_id=_UNASSIGNED)
 
 
+def _parse_review_date(value) -> date | None:
+    """Flipkart review dates are absolute ISO strings (e.g. '2026-11-23').
+    Returns None for relative/missing dates (kept by the date window)."""
+    if not value or not isinstance(value, str):
+        return None
+    try:
+        return date.fromisoformat(value[:10])
+    except ValueError:
+        return None
+
+
 class _ProductContext:
     def __init__(self, model: dict, request: ScrapeJobRequest):
         self.model = model
@@ -156,8 +167,10 @@ class _ProductContext:
             else:
                 specs.pop("Warranty", None)
 
-        # Include variants in specification if present (as requested)
-        if self.variants:
+        # Include variants in specification if present (as requested).
+        # variants may be a dict {label: [options]} or an empty list; only the
+        # dict form carries named variant groups.
+        if isinstance(self.variants, dict) and self.variants:
             variant_summary = {}
             for var_name, var_list in self.variants.items():
                 if isinstance(var_list, list):
@@ -424,6 +437,20 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
     total_reviews = ctx.ratings.get("total_reviews")
     breakdown = ctx.ratings.get("breakdown") or {}
 
+    # Honor the requested date window: keep only reviews published inside it
+    # (undated/relative reviews are kept). Reconcile the summary counts so the
+    # embedded reviews[] length matches what the summary reports.
+    window = resolve_window(request.scraping_options.date_range)
+    raw_reviews = ctx.model.get("reviews") or []
+    kept_reviews = [r for r in raw_reviews
+                    if in_window(_parse_review_date(r.get("posted_date")), window)]
+    summary = ctx.model.get("review_summary")
+    if summary:
+        summary = dict(summary)
+        summary["reviews_before_date_filter"] = len(raw_reviews)
+        summary["reviews_in_output"] = len(kept_reviews)
+        summary["date_window"] = request.scraping_options.date_range.type.value
+
     return SocialMentionRecord(
         _id=record_id,
         record_type=RECORD_TYPE_LISTING,
@@ -444,7 +471,9 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
             language=detect_language(ctx.description or ctx.subject),
             content_type="product_listing",
             media=_media_items(ctx.model.get("images"), ctx.model.get("videos")),
-            keywords=ctx.model.get("features", []) or [],
+            # keywords are NOT the highlight bullets (that duplicated
+            # product_attributes.highlights); left empty unless real tags exist.
+            keywords=[],
         ),
         entities=ctx.entities(),
         taxonomy=ctx.taxonomy(request),
@@ -465,7 +494,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         provenance=_provenance(run_id),
         quality=QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
-        review_summary=ctx.model.get("review_summary") or None,
+        review_summary=summary or None,
         reviews=[
             {
                 "reviewer_name": r.get("reviewer_name"),
@@ -477,7 +506,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
                 "posted_relative": r.get("posted_relative"),
                 "helpful_count": r.get("helpful_count"),
             }
-            for r in (ctx.model.get("reviews") or [])
+            for r in kept_reviews
         ],
     )
 

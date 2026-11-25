@@ -39,6 +39,11 @@ class BrowserClosedError(Exception):
 
 _FATAL = (BlockedError, BrowserClosedError)
 
+# Upper bound on reviews read from a single review-API payload. Pagination
+# collects across pages; this only guards one page's parse, so it is set high to
+# avoid silently truncating large single-page review sets. Raised from 50.
+_MAX_API_REVIEWS_PER_PAGE = 500
+
 
 def _is_closed_error(exc: Exception) -> bool:
     return "has been closed" in str(exc) or exc.__class__.__name__ == "TargetClosedError"
@@ -159,7 +164,7 @@ def _raw_review_items(payload: dict) -> list:
     _walk(payload)
     if not candidates:
         return []
-    return max(candidates, key=len)[:50]
+    return max(candidates, key=len)[:_MAX_API_REVIEWS_PER_PAGE]
 
 def _parse_api_reviews(payload: dict) -> dict | None:
     candidates = []
@@ -186,7 +191,7 @@ def _parse_api_reviews(payload: dict) -> dict | None:
     best = max(candidates, key=lambda kv: len(kv[1]))
     items = best[1]
     reviews = []
-    for item in items[:50]:
+    for item in items[:_MAX_API_REVIEWS_PER_PAGE]:
         def s(k):
             return str(item.get(k, "N/A")).strip() or "N/A"
 
@@ -685,9 +690,11 @@ class AlibabaEngine:
         return False
 
     async def _paginate_review_dom(self, page, block: dict, tab_count: int) -> dict:
-        """Click through review pages on the product page. Loads at most
+        """Click through review pages on the product page. With
+        ``collect_all_reviews`` on, pages through fully until the source's last
+        page / no new reviews (no page cap). Otherwise loads at most
         ``feedback_max_pages`` further pages (the request's
-        review_pages_per_product), never more than 40."""
+        review_pages_per_product), capped at 40."""
         if block is None:
             return block
         reviews = block.get("reviews", []) or []
@@ -926,7 +933,9 @@ class AlibabaEngine:
                         termination = "stale_after_click"
                         break
 
-            complete = termination == "next_disabled"
+            # A natural end (no next page, or no new reviews after retries) means
+            # the store listed every feedback it exposes -- treat it as complete.
+            complete = termination in parsing._NATURAL_END
             _log.info("event=feedback_extracted collected=%d pages=%d term=%s complete=%s",
                       len(collected), pages, termination, complete)
             return {"reviews": list(collected.values()), "complete": complete,
