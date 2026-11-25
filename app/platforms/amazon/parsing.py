@@ -951,3 +951,73 @@ def parse_product_page(html: str, asin: str, base_url: str, default_currency: st
         # Reviews shown on the product page; the engine merges review-page reviews in.
         "reviews": parse_reviews(soup),
     }
+
+
+# ── Seller storefront page (/sp?seller=<id>) ─────────────────────────────────
+
+_SELLER_STOP_RE = re.compile(
+    r"^(Do you have a question|Ask a question|Detailed Seller Information|Reviews|Customer Reviews|"
+    r"Filter by|Visit the .* storefront)", re.I)
+_KEYLINE_RE = re.compile(r"^([A-Za-z][A-Za-z0-9 /&.\-]{2,40}):\s*(.*)$")
+
+
+def seller_profile_url(base_url: str, seller_id: str) -> str:
+    return f"{base_url}/sp?seller={seller_id}"
+
+
+def _block_after(lines: list, heading: str) -> list:
+    """Lines following a heading line, up to the next section heading."""
+    for i, l in enumerate(lines):
+        if l.strip().lower() == heading.lower():
+            out = []
+            for nxt in lines[i + 1:]:
+                if _SELLER_STOP_RE.match(nxt):
+                    break
+                out.append(nxt)
+            return out
+    return []
+
+
+def parse_seller_page(html: str, base_url: str = "") -> dict:
+    """Amazon seller profile page: name, feedback (rating / % positive / ratings count / star split),
+    About Seller text, Detailed Seller Information, storefront link. Missing values stay None."""
+    soup = soup_of(html)
+    lines = [l for l in (clean_text(x) for x in soup.get_text("\n", strip=True).splitlines()) if l]
+    text = "\n".join(lines)
+    out = {
+        "name": None, "rating": None, "positive_percent": None, "positive_period_months": None,
+        "total_ratings": None, "star_breakdown_percent": {}, "about": [], "detailed_info": {},
+        "storefront_url": None,
+    }
+    out["name"] = _first_text(soup, "#seller-name", "#sellerName", "h1")
+
+    m = re.search(r"(\d(?:\.\d)?)\s*out of\s*5", text, re.I)
+    out["rating"] = float(m.group(1)) if m else None
+    m = re.search(r"(\d{1,3})\s*%\s*positive\s+in the last\s+(\d+)\s+months?\s*\(\s*([\d,]+)\s*ratings?\s*\)", text, re.I)
+    if m:
+        out["positive_percent"] = int(m.group(1))
+        out["positive_period_months"] = int(m.group(2))
+        out["total_ratings"] = int(m.group(3).replace(",", ""))
+    else:
+        m = re.search(r"([\d,]+)\s*ratings", text, re.I)
+        out["total_ratings"] = int(m.group(1).replace(",", "")) if m else None
+    for star, pct in re.findall(r"(\d)\s*star\s*(\d{1,3})\s*%", text, re.I):
+        out["star_breakdown_percent"].setdefault(f"{star}_star", int(pct))
+
+    out["about"] = _block_after(lines, "About Seller")
+
+    info: dict = {}
+    cur = None
+    for l in _block_after(lines, "Detailed Seller Information"):
+        km = _KEYLINE_RE.match(l)
+        if km:
+            cur = km.group(1).strip()
+            info[cur] = km.group(2).strip()
+        elif cur:
+            info[cur] = (info[cur] + ", " + l).strip(", ")
+    out["detailed_info"] = {k: v for k, v in info.items() if v}
+
+    a = soup.find("a", string=re.compile(r"storefront", re.I))
+    if a and a.get("href"):
+        out["storefront_url"] = urljoin(base_url or "", a["href"])
+    return out

@@ -91,20 +91,22 @@ class FlipkartAdapter(PlatformAdapter):
         )
 
     def _passes_filters(self, model: dict, request: ScrapeJobRequest, options: FlipkartOptions) -> bool:
-        filters = request.filters
-        price = model.get("price", {}) or {}
-        selling = price.get("special_deal_price") or price.get("selling_price")
-
-        if filters.min_price is not None and selling is not None and selling < float(filters.min_price):
-            return False
-        if filters.max_price is not None and selling is not None and selling > float(filters.max_price):
-            return False
-
-        if filters.exclude_keywords:
-            name = (model.get("product_name") or "").lower()
-            if any(k.lower() in name for k in filters.exclude_keywords if k):
-                return False
+        # Filters (price range, exclude keywords, ...) are applied only in Flipkart's search.
+        # Everything that was scraped is stored - nothing is rejected after scraping.
         return True
+        # --- previous post-scrape rejection logic (disabled) ---
+        # filters = request.filters
+        # price = model.get("price", {}) or {}
+        # selling = price.get("special_deal_price") or price.get("selling_price")
+        # if filters.min_price is not None and selling is not None and selling < float(filters.min_price):
+        #     return False
+        # if filters.max_price is not None and selling is not None and selling > float(filters.max_price):
+        #     return False
+        # if filters.exclude_keywords:
+        #     name = (model.get("product_name") or "").lower()
+        #     if any(k.lower() in name for k in filters.exclude_keywords if k):
+        #         return False
+        # return True
 
     def _run_meta(self, request, options, models, kept, pages_processed) -> dict:
         opts = request.scraping_options

@@ -317,3 +317,84 @@ JS_ASPECT_CHIPS = """
   return [];
 }
 """
+
+
+# --------------------------------------------------------------------------
+# Seller / retailer panel scripts (additive - used only by _scrape_seller)
+# --------------------------------------------------------------------------
+_JS_FIND_PANEL = """
+const findPanel = () => {
+  const W = window.innerWidth, H = window.innerHeight;
+  const fixedUp = e => {
+    for (let n = e; n && n !== document.body; n = n.parentElement) {
+      if (getComputedStyle(n).position === 'fixed') return true;
+    }
+    return false;
+  };
+  const ok = e => {
+    const r = e.getBoundingClientRect();
+    return r.width >= 250 && r.width <= W * 0.75 && r.height >= H * 0.6 && r.left >= W * 0.25
+        && fixedUp(e) && ((e.innerText || '').trim()).length >= 15;
+  };
+  // Topmost panel: climb from the element actually visible at the right-middle of the screen,
+  // so a tab panel opened over 'All Sellers' wins over the panel underneath it.
+  let best = null;
+  const pt = document.elementFromPoint(W * 0.8, H * 0.5);
+  for (let n = pt; n && n !== document.body; n = n.parentElement) { if (ok(n)) best = n; }
+  return best;
+};
+"""
+
+JS_PANEL_TEXT = "() => {" + _JS_FIND_PANEL + """
+  const p = findPanel();
+  return p ? p.innerText : '';
+}
+"""
+
+# arg: {label: 'OFFERS', near: 'SellerName' | null}  -> {x, y} of the element to click
+JS_PANEL_FIND = "(arg) => {" + _JS_FIND_PANEL + r"""
+  const root = findPanel();
+  if (!root) return null;
+  const norm = s => (s || '').trim().replace(/\s+/g, ' ').toUpperCase();
+  const want = norm(arg.label);
+  let els = [...root.querySelectorAll('div,span,a,button,p,h1,h2,h3')].filter(e => {
+    const r = e.getBoundingClientRect();
+    return norm(e.innerText) === want && r.width > 0 && r.height > 0;
+  });
+  if (!els.length) return null;
+  if (arg.near) {
+    const nearEls = [...root.querySelectorAll('div,span,a,h1,h2,h3')]
+      .filter(e => (e.innerText || '').trim().split('\n')[0].trim().toLowerCase() === arg.near.toLowerCase());
+    if (nearEls.length) {
+      nearEls.sort((a, b) => a.getBoundingClientRect().width * a.getBoundingClientRect().height
+                           - b.getBoundingClientRect().width * b.getBoundingClientRect().height);
+      const nt = nearEls[0].getBoundingClientRect().top;
+      const below = els.filter(e => e.getBoundingClientRect().top >= nt - 5);
+      if (below.length) {
+        below.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+        els = below;
+      }
+    }
+  }
+  const el = els[0];
+  el.scrollIntoView({block: 'center', inline: 'center'});
+  const r = el.getBoundingClientRect();
+  return {x: r.left + r.width / 2, y: r.top + r.height / 2};
+}
+"""
+
+# arg: seller name -> hrefs of seller-profile links on the page / open panel (empty if Flipkart shows none)
+JS_SELLER_LINKS = r"""
+(name) => {
+  const n = (name || '').toLowerCase();
+  const out = [];
+  document.querySelectorAll('a[href]').forEach(a => {
+    const h = a.href;
+    if (!/^https?:/.test(h) || !/seller/i.test(h) || /^https?:\/\/seller\.flipkart\.com/i.test(h)) return;
+    const t = (a.innerText || '').trim().toLowerCase();
+    const ctx = ((a.closest('div') || a).innerText || '').toLowerCase();
+    if (!n || t.includes(n) || ctx.includes(n)) out.push(h);
+  });
+  return out;
+}
+"""

@@ -633,3 +633,184 @@ def dedupe_images(urls):
             seen.add(u)
             out.append(u)
     return out
+
+
+# --------------------------------------------------------------------------
+# Seller / retailer parsing (additive)
+# --------------------------------------------------------------------------
+SELLER_TAB_LABELS = {"OFFERS", "DELIVERY", "NO COST EMI", "EMI", "COD", "REPLACE"}
+SELLER_TAB_TITLES = {
+    "OFFERS": "Offers", "DELIVERY": "Delivery", "NO COST EMI": "No Cost EMI",
+    "EMI": "EMI", "COD": "COD", "REPLACE": "Replace",
+}
+_OFFER_HEAD_RE = re.compile(
+    r"^(Bank Offer|Partner Offer|Special Price|SpecialPrice|No Cost EMI|Combo Offer|"
+    r"Exchange Offer|Wallet Offer|Cashback|Coupon)$", re.I)
+_RATING_ONLY_RE = re.compile(r"^(\d(?:\.\d)?)\s*★?$")
+
+
+def _lines(text: str) -> list:
+    return [clean(l) for l in (text or "").replace("\t", "\n").splitlines() if clean(l)]
+
+
+def parse_indian_count(s):
+    """'33.1L+' -> 3310000, '2.5K' -> 2500, '1Cr' -> 10000000."""
+    if not s:
+        return None
+    m = re.match(r"\s*([\d.,]+)\s*(Cr|L|K|M)?", str(s), re.I)
+    if not m:
+        return None
+    try:
+        n = float(m.group(1).replace(",", ""))
+    except ValueError:
+        return None
+    mult = {"cr": 10_000_000, "l": 100_000, "m": 1_000_000, "k": 1_000}.get((m.group(2) or "").lower(), 1)
+    return int(round(n * mult))
+
+
+def parse_seller_profile(text: str) -> dict:
+    """Seller profile panel: name, rating, tenure, sold / quality / speed, about, overall ratings."""
+    lines = _lines(text)
+    out = {
+        "name": None, "rating": None, "tenure": None, "tenure_years": None,
+        "products_sold": None, "products_sold_estimate": None,
+        "quality_score_percent": None, "speed_score_percent": None,
+        "about": [], "overall_ratings": {},
+    }
+    if not lines:
+        return out
+    skip = {"←", "<", "back", "close", "✕"}
+    out["name"] = next((l for l in lines if l.lower() not in skip), None)
+
+    m = re.search(r"(\d(?:\.\d)?)\s*★", text)
+    if not m and len(lines) > 1:  # star drawn as an icon, not text: "4.5 • 3 years with Flipkart"
+        m = re.search(r"\b(\d\.\d)\b", lines[1])
+    out["rating"] = float(m.group(1)) if m else None
+    m = re.search(r"(\d+)\s*(years?|months?)\s*with\s*Flipkart", text, re.I)
+    if m:
+        out["tenure"] = f"{m.group(1)} {m.group(2).lower()}"
+        out["tenure_years"] = int(m.group(1)) if m.group(2).lower().startswith("year") else round(int(m.group(1)) / 12, 2)
+
+    m = re.search(r"([\d.,]+\s?(?:Cr|L|K|M)?\+?)\s*\n?\s*Products?\s+Sold", text, re.I)
+    if m:
+        out["products_sold"] = clean(m.group(1))
+        out["products_sold_estimate"] = parse_indian_count(m.group(1))
+    m = re.search(r"(\d{1,3})\s*%\s*\n?\s*Quality Score", text, re.I)
+    out["quality_score_percent"] = int(m.group(1)) if m else None
+    m = re.search(r"(\d{1,3})\s*%\s*\n?\s*Speed Score", text, re.I)
+    out["speed_score_percent"] = int(m.group(1)) if m else None
+
+    low = [l.lower() for l in lines]
+    if "about seller" in low:
+        i = low.index("about seller") + 1
+        while i < len(lines) and low[i] not in ("overall ratings", "see other sellers"):
+            out["about"].append(lines[i])
+            i += 1
+    if "overall ratings" in low:
+        i = low.index("overall ratings") + 1
+        while i < len(lines) and low[i] != "see other sellers":
+            if i + 1 < len(lines):
+                r = _RATING_ONLY_RE.match(lines[i + 1])
+                if r and not _RATING_ONLY_RE.match(lines[i]):
+                    out["overall_ratings"][lines[i]] = float(r.group(1))
+                    i += 2
+                    continue
+            i += 1
+    return out
+
+
+def parse_seller_card(text: str, name) -> dict:
+    """The seller's card inside the 'All Sellers' panel (price, EMI, delivery, highlights)."""
+    lines = _lines(text)
+    if not lines:
+        return {}
+    start = None
+    if name:
+        for i, l in enumerate(lines):
+            if l.lower().startswith(name.lower()):
+                start = i
+                break
+    if start is None:
+        return {}
+    block = [lines[start][len(name):].strip()] if len(lines[start]) > len(name) else []
+    for l in lines[start + 1:]:
+        if l.upper() in SELLER_TAB_LABELS or l.upper() == "MORE" or re.fullmatch(r"\+\d+\s*MORE", l, re.I):
+            break
+        block.append(l)
+    block = [b for b in block if b]
+    joined = " | ".join(block)
+    m_rating = re.search(r"(\d\.\d)\s*★", joined)
+    if not m_rating:  # star is an icon: rating sits alone on its own line
+        r = next((re.fullmatch(r"(\d\.\d)", x) for x in block if re.fullmatch(r"\d\.\d", x)), None)
+        m_rating = r
+    m_del = re.search(r"((?:Next Day|Same Day|Express)?\s*Delivery[^|]*)", joined, re.I)
+    return {
+        "rating": float(m_rating.group(1)) if m_rating else None,
+        "delivery_note": clean(m_del.group(1)) if m_del else None,
+        "highlights": [b for b in block if re.search(r"Country of Origin|Bank Offer|Warranty", b, re.I)],
+    }
+
+
+def parse_offers_tab(body: list) -> dict:
+    """Group offer lines by their heading (Bank Offer / Partner Offer / Special Price / ...)."""
+    groups: dict = {}
+    cur = "Other"
+    item: list = []
+    for raw in body:
+        if raw.upper() == "T&C":
+            continue
+        ends = raw.upper().endswith("T&C")
+        line = re.sub(r"\s*T&C\s*$", "", raw).strip()
+        if not item and _OFFER_HEAD_RE.match(line) and not ends:
+            cur = re.sub(r"(?i)^specialprice$", "Special Price", line)
+            cur = cur.title() if cur.islower() else cur
+            groups.setdefault(cur, [])
+            continue
+        if line:
+            item.append(line)
+        if ends:
+            groups.setdefault(cur, []).append(" ".join(item))
+            item, cur = [], "Other"
+    if item:
+        groups.setdefault(cur, []).append(" ".join(item))
+    return {k: v for k, v in groups.items() if v}
+
+
+def parse_replace_tab(body: list) -> dict:
+    low = [l.lower() for l in body]
+    if "type accepted" not in low:
+        return {"details": body}
+    i = low.index("type accepted")
+    cells = body[i + 1:i + 4] + [None] * 3
+    rest = [t for t in (re.sub(r"^[•\u2022]\s*", "", l) for l in body[i + 4:]) if t]
+    return {
+        "validity": cells[0], "covers": cells[1], "type_accepted": cells[2],
+        "terms": rest,
+    }
+
+
+def parse_seller_tab(tab: str, text: str, name) -> dict:
+    """Parse one tab (OFFERS / DELIVERY / NO COST EMI / EMI / COD / REPLACE) of the seller panel."""
+    lines = _lines(text)
+    i = 0
+    skip = {"←", "<", "back"}
+    while i < len(lines) and (
+        (name and lines[i].lower() == name.lower())
+        or lines[i].upper() in SELLER_TAB_LABELS or lines[i].lower() in skip
+    ):
+        i += 1
+    body = [l for l in lines[i:] if l.upper() not in ("ADD TO CART", "BUY NOW")]
+    tab = tab.upper()
+    if tab == "OFFERS":
+        return parse_offers_tab(body)
+    if tab == "REPLACE":
+        return parse_replace_tab(body)
+    return {"details": body}
+
+
+def rating_near(text: str, name) -> float | None:
+    """Rating printed right after the seller name, e.g. 'Seller: HonasaConsumerLtd 4.5★'."""
+    if not text or not name:
+        return None
+    m = re.search(re.escape(name) + r"[^\d\n]{0,6}\n?\s*(\d\.\d)\b", text, re.I)
+    return float(m.group(1)) if m else None

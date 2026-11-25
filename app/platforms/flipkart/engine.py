@@ -70,6 +70,7 @@ class EngineConfig:
     chrome_profile_dir: str | None = None
     nav_timeout_ms: int = 60_000
     debug_dir: str | None = None
+    fetch_seller_details: bool = True
 
 
 class FlipkartEngine:
@@ -275,6 +276,13 @@ class FlipkartEngine:
         data["videos"] = vids
         data["variants"] = await self._ev(page, scripts.JS_VARIANTS, {}) or {}
 
+        data["seller_details"] = None
+        if cfg.fetch_seller_details:
+            try:
+                data["seller_details"] = await self._scrape_seller(page, data.get("seller") or {})
+            except Exception as exc:
+                _log.error("event=seller_failed url=%s error=%s", url[:90], exc)
+
         data["review_summary"] = {}
         data["reviews"] = []
         if cfg.fetch_reviews:
@@ -285,6 +293,134 @@ class FlipkartEngine:
             except Exception as exc:
                 _log.error("event=reviews_failed url=%s error=%s", url[:90], exc)
         return data
+
+    # ------------------------------------------------------------------
+    # Seller / retailer details (product page -> seller panel -> All Sellers -> tabs)
+    # ------------------------------------------------------------------
+    async def _click_visible_text(self, page: Page, pattern: str, timeout: int = 1500) -> bool:
+        loc = page.get_by_text(re.compile(pattern, re.I))
+        try:
+            count = await loc.count()
+        except Exception:
+            return False
+        for i in reversed(range(min(count, 6))):  # overlay panels come later in the DOM
+            el = loc.nth(i)
+            try:
+                if not await el.is_visible():
+                    continue
+                await el.scroll_into_view_if_needed(timeout=timeout)
+                await el.click(timeout=timeout)
+                return True
+            except Exception:
+                continue
+        return False
+
+    async def _panel_text(self, page: Page) -> str:
+        return await self._ev(page, scripts.JS_PANEL_TEXT, "") or ""
+
+    async def _panel_click(self, page: Page, label: str, near: str | None = None) -> bool:
+        try:
+            pos = await page.evaluate(scripts.JS_PANEL_FIND, {"label": label, "near": near})
+        except Exception as exc:
+            _log.warning("event=panel_find_failed label=%s error=%s", label, exc)
+            return False
+        if not pos:
+            return False
+        try:
+            await page.mouse.click(pos["x"], pos["y"])
+            await page.wait_for_timeout(900)
+            return True
+        except Exception:
+            return False
+
+    async def _scrape_seller(self, page: Page, hint: dict) -> dict | None:
+        """Collect everything Flipkart shows about the seller of this listing.
+
+        Never raises for missing UI pieces: whatever could be read is returned.
+        """
+        name = (hint or {}).get("name")
+        details: dict = {}
+        profile: dict = {}
+        await page.evaluate("window.scrollTo(0, 0)")
+        await page.wait_for_timeout(300)
+        main_text = await self._inner_text(page)
+        profile_url = await self._seller_link(page, name)
+
+        # 1) seller profile panel (rating, tenure, sold / quality / speed, about, overall ratings)
+        if await self._click_visible_text(page, r"^Seller:"):
+            await page.wait_for_timeout(1200)
+            txt = await self._panel_text(page)
+            if txt:
+                if await self._panel_click(page, "About Seller"):
+                    txt = await self._panel_text(page) or txt
+                profile = parsing.parse_seller_profile(txt)
+                name = profile.get("name") or name
+                profile_url = profile_url or await self._seller_link(page, name)
+                details["Seller Stats"] = {
+                    "tenure": profile.get("tenure"),
+                    "products_sold": profile.get("products_sold"),
+                    "products_sold_estimate": profile.get("products_sold_estimate"),
+                    "quality_score_percent": profile.get("quality_score_percent"),
+                    "speed_score_percent": profile.get("speed_score_percent"),
+                }
+                if profile.get("overall_ratings"):
+                    details["Overall Ratings"] = profile["overall_ratings"]
+                if profile.get("about"):
+                    details["About Seller"] = profile["about"]
+            await self._press_escape(page)
+            await page.wait_for_timeout(400)
+
+        # 2) All Sellers panel -> this seller's card -> tabbed panel
+        if await self._click_visible_text(page, r"^See other sellers"):
+            await page.wait_for_timeout(1500)
+            card = parsing.parse_seller_card(await self._panel_text(page), name)
+            if card:
+                details["Listing"] = card
+            if await self._panel_click(page, "OFFERS", near=name):
+                await page.wait_for_timeout(700)
+                prev_text = None
+                for tab in ["OFFERS", "DELIVERY", "NO COST EMI", "EMI", "COD", "REPLACE"]:
+                    if tab != "OFFERS" and not await self._panel_click(page, tab):
+                        continue
+                    tab_text = await self._panel_text(page)
+                    if tab_text == prev_text:  # tab didn't change the panel -> nothing of its own to store
+                        continue
+                    prev_text = tab_text
+                    parsed = parsing.parse_seller_tab(tab, tab_text, name)
+                    if parsed:
+                        details[parsing.SELLER_TAB_TITLES[tab]] = parsed
+            await self._press_escape(page)
+            await self._press_escape(page)
+
+        name = name or (hint or {}).get("name")
+        if not name:
+            return None
+        rating = (
+            profile.get("rating") or (hint or {}).get("rating")
+            or (details.get("Listing") or {}).get("rating")
+            or parsing.rating_near(main_text, name)
+        )
+        if rating is None:
+            _log.warning("event=seller_rating_missing name=%s main_text_sample=%r", name,
+                         (main_text[main_text.find("Seller"):][:200] if "Seller" in main_text else ""))
+        _log.info("event=seller_done name=%s rating=%s url=%s sections=%s", name, rating, profile_url, list(details))
+        return {
+            "name": name,
+            "rating": rating,
+            "profile_url": profile_url,
+            "other_details": details,
+        }
+
+    async def _seller_link(self, page: Page, name) -> str | None:
+        links = await self._ev_arg(page, scripts.JS_SELLER_LINKS, name) or []
+        return links[0] if links else None
+
+    async def _ev_arg(self, page: Page, script: str, arg, default=None):
+        try:
+            return await page.evaluate(script, arg)
+        except Exception as exc:
+            _log.warning("event=evaluate_failed error=%s", exc)
+            return default
 
     def _build_price(self, pr: dict, text: str, offer: dict) -> dict:
         tp = parsing.price_from_text(text)

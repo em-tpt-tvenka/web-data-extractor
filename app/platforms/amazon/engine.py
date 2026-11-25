@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import asyncio
@@ -110,6 +109,7 @@ class AmazonEngineConfig:
     nav_timeout_ms: int = 90_000
     captcha_wait_seconds: int = 300
     debug_dir: str | None = None
+    fetch_seller_details: bool = True
 
 
 def build_search_url(cfg: AmazonEngineConfig, page: int) -> str:
@@ -743,6 +743,62 @@ class AmazonEngine:
             summary["error"] = info["error"]
         return summary, reviews
 
+    async def _scrape_seller(self, page: Page, data: dict) -> dict | None:
+        """Open the seller's profile page (/sp?seller=ID) and collect feedback, about and business info."""
+        seller = data.get("seller") or {}
+        name, sid = seller.get("name"), seller.get("seller_id")
+        if not name and not sid:
+            return None
+        mp = self.cfg.marketplace
+        profile_url = parsing.seller_profile_url(mp.base_url, sid) if sid else None
+        info: dict = {}
+        if profile_url:
+            try:
+                html = await self._goto(page, profile_url, wait_for="#seller-name, h1", scroll_steps=2)
+                info = await asyncio.to_thread(parsing.parse_seller_page, html, mp.base_url)
+            except BrowserClosedError:
+                raise
+            except Exception as exc:  # captcha / timeout on the seller page: keep what the product page gave
+                _log.warning("event=seller_page_failed seller=%s error=%s", sid, exc)
+        name = info.get("name") or name
+        if not name:
+            return None
+
+        details: dict = {}
+        if info.get("rating") is not None or info.get("positive_percent") is not None:
+            details["Seller Feedback"] = {
+                "rating_out_of_5": info.get("rating"),
+                "positive_percent": info.get("positive_percent"),
+                "period_months": info.get("positive_period_months"),
+                "total_ratings": info.get("total_ratings"),
+                "star_breakdown_percent": info.get("star_breakdown_percent") or None,
+            }
+        if info.get("about"):
+            details["About Seller"] = info["about"]
+        if info.get("detailed_info"):
+            details["Detailed Seller Information"] = info["detailed_info"]
+        details["Fulfilment"] = {
+            "ships_from": seller.get("ships_from"),
+            "fulfilled_by_amazon": seller.get("fulfilled_by_amazon"),
+        }
+        if info.get("storefront_url"):
+            details["Storefront"] = info["storefront_url"]
+        if sid:
+            details["Seller ID"] = sid
+
+        if info.get("rating") is not None and seller.get("rating") is None:
+            seller["rating"] = info["rating"]  # also feeds entities.retailer.seller_rating
+        _log.info("event=seller_done seller=%s id=%s rating=%s positive=%s sections=%s",
+                  name, sid, info.get("rating"), info.get("positive_percent"), list(details))
+        return {
+            "name": name,
+            "rating": info.get("rating"),
+            "profile_url": profile_url,
+            "seller_id": sid,
+            "retailer_key": sid or f"{mp.domain}_{name}",
+            "other_details": {k: v for k, v in details.items() if v},
+        }
+
     def _coverage(self, info: dict, extracted: int) -> dict:
         """Reported review count vs. unique reviews extracted. ``complete`` is
         None when Amazon reported no count or review pages were not loaded."""
@@ -803,6 +859,16 @@ class AmazonEngine:
                 "product_id": asin, "product_name": data["product_name"],
                 "product_detail_url": url, "scraped_at": data["scraped_at"],
             }
+            # Seller profile page (best-effort; never fails the product). Done before the review
+            # pages because both reuse this tab.
+            data["seller_details"] = None
+            if self.cfg.fetch_seller_details:
+                try:
+                    data["seller_details"] = await self._scrape_seller(page, data)
+                except BrowserClosedError:
+                    raise
+                except Exception as exc:
+                    _log.warning("event=seller_failed asin=%s error=%s", asin, exc)
             data["review_summary"], data["reviews"] = await self._scrape_reviews(page, data)
 
             s = data["review_summary"]

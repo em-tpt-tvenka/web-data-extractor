@@ -482,9 +482,23 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
     )
 
 
+def _attach_seller_details(record: SocialMentionRecord, seller: dict | None) -> None:
+    """Carry the scraped seller block on the listing record so the repository can build the
+    retailer document. Preferred: declare `seller_details: dict | None = None` on
+    SocialMentionRecord. The fallback keeps product/review saving working if it isn't declared."""
+    if not seller:
+        return
+    try:
+        record.seller_details = seller
+    except Exception:
+        record.__dict__["seller_details"] = seller
+
+
 def build_records(model: dict, request: ScrapeJobRequest, run_id: str) -> list[SocialMentionRecord]:
     ctx = _ProductContext(model, request)
     # Always return 1 master product listing record containing in-detail offers,
     # clean specifications with variants, review summary, and attached customer reviews.
     # This prevents duplicate record flooding (e.g. 20 copies of product details for 20 reviews).
-    return [_listing_record(ctx, request, run_id)]
+    record = _listing_record(ctx, request, run_id)
+    _attach_seller_details(record, model.get("seller_details"))
+    return [record]
