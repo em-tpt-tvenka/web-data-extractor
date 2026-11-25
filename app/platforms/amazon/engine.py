@@ -29,6 +29,10 @@ _SORT_MAP = {
     "newest": "date-desc-rank",
 }
 _RESULT_SEL = "div[data-component-type='s-search-result']"
+# Keep paging the search results until max_products is reached even when
+# max_pages is small: the signed-in / ad-heavy layout drops many page-1 cards as
+# sponsored, so one page often yields far fewer than max_products.
+_SEARCH_BACKFILL_CAP = 15
 _EXPANDER_SELS = (
     "#productDetails_expanderTables_depthLeftSections a.a-expander-header[aria-expanded='false']",
     "#productDetails_expanderTables_depthRightSections a.a-expander-header[aria-expanded='false']",
@@ -888,6 +892,9 @@ class AmazonEngine:
         cfg = self.cfg
         models: list[dict] = []
         page_limit = cfg.max_pages if cfg.max_pages > 0 else 50
+        # Backfill extra pages (bounded) to reach max_products; the loop still
+        # stops as soon as len(models) >= max_products.
+        page_limit = max(page_limit, _SEARCH_BACKFILL_CAP)
         cooling = self.cooldown_remaining()
         if cooling:
             limited_at, allowed = cooling
