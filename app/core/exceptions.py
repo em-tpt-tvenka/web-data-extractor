@@ -25,3 +25,23 @@ class ScrapingError(AppError):
 class PlatformNotImplementedError(AppError):
     status_code = 501
     code = "platform_not_implemented"
+
+class ReportNotFoundError(AppError):
+    status_code = 404
+    code = "report_not_found"
+
+class SummaryNotFoundError(AppError):
+    status_code = 404
+    code = "summary_not_found"
+
+class ArtifactNotFoundError(AppError):
+    status_code = 404
+    code = "artifact_not_found"
+
+class NoDataError(AppError):
+    status_code = 422
+    code = "no_data_for_filters"
+
+class ReportGenerationError(AppError):
+    status_code = 500
+    code = "report_generation_failed"

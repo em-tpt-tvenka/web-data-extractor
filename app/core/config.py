@@ -120,6 +120,38 @@ class Settings(BaseSettings):
     collection_authorized: bool = False
     authorization_reference: str | None = None
 
+    # ── Reporting engine ────────────────────────────────────────────────────
+    # Where generated report artifacts (pdf/xlsx) are written.
+    report_export_dir: str = str(PROJECT_ROOT / "local_data" / "reports")
+    # Reuse an existing report_summaries document when its filters, aggregation
+    # version and data snapshot signature all match the new request.
+    report_reuse_summaries: bool = True
+    # Max representative reviews attached as evidence per section sent to the LLM.
+    report_evidence_per_section: int = 6
+    # Risk-rule thresholds (configurable; the report states the calculation).
+    risk_growth_qoq_threshold: float = 20.0      # % QoQ volume growth
+    risk_negative_share_threshold: float = 55.0  # % negative share
+    risk_min_volume: int = 10                    # ignore themes below this volume
+
+    # ── LLM providers (provider-independent; none required to run) ──────────
+    # One of: "fallback" (deterministic, no network), "ollama", "gemini",
+    # "openrouter". An unconfigured/unreachable provider degrades to "fallback".
+    llm_provider: str = "fallback"
+    llm_timeout: int = 120
+    llm_max_retries: int = 3
+    llm_temperature: float = 0.2
+
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-2.5-flash"
+    gemini_base_url: str = "https://generativelanguage.googleapis.com"
+
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "qwen2.5:7b"
+
+    openrouter_api_key: str | None = None
+    openrouter_model: str = "meta-llama/llama-3.1-8b-instruct:free"
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+
     def profile_for(self, platform: str) -> str:
         return str(Path(self.profile_base_dir) / platform)
 

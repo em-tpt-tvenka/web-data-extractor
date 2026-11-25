@@ -7,6 +7,8 @@ from app.api.v1 import jobs, platforms, scraping
 from app.core.config import settings
 from app.core.exceptions import AppError
 from app.core.logging import configure_logging, get_logger
+from app.reporting.api import routes as reporting_routes
+from app.reporting.repositories.indexes import ensure_reporting_indexes
 from app.storage.database import ensure_indexes
 
 _log = get_logger("app")
@@ -16,6 +18,7 @@ async def lifespan(app: FastAPI):
     configure_logging()
     try:
         await ensure_indexes()
+        await ensure_reporting_indexes()
     except Exception as exc:
         _log.warning("event=index_setup_failed error=%s", exc)
     yield
@@ -33,5 +36,5 @@ async def _app_error_handler(request: Request, exc: AppError) -> JSONResponse:
 async def health() -> dict[str, str]:
     return {"status": "ok"}
 
-for module in (scraping, jobs, platforms):
+for module in (scraping, jobs, platforms, reporting_routes):
     app.include_router(module.router, prefix=settings.api_v1_prefix)
