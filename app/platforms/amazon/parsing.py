@@ -247,28 +247,52 @@ def extract_variants(html: str, base_url: str) -> dict[str, list[dict]]:
     ``{"Colour": [{"option": "Grey", "url": ".../dp/ASIN", "product_id": "ASIN"}]}``.
     Read from the page's embedded twister data, never guessed."""
     out: dict[str, list[dict]] = {}
-    labels = _decode_after(html, r'"dimensionsDisplay"\s*:\s*')
     by_asin = _decode_after(html, r'"dimensionValuesDisplayData"\s*:\s*')
-    if isinstance(labels, list) and isinstance(by_asin, dict):
+    # Current Amazon twister: dimension labels come from variationDisplayLabels
+    # ({"size_name": "Size", "color_name": "Colour", ...}); the dimension ORDER
+    # (to line up with each ASIN's value list) comes from variationValues keys.
+    labels_map = _decode_after(html, r'"variationDisplayLabels"\s*:\s*')
+    var_values = _decode_after(html, r'"variationValues"\s*:\s*')
+    dim_keys = list(var_values.keys()) if isinstance(var_values, dict) else []
+    if isinstance(by_asin, dict) and dim_keys and isinstance(labels_map, dict):
         for asin, values in by_asin.items():
             if not ASIN_RE.match(str(asin)) or not isinstance(values, list):
                 continue
-            for label, value in zip(labels, values):
-                label, value = clean_text(label), clean_text(value)
+            for idx, value in enumerate(values):
+                if idx >= len(dim_keys):
+                    break
+                dim_key = dim_keys[idx]
+                label = clean_text(labels_map.get(dim_key)
+                                   or re.sub(r"_name$", "", str(dim_key)).replace("_", " ").title())
+                value = clean_text(value)
                 if not label or not value:
                     continue
                 opts = out.setdefault(label, [])
                 if all(o["option"] != value for o in opts):
                     opts.append({"option": value, "url": f"{base_url}/dp/{asin}", "product_id": asin})
+    # Legacy twister: dimensionsDisplay (ordered label list) + dimensionValuesDisplayData.
     if not out:
-        values = _decode_after(html, r'"variationValues"\s*:\s*')
-        if isinstance(values, dict):
-            for key, vals in values.items():
-                label = re.sub(r"_name$", "", str(key)).replace("_", " ").title()
-                opts = [{"option": clean_text(v), "url": None, "product_id": None}
-                        for v in dedupe(vals if isinstance(vals, list) else []) if isinstance(v, str)]
-                if opts:
-                    out[label] = opts
+        labels = _decode_after(html, r'"dimensionsDisplay"\s*:\s*')
+        if isinstance(labels, list) and isinstance(by_asin, dict):
+            for asin, values in by_asin.items():
+                if not ASIN_RE.match(str(asin)) or not isinstance(values, list):
+                    continue
+                for label, value in zip(labels, values):
+                    label, value = clean_text(label), clean_text(value)
+                    if not label or not value:
+                        continue
+                    opts = out.setdefault(label, [])
+                    if all(o["option"] != value for o in opts):
+                        opts.append({"option": value, "url": f"{base_url}/dp/{asin}", "product_id": asin})
+    # Last resort: variationValues ({dim_key: [values]}) without per-ASIN urls.
+    if not out and isinstance(var_values, dict):
+        for key, vals in var_values.items():
+            label = clean_text((labels_map or {}).get(key)) \
+                or re.sub(r"_name$", "", str(key)).replace("_", " ").title()
+            opts = [{"option": clean_text(v), "url": None, "product_id": None}
+                    for v in dedupe(vals if isinstance(vals, list) else []) if isinstance(v, str)]
+            if opts:
+                out[label] = opts
     return {k: v for k, v in out.items() if v}
 
 
