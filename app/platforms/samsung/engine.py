@@ -27,6 +27,9 @@ _BLOCK_RE = re.compile(
     r"|pardon our interruption|request unsuccessful|access to this page has been denied",
     re.I,
 )
+# Samsung's own error page title ("error | Samsung India") when a /buy/ slug
+# does not resolve to a real product (HTTP 404).
+_ERROR_TITLE_RE = re.compile(r"^error\b", re.I)
 
 
 @dataclass
@@ -194,6 +197,15 @@ class SamsungEngine:
                     break
         return found
 
+    def _looks_failed(self, model: dict | None, status: int | None) -> bool:
+        """True when a /buy/ navigation did not land on a real product page:
+        a non-2xx status, or Samsung's own "error | Samsung India" error page
+        (seen on slugs its URL router does not recognize)."""
+        if status is not None and status >= 400:
+            return True
+        name = (model or {}).get("product_name") or ""
+        return not name.strip() or bool(_ERROR_TITLE_RE.match(name.strip()))
+
     async def _scrape_product(self, ctx, page: Page, url: str) -> dict | None:
         cfg = self.cfg
         # Capture Bazaarvoice's own reviews.json request as the review widget
@@ -208,19 +220,46 @@ class SamsungEngine:
 
         page.on("request", _on_req)
         try:
-            await page.goto(url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
-            await page.wait_for_timeout(2000)
-            await self._dismiss(page)
-            await self._expand(page)
-            # Scroll further so the (lazy) reviews widget enters view and fires
-            # its reviews.json request.
-            for _ in range(10):
-                await page.evaluate("window.scrollBy(0, 1200)")
-                await page.wait_for_timeout(450)
-            await page.wait_for_timeout(1500)
-            html = await self._html(page)
-            model = parsing.parse_product(html, page.url)
-            if model and model.get("product_name") and cfg.fetch_reviews:
+            # The full deep slug + /buy/ resolves correctly for most lines
+            # (Samsung normalizes it server-side), but 404s for some (e.g.
+            # Galaxy A-series marketing colour slugs like "awesome-icyblue"
+            # its router does not recognize). Try it first, then fall back to
+            # progressively shorter candidates, validating each live rather
+            # than guessing which slug tokens are "real" model name vs filler.
+            candidates = [url] + parsing.buy_url_fallback_candidates(url, cfg.base_url)
+            model = None
+            for attempt, candidate in enumerate(candidates):
+                try:
+                    resp = await page.goto(candidate, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
+                except Exception as exc:
+                    _log.warning("event=buy_url_nav_failed url=%s error=%s", candidate[:100], exc)
+                    continue
+                await page.wait_for_timeout(2000)
+                await self._dismiss(page)
+                await self._expand(page)
+                # Scroll further so the (lazy) reviews widget enters view and
+                # fires its reviews.json request.
+                for _ in range(10):
+                    await page.evaluate("window.scrollBy(0, 1200)")
+                    await page.wait_for_timeout(450)
+                await page.wait_for_timeout(1500)
+                html = await self._html(page)
+                candidate_model = parsing.parse_product(html, page.url)
+                status = resp.status if resp else None
+                if not self._looks_failed(candidate_model, status):
+                    model = candidate_model
+                    if attempt > 0:
+                        _log.info("event=buy_url_fallback_resolved original=%s resolved=%s attempt=%d",
+                                  url[:90], candidate[:90], attempt)
+                    break
+                _log.warning("event=buy_url_candidate_failed url=%s status=%s title=%r attempt=%d/%d",
+                            candidate[:100], status, (candidate_model or {}).get("product_name"),
+                            attempt, len(candidates) - 1)
+            if model is None:
+                _log.error("event=all_buy_url_candidates_failed url=%s candidates_tried=%d",
+                          url[:100], len(candidates))
+                return None
+            if model.get("product_name") and cfg.fetch_reviews:
                 jsonld = model.get("reviews") or []
                 bv, summary = await self._bazaarvoice(
                     ctx,

@@ -258,6 +258,38 @@ def canonical_buy_url(url: str, base: str) -> str:
     return clean + "/buy/"
 
 
+def buy_url_fallback_candidates(url: str, base: str) -> list[str]:
+    """Progressively shorter ``/buy/`` candidates for when the full deep slug
+    404s. Samsung's server-side URL normalization (confirmed live) resolves the
+    FULL deep slug + ``/buy/`` for mainline lines (e.g. Galaxy S) but 404s on it
+    for others whose slug carries marketing filler Samsung's router does not
+    recognize (e.g. Galaxy A-series colour names like "awesome-icyblue"). Rather
+    than hardcoding a colour/connectivity vocabulary (fragile -- new marketing
+    names ship every generation), this trims the slug structurally, one trailing
+    hyphen-token at a time, down to 2 tokens (``galaxy-<line>``), so the caller
+    can retry each candidate live until one actually resolves."""
+    if not url:
+        return []
+    root = base.rstrip("/")
+    clean = url.split("?")[0].split("#")[0].rstrip("/")
+    clean = _BUY_PATH_RE.sub("", clean).rstrip("/")
+    path = clean[len(root):] if clean.lower().startswith(root.lower()) else clean
+    parts = [p for p in path.strip("/").split("/") if p]
+    if len(parts) < 2:
+        return []
+    category = parts[0]
+    slug = _SLUG_STORAGE_SUFFIX.sub("", _SLUG_CODE_SUFFIX.sub("", parts[-1]))
+    toks = [t for t in slug.split("-") if t]
+    candidates: list[str] = []
+    seen: set[str] = set()
+    for n in range(len(toks) - 1, 1, -1):
+        cand = f"{root}/{category}/{'-'.join(toks[:n])}/buy/"
+        if cand not in seen:
+            seen.add(cand)
+            candidates.append(cand)
+    return candidates
+
+
 def _clean_variant_text(s) -> str | None:
     if not s:
         return None
