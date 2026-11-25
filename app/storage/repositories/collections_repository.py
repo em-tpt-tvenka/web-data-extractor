@@ -19,14 +19,14 @@ PRODUCTS, REVIEWS, RETAILERS = "products", "reviews", "retailers"
 _INDEXES = {
     PRODUCTS: [
         ([("platform", ASCENDING), ("product_id", ASCENDING)], {"unique": True, "name": "uq_platform_product"}),
+        ([("retailer_id", ASCENDING)], {"name": "retailer"}),
         ([("brand", ASCENDING)], {"name": "brand"}),
         ([("category", ASCENDING)], {"name": "category"}),
         ([("tenant_id", ASCENDING)], {"name": "tenant"}),
     ],
     RETAILERS: [
-        ([("platform", ASCENDING), ("product_id", ASCENDING), ("retailer_id", ASCENDING)],
-         {"unique": True, "name": "uq_platform_product_retailer"}),
-        ([("retailer_id", ASCENDING)], {"name": "retailer"}),
+        ([("platform", ASCENDING), ("retailer_id", ASCENDING)],
+         {"unique": True, "name": "uq_platform_retailer"}),
         ([("tenant_id", ASCENDING)], {"name": "tenant"}),
     ],
     REVIEWS: [

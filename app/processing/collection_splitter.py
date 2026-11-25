@@ -58,6 +58,14 @@ def _product_id(d: dict) -> str:
     return str(pid)
 
 
+def _retailer_id(d: dict) -> str:
+    """The retailer's own id as given by the website; falls back to a
+    platform-level id (e.g. ``RETAILER_AMAZON``) when the site exposes none."""
+    src = d.get("source") or {}
+    ent = (d.get("entities") or {}).get("retailer") or {}
+    return _first(ent.get("retailer_id"), f"RETAILER_{str(src.get('platform')).upper()}")
+
+
 def _media(content: dict, kind: str) -> list[str]:
     media = content.get("media") or []
     if not isinstance(media, list):
@@ -79,6 +87,44 @@ def _common(d: dict, product_id: str) -> dict:
     }
 
 
+# ── commercial (price / availability / delivery) — lives on the product ──────
+
+def _commercial_fields(d: dict) -> dict:
+    """Price, availability, shipping and offer data for the product. These are
+    per-product commercial details, so they are stored on the product document
+    (not on the retailer, which only holds retailer identity)."""
+    com = d.get("commercial") or {}
+    price, avail, deliv = com.get("price") or {}, com.get("availability") or {}, com.get("delivery") or {}
+    selling = price.get("selling_price") or {}
+    return {
+        "current_price": _amount(selling),
+        "original_price": _amount(price.get("original_price")),
+        "listed_price": _amount(price.get("listed_price")),
+        "lowest_price_with_offers": _amount(price.get("lowest_price_with_offers")),
+        "discount_amount": price.get("discount_amount"),
+        "discount_percentage": price.get("discount_percentage"),
+        "currency": _first(selling.get("currency"), (price.get("original_price") or {}).get("currency"),
+                           (com.get("price_range") or {}).get("currency")),
+        "price_type": price.get("price_type"),
+        "price_observed_at": price.get("price_observed_at"),
+        "availability_status": avail.get("status"),
+        "stock_quantity": avail.get("stock_quantity"),
+        "in_stock": {"in_stock": True, "limited_stock": True, "out_of_stock": False}.get(avail.get("status")),
+        "shipping": {
+            "delivery_charge": _amount(deliv.get("delivery_charge")),
+            "delivery_currency": (deliv.get("delivery_charge") or {}).get("currency"),
+            "estimated_delivery_date": deliv.get("estimated_delivery_date"),
+            "delivery_type": deliv.get("delivery_type"),
+        },
+        "promotion": com.get("promotion"),
+        "payment_options": com.get("payment_options"),
+        "warranty": com.get("warranty"),
+        "offers_detail": com.get("offers_detail"),
+        "price_range": com.get("price_range"),
+        "commercial": com or None,  # full block, platform-specific extras included
+    }
+
+
 # ── products ────────────────────────────────────────────────────────────────
 
 def _product_doc(d: dict, product_id: str) -> dict:
@@ -91,6 +137,8 @@ def _product_doc(d: dict, product_id: str) -> dict:
     return {
         "_id": doc_id(src.get("platform"), product_id),
         **_common(d, product_id),
+        # Which retailer sells this product (maps to the retailers collection).
+        "retailer_id": _retailer_id(d),
         "title": _first(pe.get("product_name"), content.get("title") if is_listing else None),
         "brand": brands[0] if brands else None,
         "brands": brands,
@@ -123,6 +171,8 @@ def _product_doc(d: dict, product_id: str) -> dict:
         "total_reviews": _first(metrics.get("total_reviews"), metrics.get("review_count")) if is_listing else None,
         "rating_distribution": (metrics.get("rating_distribution") or None) if is_listing else None,
         "review_summary": d.get("review_summary"),
+        # Per-product commercial data (price, availability, shipping, offers).
+        **_commercial_fields(d),
         "source_record_ids": [d.get("_id")],
     }
 
@@ -139,49 +189,28 @@ def _merge(base: dict, extra: dict) -> dict:
 
 # ── retailers ───────────────────────────────────────────────────────────────
 
-def _retailer_doc(d: dict, product_id: str) -> dict:
-    src, pe = d.get("source") or {}, _product_entity(d)
+def _retailer_doc(d: dict) -> dict:
+    """Retailer identity only — one row per ``(platform, retailer_id)``, shared
+    across every product that retailer sells. No product-level data lives here;
+    products reference this row via their ``retailer_id`` field, and all pricing
+    / availability is stored on the product."""
+    src = d.get("source") or {}
     ent = (d.get("entities") or {}).get("retailer") or {}
-    com = d.get("commercial") or {}
-    price, avail, deliv = com.get("price") or {}, com.get("availability") or {}, com.get("delivery") or {}
+    tenant, prov = d.get("tenant") or {}, d.get("provenance") or {}
     platform = src.get("platform")
-    retailer_id = _first(ent.get("retailer_id"), f"RETAILER_{str(platform).upper()}")
-    selling = price.get("selling_price") or {}
-    is_listing = d.get("record_type") == RECORD_TYPE_LISTING
+    retailer_id = _retailer_id(d)
     extras = {k: v for k, v in ent.items() if k not in ("retailer_id", "retailer_name")}
     return {
-        "_id": doc_id(platform, product_id, retailer_id),
-        **_common(d, product_id),
+        "_id": doc_id(platform, retailer_id),
+        "platform": platform,
         "retailer_id": retailer_id,
         "retailer_name": ent.get("retailer_name"),
         "seller": extras or None,  # e.g. Amazon seller / ships-from, kept as given
-        "product_url": _first(pe.get("product_url"), src.get("source_url") if is_listing else None),
-        "country_code": src.get("country_code"),
-        "current_price": _amount(selling),
-        "original_price": _amount(price.get("original_price")),
-        "listed_price": _amount(price.get("listed_price")),
-        "lowest_price_with_offers": _amount(price.get("lowest_price_with_offers")),
-        "discount_amount": price.get("discount_amount"),
-        "discount_percentage": price.get("discount_percentage"),
-        "currency": _first(selling.get("currency"), (price.get("original_price") or {}).get("currency"),
-                           (com.get("price_range") or {}).get("currency")),
-        "price_type": price.get("price_type"),
-        "price_observed_at": price.get("price_observed_at"),
-        "availability_status": avail.get("status"),
-        "stock_quantity": avail.get("stock_quantity"),
-        "in_stock": {"in_stock": True, "limited_stock": True, "out_of_stock": False}.get(avail.get("status")),
-        "shipping": {
-            "delivery_charge": _amount(deliv.get("delivery_charge")),
-            "delivery_currency": (deliv.get("delivery_charge") or {}).get("currency"),
-            "estimated_delivery_date": deliv.get("estimated_delivery_date"),
-            "delivery_type": deliv.get("delivery_type"),
-        },
-        "promotion": com.get("promotion"),
-        "payment_options": com.get("payment_options"),
-        "warranty": com.get("warranty"),
-        "offers_detail": com.get("offers_detail"),
-        "price_range": com.get("price_range"),
-        "commercial": com or None,  # full block, platform-specific extras included
+        "marketplace": src.get("marketplace"),
+        "tenant_id": tenant.get("tenant_id"),
+        "project_id": tenant.get("project_id"),
+        "last_collection_run_id": prov.get("collection_run_id"),
+        "last_scraped_at": src.get("collected_at"),
         "source_record_ids": [d.get("_id")],
     }
 
@@ -286,7 +315,7 @@ def split_records(records: list[SocialMentionRecord | dict]) -> dict[str, list[d
         p = _product_doc(d, pid)
         products[p["_id"]] = _merge(products[p["_id"]], p) if p["_id"] in products else p
 
-        rt = _retailer_doc(d, pid)
+        rt = _retailer_doc(d)
         retailers[rt["_id"]] = _merge(retailers[rt["_id"]], rt) if rt["_id"] in retailers else rt
 
         if d.get("record_type") == RECORD_TYPE_LISTING:

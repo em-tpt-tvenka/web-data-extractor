@@ -142,14 +142,14 @@ class LocalStorage:
         dicts = [r.to_mongo() for r in records]
 
         if settings.export_json:
-            # One output folder per job with the three collections as stored in
-            # MongoDB: products.json, retailers.json, reviews.json (the only JSON
-            # export; the full records are in MongoDB's `records` collection).
+            # A single JSON file per job holding the three collections exactly as
+            # stored in MongoDB, keyed by collection:
+            # {"products": [...], "retailers": [...], "reviews": [...]}.
+            # The DB still writes each collection to its own table; only this
+            # on-disk export is combined into one file.
             try:
-                folder = target / stem
-                folder.mkdir(parents=True, exist_ok=True)
-                for name, docs in split_records(dicts).items():
-                    paths[name] = self._write_json(folder / f"{name}.json", docs)
+                paths["json"] = self._write_json(
+                    target / f"{stem}.json", split_records(dicts))
             except Exception as exc:
                 _log.error("event=export_collections_failed platform=%s run_id=%s error=%s",
                            platform, run_id, exc)
@@ -167,9 +167,9 @@ class LocalStorage:
         return paths
 
     @staticmethod
-    def _write_json(path: Path, dicts: list[dict]) -> str:
+    def _write_json(path: Path, payload: Any) -> str:
         with path.open("w", encoding="utf-8") as fh:
-            json.dump(dicts, fh, ensure_ascii=False, indent=2, default=str)
+            json.dump(payload, fh, ensure_ascii=False, indent=2, default=str)
         return str(path)
 
     @staticmethod
