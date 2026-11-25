@@ -222,14 +222,17 @@ def _review_doc_from_record(d: dict, product_id: str) -> dict:
     src, content, author = d.get("source") or {}, d.get("content") or {}, d.get("author") or {}
     metrics, loc = d.get("metrics") or {}, d.get("location") or {}
     review_id = str(src.get("source_item_id"))
+    review_type = src.get("source_type") or "review"
     known = {"_id", "schema_version", "record_type", "tenant", "source", "content", "entities", "taxonomy",
              "product_attributes", "commercial", "metrics", "author", "location", "campaign",
              "deduplication", "provenance", "quality", "lifecycle", "review_summary", "reviews"}
     return {
-        "_id": doc_id(src.get("platform"), product_id, review_id),
+        # review_type is part of the identity so product / store / other review
+        # types for the same product+review_id can never collide on upsert.
+        "_id": doc_id(src.get("platform"), product_id, review_type, review_id),
         **_common(d, product_id),
         "review_id": review_id,
-        "review_type": src.get("source_type") or "review",
+        "review_type": review_type,
         "product_name": _product_entity(d).get("product_name"),
         "product_url": _first(_product_entity(d).get("product_url"), src.get("source_url")),
         "reviewer_name": author.get("display_name"),
@@ -261,11 +264,14 @@ def _review_doc_from_embedded(d: dict, product_id: str, r: dict) -> dict:
     review_id = r.get("review_id") or "gen:" + _hash(
         platform, product_id, r.get("reviewer_name"), r.get("posted_date") or r.get("posted_relative"),
         r.get("rating"), r.get("title"), r.get("review_text"))
+    review_type = r.get("review_type") or "review"
     return {
-        "_id": doc_id(platform, product_id, review_id),
+        # review_type is part of the identity so product / store / other review
+        # types for the same product+review_id can never collide on upsert.
+        "_id": doc_id(platform, product_id, review_type, review_id),
         **_common(d, product_id),
         "review_id": str(review_id),
-        "review_type": r.get("review_type") or "review",
+        "review_type": review_type,
         "product_name": _product_entity(d).get("product_name"),
         "product_url": _first(_product_entity(d).get("product_url"), src.get("source_url")),
         "reviewer_name": r.get("reviewer_name"),

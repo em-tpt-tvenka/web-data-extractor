@@ -407,9 +407,9 @@ class _ProductContext:
                     # would otherwise be emitted twice with a different
                     # review_type. De-dupe on a content key (reviewer + date +
                     # text) BEFORE the type is assigned; keep the first occurrence.
-                    ckey = (clean_text(r.get("reviewer") or "").lower(),
+                    ckey = ((clean_text(r.get("reviewer")) or "").lower(),
                             str(r.get("date") or "").strip(),
-                            clean_text(r.get("text") or "").lower())
+                            (clean_text(r.get("text")) or "").lower())
                     if any(ckey) and ckey in seen_content:
                         continue
                     entry = self._embedded(r, kind)
@@ -424,20 +424,23 @@ class _ProductContext:
                     _log.warning("event=review_map_failed product=%s kind=%s error=%s",
                                  self.offer_id, kind, exc)
 
-        # Output-level dedup: a few store ("supplier_feedback") entries survive
-        # the cross-source pass with a different review_id yet IDENTICAL final
-        # review_text (the raw-text key above differs when only an appended
-        # supplier reply differed). Collapse entries whose normalized
-        # (reviewer_name + posted_date + review_text) match AND whose text is
-        # non-empty, keeping the first. Blank-text entries are distinct
-        # anonymized feedback and are always kept.
+        # Output-level dedup: a few entries survive the cross-source pass with a
+        # different review_id yet IDENTICAL final review_text (the raw-text key
+        # above differs when only an appended supplier reply differed). Collapse
+        # entries whose normalized (reviewer_name + posted_date + review_text)
+        # match AND whose text is non-empty, keeping the first. The key is scoped
+        # WITHIN a single review_type so a genuine store ("supplier_feedback")
+        # review is NOT dropped merely because its text coincides with a product
+        # review of a different type. Blank-text entries are distinct anonymized
+        # feedback and are always kept.
         deduped, seen_out = [], set()
         for entry in out:
             text = (entry.get("review_text") or "").strip()
             if text:
-                okey = (clean_text(entry.get("reviewer_name") or "").lower(),
+                okey = (entry.get("review_type"),
+                        (clean_text(entry.get("reviewer_name")) or "").lower(),
                         str(entry.get("posted_date") or "").strip(),
-                        clean_text(text).lower())
+                        (clean_text(text) or "").lower())
                 if okey in seen_out:
                     continue
                 seen_out.add(okey)
@@ -465,6 +468,26 @@ class _ProductContext:
                                       "missing_ratings", "warnings")}
 
         summary["quality"] = {"product_reviews": _q(pq), "store_reviews": _q(sq)}
+
+        # Quality facet: expose the supplier's per-dimension rating scatter
+        # (store_review_summary.sub_ratings, e.g. "Product Quality",
+        # "Supplier Service") as a labeled structure, without fetching anything
+        # new. Per-review sub_scores remain on each embedded review, and the
+        # existing store_reviews.sub_ratings key is left intact.
+        sub_ratings = self.store_summary.get("sub_ratings")
+        if not sub_ratings:
+            sub_ratings = (summary.get("store_reviews") or {}).get("sub_ratings")
+        quality_ratings: dict = {}
+        for dim, data in (sub_ratings or {}).items():
+            if isinstance(data, dict):
+                entry = {"score": data.get("score")}
+                if data.get("star_breakdown"):
+                    entry["star_breakdown"] = data["star_breakdown"]
+                quality_ratings[str(dim)] = entry
+            elif data is not None:
+                quality_ratings[str(dim)] = {"score": data}
+        if quality_ratings:
+            summary["quality_ratings"] = quality_ratings
         return summary
 
 

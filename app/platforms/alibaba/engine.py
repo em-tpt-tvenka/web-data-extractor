@@ -67,8 +67,13 @@ _SORT_MAP = {
     "rating": "relevance",
     "newest": "relevance",
 }
-_PAGE_KEYS = ("pageno", "pagenum", "page", "currentpage", "pageindex",
-              "beginpage", "curpage", "pagestart", "start")
+_PAGE_KEYS = ("pageno", "pagenum", "pagenumber", "page", "currentpage",
+              "currentpagenum", "currentpagenumber", "pageindex",
+              "beginpage", "curpage", "pagestart")
+# Offset/cursor-style pagination: an index into the result set that advances by
+# the page size each page (start=0,20,40...), rather than a 1-based page number.
+_OFFSET_KEYS = ("start", "offset", "from", "startindex", "beginindex", "fromindex", "startrow")
+_PAGESIZE_KEYS = ("pagesize", "size", "limit", "rows", "num", "pagecount", "ps")
 _CAPTCHA_TEXTS = ["drag the slider", "unusual traffic from your network",
                   "please complete the security check", "nc_iconfont-load"]
 _REVIEW_NEXT_SELS = (
@@ -247,36 +252,88 @@ def _item_key(it: dict) -> str:
             return f"{k}:{v}"
     return json.dumps(it, sort_keys=True)[:200]
 
+def _page_size_from(mapping: dict) -> int | None:
+    """Positive page size declared in a query/form mapping (``parse_qs`` shape),
+    used to turn a logical page number into an offset for offset-style APIs."""
+    for k, v in mapping.items():
+        if k.lower() in _PAGESIZE_KEYS and v and str(v[0]).strip().isdigit():
+            n = int(v[0])
+            if n > 0:
+                return n
+    return None
+
+
+def _advance_params(mapping: dict, page_no: int) -> bool:
+    """Advance a query/form mapping (``parse_qs`` shape) to ``page_no`` in place.
+    Handles both 1-based page-number params and offset/cursor params
+    (``start``/``offset`` + ``pageSize``). Returns True when something changed."""
+    for k in list(mapping):
+        if k.lower() in _PAGE_KEYS:
+            mapping[k] = [str(page_no)]
+            return True
+    size = _page_size_from(mapping)
+    if size:
+        for k in list(mapping):
+            if k.lower() in _OFFSET_KEYS and mapping[k] and str(mapping[k][0]).strip().lstrip("-").isdigit():
+                mapping[k] = [str((page_no - 1) * size)]
+                return True
+    return False
+
+
+def _advance_obj(obj: dict, page_no: int) -> bool:
+    """Same as ``_advance_params`` for a decoded JSON post body (scalar values)."""
+    for k in list(obj):
+        if k.lower() in _PAGE_KEYS:
+            obj[k] = page_no
+            return True
+    size = None
+    for k in obj:
+        if k.lower() in _PAGESIZE_KEYS and str(obj.get(k)).strip().isdigit():
+            n = int(obj[k])
+            if n > 0:
+                size = n
+                break
+    if size:
+        for k in list(obj):
+            if k.lower() in _OFFSET_KEYS and str(obj.get(k)).strip().lstrip("-").isdigit():
+                obj[k] = (page_no - 1) * size
+                return True
+    return False
+
+
 def _next_request(url: str, post_data, page_no: int):
     parsed = urllib.parse.urlparse(url)
     qs = urllib.parse.parse_qs(parsed.query, keep_blank_values=True)
-    for k in list(qs):
-        if k.lower() in _PAGE_KEYS:
-            qs[k] = [str(page_no)]
-            new_q = urllib.parse.urlencode({k: v[0] for k, v in qs.items()}, safe="%,")
-            return urllib.parse.urlunparse(parsed._replace(query=new_q)), post_data
+    if _advance_params(qs, page_no):
+        new_q = urllib.parse.urlencode({k: v[0] for k, v in qs.items()}, safe="%,")
+        return urllib.parse.urlunparse(parsed._replace(query=new_q)), post_data
     if post_data:
         try:
             obj = json.loads(post_data)
-            if isinstance(obj, dict):
-                for k in list(obj):
-                    if k.lower() in _PAGE_KEYS:
-                        obj[k] = page_no
-                        return url, json.dumps(obj)
+            if isinstance(obj, dict) and _advance_obj(obj, page_no):
+                return url, json.dumps(obj)
         except Exception:
             pass
         if "=" in post_data:
             fqs = urllib.parse.parse_qs(post_data, keep_blank_values=True)
-            for k in list(fqs):
-                if k.lower() in _PAGE_KEYS:
-                    fqs[k] = [str(page_no)]
-                    return url, urllib.parse.urlencode({k: v[0] for k, v in fqs.items()})
+            if _advance_params(fqs, page_no):
+                return url, urllib.parse.urlencode({k: v[0] for k, v in fqs.items()})
     return None, None
 
 def _dom_review_key(r: dict) -> tuple:
     return (str(r.get("reviewer", "")).strip(),
             str(r.get("date", "")).strip(),
             str(r.get("text", ""))[:60].strip())
+
+def _review_content_key(r: dict) -> tuple:
+    """Content identity for union/de-dup across review tabs: the native review
+    id when present, otherwise reviewer + date + text (same basis as
+    ``_dom_review_key``). Lets several product-review tabs be merged without
+    re-adding the same physical review."""
+    rid = r.get("review_id") or r.get("id")
+    if rid not in (None, "", "N/A"):
+        return ("id", str(rid))
+    return ("c",) + _dom_review_key(r)
 
 def _dom_review_has_content(r: dict) -> bool:
     media = r.get("review_media", {})
@@ -358,8 +415,13 @@ class AlibabaEngine:
         """Further review pages a source may load. With ``collect_all_reviews``
         there is no page limit - every loop using this stops on its own at the
         source's last page or when pages bring no new reviews; otherwise
-        ``feedback_max_pages`` (optionally also capped at ``cap``)."""
-        if self.cfg.collect_all_reviews and self.cfg.feedback_max_pages > 0:
+        ``feedback_max_pages`` (optionally also capped at ``cap``).
+
+        ``review_pages_per_product == 0`` (``feedback_max_pages == 0``) must NOT
+        silently disable product-review pagination when ``collect_all_reviews``
+        is on: under collect-all the budget is unbounded regardless, and 0 is
+        treated as "collect everything" rather than "collect nothing"."""
+        if self.cfg.collect_all_reviews:
             return itertools.count()
         n = self.cfg.feedback_max_pages if cap is None else min(self.cfg.feedback_max_pages, cap)
         return range(max(0, n))
@@ -592,12 +654,19 @@ class AlibabaEngine:
                      "_source": "api_native"}, date_posted, feedback_cap)
         return (None, date_posted, feedback_cap)
 
-    async def _collect_all_feedback(self, page, cap: dict, tab_count: int) -> tuple[list, int, str]:
+    async def _collect_all_feedback(self, page, cap: dict, tab_count: int,
+                                    target: int = 0) -> tuple[list, int, str]:
         """Replay the captured review API request for further pages.
-        Returns ``(items, pages_scraped, stop_reason)``."""
+        Returns ``(items, pages_scraped, stop_reason)``.
+
+        ``target`` (``max(tab_count, product_review_summary.total_review_count)``)
+        is only a progress goal for logging. Under ``collect_all_reviews`` it is
+        NOT a terminator: pagination runs until a true natural end (no next page,
+        no pagination parameter, or two consecutive pages with no new reviews)."""
         collected: dict[str, dict] = {}
         for it in _raw_review_items(cap["body"]):
             collected[_item_key(it)] = it
+        target = max(target or 0, tab_count or 0)
 
         start_page = None
         parsed = urllib.parse.urlparse(cap["url"])
@@ -625,9 +694,12 @@ class AlibabaEngine:
         page_no = start_page
         empty_streak = 0
         pages = 1  # the captured response is the first page
-        stop = "reached max pages" if self.cfg.feedback_max_pages else "review pagination not requested"
+        stop = ("reached max pages" if (self.cfg.feedback_max_pages or self.cfg.collect_all_reviews)
+                else "review pagination not requested")
         for _ in self._review_pages():
-            if tab_count and len(collected) >= tab_count:
+            # tab_count/target is a hard stop ONLY when not collecting everything;
+            # under collect_all we continue to a natural end regardless of it.
+            if not self.cfg.collect_all_reviews and tab_count and len(collected) >= tab_count:
                 stop = "collected all reported reviews"
                 break
             page_no += 1
@@ -660,10 +732,10 @@ class AlibabaEngine:
             else:
                 empty_streak = 0
         else:
-            if tab_count and len(collected) >= tab_count:
+            if not self.cfg.collect_all_reviews and tab_count and len(collected) >= tab_count:
                 stop = "collected all reported reviews"
-        _log.info("event=feedback_paginated collected=%d tab_count=%d pages=%d stop=%s",
-                  len(collected), tab_count, pages, stop)
+        _log.info("event=feedback_paginated collected=%d tab_count=%d target=%d pages=%d stop=%s",
+                  len(collected), tab_count, target, pages, stop)
         return list(collected.values()), pages, stop
 
     async def _open_full_reviews(self, page) -> bool:
@@ -689,21 +761,24 @@ class AlibabaEngine:
                 continue
         return False
 
-    async def _paginate_review_dom(self, page, block: dict, tab_count: int) -> dict:
+    async def _paginate_review_dom(self, page, block: dict, tab_count: int,
+                                   target: int = 0) -> dict:
         """Click through review pages on the product page. With
         ``collect_all_reviews`` on, pages through fully until the source's last
-        page / no new reviews (no page cap). Otherwise loads at most
-        ``feedback_max_pages`` further pages (the request's
-        review_pages_per_product), capped at 40."""
+        page / no new reviews (no page cap, and tab_count/target is NOT a
+        terminator). Otherwise loads at most ``feedback_max_pages`` further pages
+        (the request's review_pages_per_product), capped at 40."""
         if block is None:
             return block
+        target = max(target or 0, tab_count or 0)
         reviews = block.get("reviews", []) or []
         seen = {_dom_review_key(r) for r in reviews}
         pages = block.get("pages_scraped") or 1
         extra = min(self.cfg.feedback_max_pages, 40)
-        stop = "reached max pages" if extra else "review pagination not requested"
+        stop = ("reached max pages" if (extra or self.cfg.collect_all_reviews)
+                else "review pagination not requested")
         for _ in self._review_pages(cap=40):
-            if tab_count and len(reviews) >= tab_count:
+            if not self.cfg.collect_all_reviews and tab_count and len(reviews) >= tab_count:
                 stop = "collected all reported reviews"
                 break
             clicked = False
@@ -746,15 +821,55 @@ class AlibabaEngine:
         block["stop_reason"] = stop
         return block
 
-    async def _finalize_review_block(self, page, block: dict, feedback_cap, tab_count: int) -> dict:
+    @staticmethod
+    def _merge_review_blocks(existing: dict | None, block: dict | None) -> dict | None:
+        """Union two review blocks of the same rtype instead of discarding the
+        smaller one: reviews (and native_items) are accumulated and de-duplicated
+        by content key, so multiple product-review tabs together yield the full
+        set rather than only the largest tab's."""
+        if existing is None:
+            return block
+        if block is None:
+            return existing
+        reviews = existing.get("reviews") or []
+        existing["reviews"] = reviews
+        seen = {_review_content_key(r) for r in reviews}
+        for r in block.get("reviews") or []:
+            k = _review_content_key(r)
+            if k not in seen:
+                seen.add(k)
+                reviews.append(r)
+        if block.get("native_items"):
+            native = existing.get("native_items") or []
+            nseen = {_item_key(it) for it in native}
+            for it in block["native_items"]:
+                kk = _item_key(it)
+                if kk not in nseen:
+                    nseen.add(kk)
+                    native.append(it)
+            existing["native_items"] = native
+        existing["tab_count"] = max(existing.get("tab_count") or 0, block.get("tab_count") or 0)
+        existing["total_reviews"] = max(len(reviews), existing.get("tab_count") or 0)
+        labels = existing.get("tab_labels") or (
+            [existing["tab_label"]] if existing.get("tab_label") else [])
+        bl = block.get("tab_label")
+        if bl and bl not in labels:
+            labels.append(bl)
+        if labels:
+            existing["tab_labels"] = labels
+        return existing
+
+    async def _finalize_review_block(self, page, block: dict, feedback_cap, tab_count: int,
+                                     target: int = 0) -> dict:
         if block is None:
             return block
+        target = max(target or 0, tab_count or 0)
         if feedback_cap:
-            full, pages, stop = await self._collect_all_feedback(page, feedback_cap, tab_count)
+            full, pages, stop = await self._collect_all_feedback(page, feedback_cap, tab_count, target)
             if full:
                 block["native_items"] = full
                 block["reviews"] = [parsing.normalize_native_item(x) for x in full]
-                block["total_reviews"] = max(tab_count or 0, len(full))
+                block["total_reviews"] = max(target, len(full))
                 block["_source"] = "api_paginated"
                 block["pages_scraped"] = pages
                 block["stop_reason"] = stop
@@ -762,7 +877,9 @@ class AlibabaEngine:
 
         # "View all reviews" opens further review pages, so it counts against
         # the same page budget (skipped when no review pages were requested).
-        if self.cfg.feedback_max_pages and tab_count and len(block.get("reviews", []) or []) < tab_count:
+        # Under collect_all the budget is unbounded even when review pages == 0.
+        if ((self.cfg.feedback_max_pages or self.cfg.collect_all_reviews)
+                and tab_count and len(block.get("reviews", []) or []) < tab_count):
             if await self._open_full_reviews(page):
                 try:
                     dom = await page.evaluate(scripts.REVIEWS_JS)
@@ -775,7 +892,7 @@ class AlibabaEngine:
                     block["reviews"] = reviews
                 except Exception:
                     pass
-        return await self._paginate_review_dom(page, block, tab_count)
+        return await self._paginate_review_dom(page, block, tab_count, target)
 
     async def _feedback_route(self, route):
         try:
@@ -1093,6 +1210,12 @@ class AlibabaEngine:
 
             result["product_description"] = await self._extract_description(page)
 
+            # The page's own reported product-review total is the completeness
+            # TARGET (used alongside each tab's displayed count). A review tab's
+            # "(N)" can understate the full set, so this keeps pagination going.
+            prs = result.get("product_review_summary") or {}
+            prod_total = parsing.to_int(prs.get("total_review_count")) or 0
+
             tabs: list[tuple[str, int, object]] = []
             for sel in ('[role="tab"]', "li", "a", "button", "span", "div"):
                 try:
@@ -1111,7 +1234,7 @@ class AlibabaEngine:
             if not tabs:
                 await self._wait_review_anchors(page)
                 block, date, fb = await self._extract_current_reviews(page, api_captures)
-                block = await self._finalize_review_block(page, block, fb, 0)
+                block = await self._finalize_review_block(page, block, fb, 0, target=prod_total)
                 result["date_posted"] = date
                 if block:
                     block["tab_label"] = "default"
@@ -1129,23 +1252,41 @@ class AlibabaEngine:
                 try:
                     api_captures.clear()
                     await loc.scroll_into_view_if_needed()
-                    await loc.click()
-                    await self._wait_network_idle(page, timeout_ms=6_000)
+                    # The review XHR can fire well after the click and after a
+                    # short network-idle, so wait explicitly (bounded, best
+                    # effort) for a response whose URL looks like a review feed
+                    # before extracting, so feedback_cap is reliably populated.
+                    try:
+                        async with page.expect_response(
+                            re.compile(r"feedback|review|evaluat|comment|rate", re.I),
+                            timeout=8_000):
+                            await loc.click()
+                    except Exception:
+                        pass
+                    # Widened settle window (from 6s) to catch late review XHRs
+                    # and let the response handler record the capture.
+                    await self._wait_network_idle(page, timeout_ms=8_000)
                     await self._wait_review_anchors(page)
                 except Exception as e:
                     _log.warning("event=tab_click_failed label=%r error=%s", label, e)
                     continue
 
+                tgt = max(cnt, prod_total) if rtype == "product_reviews" else cnt
                 block, date, fb = await self._extract_current_reviews(page, api_captures)
-                block = await self._finalize_review_block(page, block, fb, cnt)
+                block = await self._finalize_review_block(page, block, fb, cnt, target=tgt)
                 if date and date != "N/A":
                     result["date_posted"] = date
                 if block:
                     block["tab_label"] = label
                     block["tab_count"] = cnt
-                    existing = result[rtype]
-                    if existing is None or block["total_reviews"] > existing["total_reviews"]:
-                        result[rtype] = block
+                    if rtype == "product_reviews":
+                        # UNION every product-review tab (de-duped by content key)
+                        # instead of keeping only the largest and dropping the rest.
+                        result[rtype] = self._merge_review_blocks(result[rtype], block)
+                    else:
+                        existing = result[rtype]
+                        if existing is None or block["total_reviews"] > existing["total_reviews"]:
+                            result[rtype] = block
 
             seller = result.get("seller") or {}
             fb_url = seller.get("feedbackUrl")

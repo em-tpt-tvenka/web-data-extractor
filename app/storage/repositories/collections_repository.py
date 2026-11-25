@@ -30,8 +30,9 @@ _INDEXES = {
         ([("tenant_id", ASCENDING)], {"name": "tenant"}),
     ],
     REVIEWS: [
-        ([("platform", ASCENDING), ("product_id", ASCENDING), ("review_id", ASCENDING)],
-         {"unique": True, "name": "uq_platform_product_review"}),
+        ([("platform", ASCENDING), ("product_id", ASCENDING), ("review_type", ASCENDING),
+          ("review_id", ASCENDING)],
+         {"unique": True, "name": "uq_platform_product_type_review"}),
         ([("platform", ASCENDING), ("product_id", ASCENDING), ("review_date", ASCENDING)],
          {"name": "product_review_date"}),
         ([("tenant_id", ASCENDING)], {"name": "tenant"}),
