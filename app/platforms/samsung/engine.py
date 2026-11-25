@@ -37,6 +37,7 @@ class EngineConfig:
     exclude_keywords: list[str] = field(default_factory=list)
     max_pages: int = 1
     max_products: int = 20
+    review_pages_per_product: int = 1
     fetch_reviews: bool = True
     headless: bool = False
     browser_channel: str = "chrome"
@@ -129,6 +130,10 @@ class SamsungEngine:
         seen: set[str] = set()
 
         def add(url: str):
+            # Samsung's search/sitemap surface deep variant URLs that redirect to
+            # the series landing page; map every candidate to its canonical
+            # non-redirecting /buy/ PDP and de-duplicate on that.
+            url = parsing.canonical_buy_url(url, base)
             low = url.lower()
             if url in seen:
                 return
@@ -217,8 +222,28 @@ class SamsungEngine:
             model = parsing.parse_product(html, page.url)
             if model and model.get("product_name") and cfg.fetch_reviews:
                 jsonld = model.get("reviews") or []
-                bv = await self._bazaarvoice(ctx, model.get("product_id"), list(bv_urls))
+                bv, summary = await self._bazaarvoice(
+                    ctx,
+                    product_id=model.get("bv_product_id") or model.get("product_id"),
+                    captured_urls=list(bv_urls),
+                    passkey=model.get("bv_passkey"),
+                    api_url=model.get("bv_api_url"),
+                )
                 model["reviews"] = parsing.merge_reviews(jsonld, bv)
+                if summary:
+                    model["review_summary"] = summary
+                    ratings = model.get("ratings") or {}
+                    if summary.get("average_rating") is not None:
+                        ratings["average_rating"] = summary["average_rating"]
+                    if summary.get("total_reviews") is not None:
+                        ratings["total_reviews"] = summary["total_reviews"]
+                        ratings["total_ratings"] = summary.get("total_ratings") or summary["total_reviews"]
+                    if summary.get("rating_breakdown"):
+                        ratings["breakdown"] = summary["rating_breakdown"]
+                    model["ratings"] = ratings
+            # Internal BV handles are not part of the normalized output.
+            for k in ("bv_passkey", "bv_api_url", "bv_product_id"):
+                model.pop(k, None)
             return model
         finally:
             try:
@@ -226,29 +251,42 @@ class SamsungEngine:
             except Exception:
                 pass
 
-    async def _bazaarvoice(self, ctx, product_id: str | None, captured_urls: list[str] | None = None) -> list[dict]:
-        """Fetch ALL Bazaarvoice reviews for a product, paginating by Offset.
-        Prefers a reviews.json URL the page itself requested (it already carries
-        the passkey + correct ProductId); falls back to configured bv_api_url +
-        bv_passkey when provided."""
+    async def _bazaarvoice(self, ctx, product_id: str | None, captured_urls: list[str] | None = None,
+                           passkey: str | None = None, api_url: str | None = None):
+        """Fetch ALL Bazaarvoice reviews for a product, paginating by Offset, and
+        return ``(reviews, review_summary)``.
+
+        Base URL precedence: the passkey + ProductId read from the page's hidden
+        inputs (most reliable), then a reviews.json URL the widget itself
+        requested, then the configured bv_api_url + bv_passkey."""
         from urllib.parse import urlsplit, urlunsplit, parse_qs, urlencode
         cfg = self.cfg
         base = None
-        if captured_urls:
-            base = captured_urls[-1]
-        elif cfg.bv_api_url and cfg.bv_passkey and product_id:
-            base = (f"{cfg.bv_api_url.rstrip('/')}/reviews.json?apiversion=5.4&passkey={cfg.bv_passkey}"
+        pk = passkey or cfg.bv_passkey
+        api = (api_url or cfg.bv_api_url or "https://api.bazaarvoice.com/data").rstrip("/")
+        if pk and product_id:
+            base = (f"{api}/reviews.json?apiversion=5.4&passkey={pk}"
                     f"&Filter=ProductId:{product_id}&Include=Products&Stats=Reviews")
+        elif captured_urls:
+            base = captured_urls[-1]
         if not base:
-            return []
+            _log.info("event=bazaarvoice_skip id=%s reason=no_passkey_or_captured_url", product_id)
+            return [], None
         sp = urlsplit(base)
         q = {k: v[0] for k, v in parse_qs(sp.query).items()}
         q.setdefault("apiversion", "5.4")
+        q.setdefault("Include", "Products")
+        q.setdefault("Stats", "Reviews")
         q["Limit"] = "100"
         q.setdefault("Sort", "SubmissionTime:desc")
         out: list[dict] = []
+        summary = None
         offset, total, pages = 0, None, 0
-        while pages < 60:  # safety cap: 60 * 100 = 6000 reviews
+        # Each BV page holds up to 100 reviews; review_pages_per_product<=0 means
+        # collect everything (hard safety ceiling of 60 pages = 6000 reviews).
+        rpp = cfg.review_pages_per_product
+        max_pages = 60 if rpp is None or rpp <= 0 else min(60, rpp)
+        while pages < max_pages:
             q["Offset"] = str(offset)
             page_url = urlunsplit((sp.scheme, sp.netloc, sp.path, urlencode(q, safe=":,"), ""))
             try:
@@ -260,6 +298,8 @@ class SamsungEngine:
             except Exception as exc:
                 _log.warning("event=bazaarvoice_failed id=%s offset=%d error=%s", product_id, offset, exc)
                 break
+            if summary is None:
+                summary = parsing.bazaarvoice_summary(data)
             batch = parsing.parse_bazaarvoice(data, product_id)
             out.extend(batch)
             if isinstance(data, dict):
@@ -273,7 +313,7 @@ class SamsungEngine:
             offset += 100
         _log.info("event=bazaarvoice_done id=%s collected=%d total=%s pages=%d",
                   product_id, len(out), total, pages)
-        return out
+        return out, summary
 
     async def _expand(self, page: Page) -> None:
         for sel in (
