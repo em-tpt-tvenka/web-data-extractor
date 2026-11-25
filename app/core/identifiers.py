@@ -39,6 +39,18 @@ def tenant_id() -> str:
 def project_id() -> str:
     return f"prj_{_uuid7()}"
 
+def summary_id() -> str:
+    return f"sum_{_uuid7()}"
+
+def report_id() -> str:
+    return f"rpt_{_uuid7()}"
+
+def insight_id() -> str:
+    return f"ins_{_uuid7()}"
+
+def artifact_id() -> str:
+    return f"art_{_uuid7()}"
+
 def content_hash(*parts: str) -> str:
     digest = hashlib.sha256("|".join(p or "" for p in parts).encode()).hexdigest()
     return f"sha256:{digest}"

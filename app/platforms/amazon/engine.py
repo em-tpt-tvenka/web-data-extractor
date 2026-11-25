@@ -387,6 +387,30 @@ class AmazonEngine:
             self.signed_in = None
         _log.info("event=home_opened marketplace=%s signed_in=%s",
                   self.cfg.marketplace.domain, self.signed_in)
+        if self.signed_in is False and not self.cfg.headless:
+            await self._wait_for_sign_in(page)
+
+    async def _wait_for_sign_in(self, page: Page) -> None:
+        """Pause a visible run so the user can sign in to Amazon; full review
+        pages are only served to a signed-in session. Polls the account menu
+        until signed in or the wait budget is exhausted, then proceeds."""
+        deadline = self.cfg.captcha_wait_seconds
+        _log.warning("event=login_wait seconds=%d message=sign in to Amazon in the browser "
+                     "window now to collect all reviews", deadline)
+        waited = 0
+        while waited < deadline:
+            await page.wait_for_timeout(5_000)
+            waited += 5
+            try:
+                label = await page.locator("#nav-link-accountList-nav-line-1").first.inner_text(timeout=3_000)
+                if "sign in" not in label.lower():
+                    self.signed_in = True
+                    _log.info("event=signed_in_detected waited=%ds", waited)
+                    return
+            except Exception:
+                pass
+        _log.warning("event=login_wait_timeout message=proceeding without sign-in; "
+                     "only product-page reviews will be collected")
 
     def _save_debug(self, name: str, html: str) -> None:
         if not self.cfg.debug_dir:
