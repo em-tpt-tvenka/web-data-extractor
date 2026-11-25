@@ -645,3 +645,85 @@ def dedupe_images(urls):
             seen.add(u)
             out.append(u)
     return out
+
+
+# ── per-review media (images / videos) ───────────────────────────────────────
+# Flipkart review photos use the rukminim "blobio/.../imr/blobio-imr_<id>" CDN
+# pattern (distinct from the product GALLERY "/image/.../" pattern). The same
+# photo is served at several sizes (180/188/360/376); the CDN also honours a
+# larger size segment, so review photos are normalised to 832x832 for the best
+# resolution and de-duplicated by their stable blobio-imr id.
+_IMR_RE = re.compile(r"blobio|/imr/", re.I)
+_IMR_ID_RE = re.compile(r"blobio-imr_[0-9a-fA-F]+\.[A-Za-z0-9]+", re.I)
+
+
+def is_review_media_url(url: str | None) -> bool:
+    """True for a review-photo (blobio-imr) URL, False for gallery images."""
+    return bool(url and _IMR_RE.search(url))
+
+
+def best_review_image(url: str) -> str:
+    """Normalise a review-photo URL to the largest size, query stripped."""
+    base = url.split("?")[0]
+    return re.sub(r"/blobio/\d+/\d+/", "/blobio/832/832/", base)
+
+
+def dedupe_review_images(urls) -> list:
+    """De-duplicate review photos by their blobio-imr id, keeping best-res URLs.
+    Non review-media (e.g. gallery) URLs are dropped."""
+    seen, out = set(), []
+    for u in urls or []:
+        if not is_review_media_url(u):
+            continue
+        b = best_review_image(u)
+        m = _IMR_ID_RE.search(b)
+        key = m.group(0).lower() if m else b
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(b)
+    return out
+
+
+def _media_norm(s: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def attach_review_media(reviews: list, cards: list) -> tuple:
+    """Merge per-review images/videos extracted from the DOM review cards into
+    the text-parsed ``reviews`` of the SAME page. A card is matched to a review
+    by reviewer name plus the review's title or body text appearing in the
+    card's text (both are rendered inside the card). Each card and each review
+    are matched at most once. Returns (images_added, videos_added, matched)."""
+    imgs_added = vids_added = matched = 0
+    used: set = set()
+    for card in cards or []:
+        imgs = dedupe_review_images(card.get("images") or [])
+        vids = list(dict.fromkeys(v for v in (card.get("videos") or []) if v))
+        if not imgs and not vids:
+            continue
+        cnorm = _media_norm(card.get("text"))
+        hit = None
+        for idx, r in enumerate(reviews):
+            if idx in used:
+                continue
+            name = _media_norm(r.get("reviewer_name"))
+            body = _media_norm(r.get("review_text"))[:30]
+            title = _media_norm(r.get("title"))
+            if (name and len(name) >= 3 and name in cnorm
+                    and ((body and body in cnorm)
+                         or (title and len(title) >= 3 and title in cnorm))):
+                hit = (idx, r)
+                break
+        if hit is None:
+            continue
+        idx, r = hit
+        used.add(idx)
+        matched += 1
+        if imgs:
+            r["images"] = dedupe_review_images((r.get("images") or []) + imgs)
+            imgs_added += len(imgs)
+        if vids:
+            r["videos"] = list(dict.fromkeys((r.get("videos") or []) + vids))
+            vids_added += len(vids)
+    return imgs_added, vids_added, matched

@@ -302,6 +302,91 @@ JS_CLICK_MORE = """
 }
 """
 
+JS_REVIEW_MEDIA = r"""
+() => {
+  const IMR = /blobio|\/imr\//i;
+  const imgsFrom = (el) => {
+    const s = new Set();
+    el.querySelectorAll('img').forEach(i => {
+      [i.currentSrc, i.src, i.getAttribute('data-src'), i.srcset].forEach(v => {
+        if (!v) return;
+        v.split(',').forEach(part => {
+          const u = (part || '').trim().split(' ')[0];
+          if (u && IMR.test(u)) s.add(u);
+        });
+      });
+    });
+    el.querySelectorAll('*').forEach(e => {
+      const bg = getComputedStyle(e).backgroundImage || '';
+      const m = bg.match(/url\("?([^")]+)"?\)/);
+      if (m && IMR.test(m[1])) s.add(m[1]);
+    });
+    return [...s];
+  };
+  const vidsFrom = (el) => {
+    const s = new Set();
+    el.querySelectorAll('video').forEach(v => {
+      [v.currentSrc, v.src, v.getAttribute('src'), v.getAttribute('data-src')].forEach(u => {
+        if (u && /^https?:/.test(u)) s.add(u);
+      });
+      v.querySelectorAll('source').forEach(so => {
+        const u = so.src || so.getAttribute('src');
+        if (u && /^https?:/.test(u)) s.add(u);
+      });
+    });
+    el.querySelectorAll('a[href]').forEach(a => {
+      const u = a.href || '';
+      if (/\.(mp4|m3u8|webm)(\?|$)/i.test(u) || /\/video\//i.test(u)) s.add(u);
+    });
+    return [...s];
+  };
+  // A review card is the smallest ancestor of a review photo/video whose text
+  // carries the per-review scaffolding (the Helpful action plus a rating/variant
+  // or verified-purchase marker). The top aggregate "customer photos" strip has
+  // no Helpful action, so it is naturally excluded. textContent (not innerText)
+  // is used so detection does not depend on CSS layout being applied.
+  const isCard = (node) => {
+    if (!node || node.nodeType !== 1) return false;
+    const t = node.textContent || '';
+    if (t.length < 20 || t.length > 2500) return false;
+    return /Helpful/.test(t) && (/Review for/.test(t) || /Verified Purchase/.test(t) || /•/.test(t));
+  };
+  // Per-review photos are <img> (src + srcset); seed from every review photo /
+  // video element and from each card's own text markers (the Helpful action /
+  // verified-purchase line), then walk up to the card and harvest all media.
+  const seeds = [];
+  document.querySelectorAll('img').forEach(i => {
+    const u = i.currentSrc || i.src || i.getAttribute('data-src') || i.srcset || '';
+    if (IMR.test(u)) seeds.push(i);
+  });
+  document.querySelectorAll('video').forEach(v => seeds.push(v));
+  [...document.querySelectorAll('*')].forEach(e => {
+    const t = (e.textContent || '').trim();
+    if ((t === 'Helpful' || t === 'Verified Purchase') && e.querySelectorAll('*').length <= 1) seeds.push(e);
+  });
+  // A photo <img> can sit ~16 wrappers below its card, so walk up generously.
+  const cards = new Set();
+  for (const seed of seeds) {
+    let node = seed;
+    for (let i = 0; i < 24 && node; i++, node = node.parentElement) {
+      if (isCard(node)) { cards.add(node); break; }
+    }
+  }
+  const out = [];
+  for (const card of cards) {
+    const images = imgsFrom(card);
+    const videos = vidsFrom(card);
+    if (!images.length && !videos.length) continue;
+    out.push({
+      text: (card.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 500),
+      images: images,
+      videos: videos,
+    });
+  }
+  return out;
+}
+"""
+
 JS_ASPECT_CHIPS = """
 () => {
   const leaf = [...document.querySelectorAll('div,span,button,a')]

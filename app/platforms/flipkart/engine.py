@@ -428,6 +428,7 @@ class FlipkartEngine:
                 page_text = await self._inner_text(page)
                 got = parsing.parse_reviews(page_text)
             pages_done = p
+            await self._attach_review_media(page, got)
 
             new = 0
             for r in got:
@@ -498,6 +499,7 @@ class FlipkartEngine:
                     break
                 info["pages"] = p
                 pages_done += 1
+                await self._attach_review_media(page, got)
                 for r in got:
                     k = parsing.review_key(r)
                     info["found"] += 1
@@ -535,6 +537,29 @@ class FlipkartEngine:
             "listings": listings,
         })
         return summary, kept
+
+    async def _attach_review_media(self, page: Page, reviews: list) -> None:
+        """Extract per-review images/videos from the current review page's DOM
+        cards and merge them into ``reviews`` (same page) in place. Failures are
+        logged with counts so missing media is never silent."""
+        if not reviews:
+            return
+        try:
+            cards = await page.evaluate(scripts.JS_REVIEW_MEDIA)
+        except Exception as exc:
+            _log.warning("event=review_media_eval_failed error=%s", exc)
+            return
+        cards = cards or []
+        if not cards:
+            return
+        imgs, vids, matched = parsing.attach_review_media(reviews, cards)
+        if matched < len(cards):
+            _log.warning(
+                "event=review_media_partial cards_with_media=%d matched=%d images=%d videos=%d",
+                len(cards), matched, imgs, vids)
+        else:
+            _log.info("event=review_media cards_with_media=%d matched=%d images=%d videos=%d",
+                      len(cards), matched, imgs, vids)
 
     async def _open_review_page(self, page: Page, url: str) -> str | None:
         """Load a review page, retrying with back-off when Flipkart redirects

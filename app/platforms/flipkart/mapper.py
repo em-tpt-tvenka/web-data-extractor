@@ -541,6 +541,8 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
                 "posted_date": r.get("posted_date"),
                 "posted_relative": r.get("posted_relative"),
                 "helpful_count": r.get("helpful_count"),
+                "images": r.get("images") or [],
+                "videos": r.get("videos") or [],
             }
             for r in kept_reviews
         ],
