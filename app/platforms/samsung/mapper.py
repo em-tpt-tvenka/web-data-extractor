@@ -31,6 +31,7 @@ from app.schemas.record import (
     EntitiesBlock,
     LifecycleBlock,
     LocationBlock,
+    MediaItem,
     MetricsBlock,
     MoneyAmount,
     PriceBlock,
@@ -227,6 +228,8 @@ def _review_record(ctx: _ProductContext, review: dict, request: ScrapeJobRequest
         content=ContentBlock(
             title=title, text=text, language=language,
             original_language=language, content_type="review",
+            media=([MediaItem(media_type="image", url=u) for u in (review.get("images") or []) if u]
+                   + [MediaItem(media_type="video", url=u) for u in (review.get("videos") or []) if u]),
         ),
         entities=ctx.entities(),
         taxonomy=ctx.taxonomy(request),

@@ -627,6 +627,25 @@ def parse_bazaarvoice(data: dict, product_id: str) -> list[dict]:
         badges = r.get("Badges") or {}
         badge_low = " ".join(str(b).lower() for b in (badges.keys() if isinstance(badges, dict) else []))
         rid = r.get("Id") or r.get("ReviewId")
+        # Customer-uploaded media attached to this review.
+        images: list[str] = []
+        for ph in (r.get("Photos") or []):
+            if isinstance(ph, dict):
+                sizes = ph.get("Sizes") or {}
+                u = ((sizes.get("large") or {}).get("Url") or (sizes.get("normal") or {}).get("Url")
+                     or (sizes.get("thumbnail") or {}).get("Url") or ph.get("Url"))
+                if u:
+                    images.append(u)
+        videos: list[str] = []
+        for vid in (r.get("Videos") or []):
+            if isinstance(vid, dict):
+                u = vid.get("VideoUrl") or vid.get("Url")
+                if u:
+                    videos.append(u)
+        cdv = r.get("ContextDataValues") or {}
+        variant = {k: (v.get("Value") if isinstance(v, dict) else v) for k, v in cdv.items()} or None
+        sr = r.get("SecondaryRatings") or {}
+        sub_ratings = {k: (v.get("Value") if isinstance(v, dict) else v) for k, v in sr.items()} or None
         out.append({
             "review_id": str(rid) if rid else None,
             "rating": _to_number(r.get("Rating")),
@@ -637,5 +656,31 @@ def parse_bazaarvoice(data: dict, product_id: str) -> list[dict]:
             "verified_purchase": "verified" in badge_low,
             "posted_date": _norm_date(r.get("SubmissionTime")),
             "helpful_count": r.get("TotalPositiveFeedbackCount"),
+            "variant": variant,
+            "sub_ratings": sub_ratings,
+            "images": list(dict.fromkeys(images)),
+            "videos": list(dict.fromkeys(videos)),
         })
+    return out
+
+
+def merge_reviews(jsonld: list[dict], bv: list[dict]) -> list[dict]:
+    """Combine JSON-LD and Bazaarvoice reviews, preferring the richer Bazaarvoice
+    entries (which carry media/all fields); de-dupe by review_id, else by
+    reviewer + date + text."""
+    def _key(r):
+        rid = r.get("review_id")
+        if rid:
+            return ("id", str(rid))
+        return ("c", (r.get("reviewer_name") or "").strip().lower(),
+                str(r.get("posted_date") or ""),
+                (r.get("review_text") or "").strip().lower()[:80])
+
+    out, seen = [], set()
+    for r in list(bv or []) + list(jsonld or []):
+        k = _key(r)
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(r)
     return out

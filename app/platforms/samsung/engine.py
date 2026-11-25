@@ -191,40 +191,89 @@ class SamsungEngine:
 
     async def _scrape_product(self, ctx, page: Page, url: str) -> dict | None:
         cfg = self.cfg
-        await page.goto(url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
-        await page.wait_for_timeout(2000)
-        await self._dismiss(page)
-        await self._expand(page)
-        for _ in range(4):
-            await page.evaluate("window.scrollBy(0, 900)")
-            await page.wait_for_timeout(500)
-        html = await self._html(page)
-        model = parsing.parse_product(html, page.url)
-        # if not model.get("product_name") and _BLOCK_RE.search(html):
-        #     _log.warning("event=product_blocked url=%s", url[:90])
-        #     return None
-        if model and model.get("product_name"):
-             if cfg.fetch_reviews and not model.get("reviews") and cfg.bv_api_url and cfg.bv_passkey:
-                        model["reviews"] = await self._bazaarvoice(ctx, model.get("product_id"))
-        return model
+        # Capture Bazaarvoice's own reviews.json request as the review widget
+        # loads: that URL carries the passkey + ProductId, so reviews work
+        # without any pre-configured passkey.
+        bv_urls: list[str] = []
 
-    async def _bazaarvoice(self, ctx, product_id: str | None) -> list[dict]:
-        if not product_id:
-            return []
-        cfg = self.cfg
-        url = (
-            f"{cfg.bv_api_url.rstrip('/')}/reviews.json?apiversion=5.4&passkey={cfg.bv_passkey}"
-            f"&Filter=ProductId:{product_id}&Include=Products&Stats=Reviews&Limit=100&Sort=SubmissionTime:desc"
-        )
+        def _on_req(r):
+            u = r.url
+            if "bazaarvoice" in u and "reviews.json" in u:
+                bv_urls.append(u)
+
+        page.on("request", _on_req)
         try:
-            resp = await ctx.request.get(url, timeout=cfg.nav_timeout_ms)
-            if not resp.ok:
-                return []
-            data = await resp.json()
-            return parsing.parse_bazaarvoice(data, product_id)
-        except Exception as exc:
-            _log.warning("event=bazaarvoice_failed id=%s error=%s", product_id, exc)
+            await page.goto(url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
+            await page.wait_for_timeout(2000)
+            await self._dismiss(page)
+            await self._expand(page)
+            # Scroll further so the (lazy) reviews widget enters view and fires
+            # its reviews.json request.
+            for _ in range(10):
+                await page.evaluate("window.scrollBy(0, 1200)")
+                await page.wait_for_timeout(450)
+            await page.wait_for_timeout(1500)
+            html = await self._html(page)
+            model = parsing.parse_product(html, page.url)
+            if model and model.get("product_name") and cfg.fetch_reviews:
+                jsonld = model.get("reviews") or []
+                bv = await self._bazaarvoice(ctx, model.get("product_id"), list(bv_urls))
+                model["reviews"] = parsing.merge_reviews(jsonld, bv)
+            return model
+        finally:
+            try:
+                page.remove_listener("request", _on_req)
+            except Exception:
+                pass
+
+    async def _bazaarvoice(self, ctx, product_id: str | None, captured_urls: list[str] | None = None) -> list[dict]:
+        """Fetch ALL Bazaarvoice reviews for a product, paginating by Offset.
+        Prefers a reviews.json URL the page itself requested (it already carries
+        the passkey + correct ProductId); falls back to configured bv_api_url +
+        bv_passkey when provided."""
+        from urllib.parse import urlsplit, urlunsplit, parse_qs, urlencode
+        cfg = self.cfg
+        base = None
+        if captured_urls:
+            base = captured_urls[-1]
+        elif cfg.bv_api_url and cfg.bv_passkey and product_id:
+            base = (f"{cfg.bv_api_url.rstrip('/')}/reviews.json?apiversion=5.4&passkey={cfg.bv_passkey}"
+                    f"&Filter=ProductId:{product_id}&Include=Products&Stats=Reviews")
+        if not base:
             return []
+        sp = urlsplit(base)
+        q = {k: v[0] for k, v in parse_qs(sp.query).items()}
+        q.setdefault("apiversion", "5.4")
+        q["Limit"] = "100"
+        q.setdefault("Sort", "SubmissionTime:desc")
+        out: list[dict] = []
+        offset, total, pages = 0, None, 0
+        while pages < 60:  # safety cap: 60 * 100 = 6000 reviews
+            q["Offset"] = str(offset)
+            page_url = urlunsplit((sp.scheme, sp.netloc, sp.path, urlencode(q, safe=":,"), ""))
+            try:
+                resp = await ctx.request.get(page_url, timeout=cfg.nav_timeout_ms)
+                if not resp.ok:
+                    _log.warning("event=bazaarvoice_http id=%s offset=%d status=%s", product_id, offset, resp.status)
+                    break
+                data = await resp.json()
+            except Exception as exc:
+                _log.warning("event=bazaarvoice_failed id=%s offset=%d error=%s", product_id, offset, exc)
+                break
+            batch = parsing.parse_bazaarvoice(data, product_id)
+            out.extend(batch)
+            if isinstance(data, dict):
+                total = data.get("TotalResults")
+                got = len(data.get("Results") or [])
+            else:
+                got = 0
+            pages += 1
+            if got == 0 or (total is not None and len(out) >= total):
+                break
+            offset += 100
+        _log.info("event=bazaarvoice_done id=%s collected=%d total=%s pages=%d",
+                  product_id, len(out), total, pages)
+        return out
 
     async def _expand(self, page: Page) -> None:
         for sel in (
