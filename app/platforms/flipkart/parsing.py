@@ -635,15 +635,29 @@ def availability_status(raw):
     return None
 
 
+_IMG_HOST_RE = re.compile(r"^https?://[^/]+", re.I)
+
+
 def dedupe_images(urls):
+    """De-dupe product gallery images by identity, not by exact string match.
+
+    Flipkart serves the SAME image asset from multiple interchangeable CDN
+    mirror subdomains (e.g. ``rukminim1``/``rukminim2``/``rukmini1``...) with
+    an otherwise identical path, and at several size variants
+    (``/image/128/128/...`` vs ``/image/832/832/...``). The dedup key strips
+    the scheme+host and normalizes the size segment, so these count as the
+    same image; a query string (cache-busting params) is also ignored. The
+    first occurrence's URL (normalized to the largest size, 832x832, for best
+    resolution) is kept, preserving the original gallery order."""
     seen, out = set(), []
     for u in urls:
         if not u:
             continue
-        u = re.sub(r"/image/\d+/\d+/", "/image/832/832/", u.split("?")[0])
-        if u not in seen:
-            seen.add(u)
-            out.append(u)
+        clean = re.sub(r"/image/\d+/\d+/", "/image/832/832/", u.split("?")[0])
+        key = _IMG_HOST_RE.sub("", clean)
+        if key not in seen:
+            seen.add(key)
+            out.append(clean)
     return out
 
 
