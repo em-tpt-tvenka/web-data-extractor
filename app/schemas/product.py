@@ -19,6 +19,14 @@ class ProductEntity(BaseModel):
     sku: str | None = None
     model_number: str | None = None
     product_url: str | None = None
+    # Cross-platform grouping keys (see app.platforms.common.canonical_ids):
+    # canonical_product_id is stable for the same model LINE regardless of
+    # configuration or platform (e.g. "Galaxy A36 5G" on any site/any variant);
+    # variant_key additionally pins the specific storage/color configuration,
+    # so a price comparison can tell "same phone, different RAM/color" (not
+    # comparable) apart from "same phone, same configuration" (comparable).
+    canonical_product_id: str | None = None
+    variant_key: str | None = None
 
 class RetailerEntity(BaseModel):
     model_config = ConfigDict(extra="allow")
@@ -43,6 +51,11 @@ class ProductAttributesBlock(BaseModel):
     model_config = ConfigDict(extra="allow", protected_namespaces=())
 
     model_number: str | None = None
+    # The marketing/model-LINE name (e.g. "Galaxy S26 5G"), distinct from
+    # model_number (e.g. "SM-S938B") - kept as its own field so the two are
+    # never conflated (a real product's "Model Name" spec row was previously
+    # mistakenly surfaced as model_number on Flipkart).
+    model_name: str | None = None
     capacity: Capacity | None = None
     color: str | None = None
     energy_rating: str | None = None
@@ -50,6 +63,14 @@ class ProductAttributesBlock(BaseModel):
     variants: list[Any] | dict[str, Any] = Field(default_factory=list)
     manufacturer: dict[str, Any] | None = None
     specifications: dict[str, Any] = Field(default_factory=dict)
+    # Independently-scraped variant records (own price/specs/images/availability
+    # per SKU) - additive, separate from `variants` above (which stays the
+    # original swatch-label metadata shape so existing consumers of that field
+    # are unaffected). Each entry is a free-form dict shaped like:
+    # {variant_id, parent_product_id, platform_variant_id, variant_name,
+    #  attributes, product_url, images, specifications, availability,
+    #  commercial, metrics, variant_extraction}.
+    variant_details: list[dict[str, Any]] = Field(default_factory=list)
 
 class TaxonomyBlock(BaseModel):
     model_config = ConfigDict(extra="allow")

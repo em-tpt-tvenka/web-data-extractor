@@ -22,6 +22,17 @@ class PriceBlock(BaseModel):
     lowest_price_with_offers: MoneyAmount | None = None
     offer_discount_amount: float | None = None
     extra_discount_amount: float | None = None
+    # Per-offer-type adjusted prices, kept distinct rather than folded into one
+    # number: each is only populated when the source page gives an actual
+    # numeric offer amount (never estimated/guessed). exchange_adjusted_price
+    # is informational only - it depends on trading in a device, so it is
+    # deliberately NOT included in final_effective_price, which instead
+    # reflects the best price achievable from stackable, no-strings offers
+    # (bank + coupon) a buyer can get just by paying.
+    bank_offer_adjusted_price: MoneyAmount | None = None
+    coupon_adjusted_price: MoneyAmount | None = None
+    exchange_adjusted_price: MoneyAmount | None = None
+    final_effective_price: MoneyAmount | None = None
 
 class PriceRangeBlock(BaseModel):
     model_config = ConfigDict(extra="allow")
