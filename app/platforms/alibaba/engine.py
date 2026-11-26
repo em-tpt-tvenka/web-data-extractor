@@ -18,6 +18,7 @@ from playwright_stealth import Stealth
 from app.core.logging import get_logger
 from app.platforms.alibaba import parsing, scripts
 from app.platforms.browser import proxy_settings
+from app.platforms.browser_launch import with_chrome_fallback
 from app.platforms.alibaba.parsing import product_id_from_href
 
 _log = get_logger("alibaba.engine")
@@ -1316,18 +1317,25 @@ class AlibabaEngine:
                 "event=browser_launching mode=%s channel=%s headless=%s profile=%s",
                 mode, cfg.browser_channel, cfg.headless, cfg.chrome_profile_dir,
             )
-            try:
+            async def _do_launch():
                 if cfg.chrome_profile_dir:
                     Path(cfg.chrome_profile_dir).mkdir(parents=True, exist_ok=True)
-                    ctx = await pw.chromium.launch_persistent_context(
+                    return await pw.chromium.launch_persistent_context(
                         cfg.chrome_profile_dir, channel=cfg.browser_channel,
                         headless=cfg.headless, args=launch_args, proxy=proxy_settings(),
                         **self._context_options())
-                else:
-                    browser = await pw.chromium.launch(
-                        headless=cfg.headless, channel=cfg.browser_channel, args=launch_args,
-                        proxy=proxy_settings())
-                    ctx = await self._new_context(browser)
+                browser_ = await pw.chromium.launch(
+                    headless=cfg.headless, channel=cfg.browser_channel, args=launch_args,
+                    proxy=proxy_settings())
+                return await self._new_context(browser_)
+
+            try:
+                ctx = await with_chrome_fallback(
+                    _do_launch, platform="alibaba", pw=pw, profile_dir=cfg.chrome_profile_dir,
+                    headless=cfg.headless, user_agent=random.choice(USER_AGENTS),
+                    locale="en-US", proxy=proxy_settings(), viewport=random.choice(VIEWPORTS),
+                    extra_args=launch_args,
+                )
             except Exception as exc:
                 _log.error(
                     "event=browser_launch_failed channel=%s headless=%s error=%s",

@@ -7,6 +7,7 @@ from urllib.parse import unquote, urlparse
 
 from app.core.config import settings
 from app.core.logging import get_logger
+from app.platforms.browser_launch import with_chrome_fallback
 
 _log = get_logger("net.routing")
 
@@ -152,16 +153,23 @@ async def open_routed_context(
             ctx = None
             browser = None
             try:
-                if profile_dir:
-                    ctx = await pw.chromium.launch_persistent_context(
-                        profile_dir, channel=channel, headless=headless, args=launch_args,
-                        user_agent=user_agent, locale=locale, viewport=viewport, proxy=proxy,
-                    )
-                else:
+                async def _do_launch():
+                    nonlocal browser
+                    if profile_dir:
+                        return await pw.chromium.launch_persistent_context(
+                            profile_dir, channel=channel, headless=headless, args=launch_args,
+                            user_agent=user_agent, locale=locale, viewport=viewport, proxy=proxy,
+                        )
                     browser = await pw.chromium.launch(
                         headless=headless, channel=channel, args=launch_args, proxy=proxy)
-                    ctx = await browser.new_context(
+                    return await browser.new_context(
                         user_agent=user_agent, locale=locale, viewport=viewport)
+
+                ctx = await with_chrome_fallback(
+                    _do_launch, platform=platform, pw=pw, profile_dir=profile_dir,
+                    headless=headless, user_agent=user_agent, locale=locale, proxy=proxy,
+                    viewport=viewport, extra_args=launch_args,
+                )
 
                 if on_context is not None:
                     await on_context(ctx)

@@ -12,6 +12,7 @@ from playwright.async_api import Page, async_playwright
 
 from app.core.logging import get_logger
 from app.platforms.browser import proxy_settings, random_user_agent
+from app.platforms.browser_launch import with_chrome_fallback
 from app.platforms.flipkart import parsing, scripts
 
 _log = get_logger("flipkart.engine")
@@ -92,17 +93,24 @@ class FlipkartEngine:
             mode = "persistent_profile" if cfg.chrome_profile_dir else "fresh_context"
             _log.info("event=browser_launching mode=%s channel=%s headless=%s",
                       mode, cfg.browser_channel, cfg.headless)
-            try:
+
+            async def _do_launch():
                 if cfg.chrome_profile_dir:
-                    ctx = await pw.chromium.launch_persistent_context(
+                    return await pw.chromium.launch_persistent_context(
                         cfg.chrome_profile_dir, channel=cfg.browser_channel,
                         headless=cfg.headless, args=launch_args, user_agent=random_user_agent(UA),
                         locale="en-IN", viewport=viewport, proxy=proxy_settings())
-                else:
-                    browser = await pw.chromium.launch(
-                        headless=cfg.headless, channel=cfg.browser_channel, args=launch_args,
-                        proxy=proxy_settings())
-                    ctx = await browser.new_context(user_agent=random_user_agent(UA), locale="en-IN", viewport=viewport)
+                browser_ = await pw.chromium.launch(
+                    headless=cfg.headless, channel=cfg.browser_channel, args=launch_args,
+                    proxy=proxy_settings())
+                return await browser_.new_context(user_agent=random_user_agent(UA), locale="en-IN", viewport=viewport)
+
+            try:
+                ctx = await with_chrome_fallback(
+                    _do_launch, platform="flipkart", pw=pw, profile_dir=cfg.chrome_profile_dir,
+                    headless=cfg.headless, user_agent=random_user_agent(UA), locale="en-IN",
+                    proxy=proxy_settings(), viewport=viewport, extra_args=launch_args,
+                )
             except Exception as exc:
                 _log.error("event=browser_launch_failed error=%s", exc)
                 raise

@@ -16,6 +16,7 @@ from playwright.async_api import BrowserContext, Page, async_playwright
 from app.core.logging import get_logger
 from app.platforms.amazon import parsing
 from app.platforms.browser import proxy_settings, random_user_agent
+from app.platforms.browser_launch import with_chrome_fallback
 from app.platforms.amazon.options import Marketplace
 from app.platforms.perf import RateLimiter, RunStats
 
@@ -221,27 +222,36 @@ class AmazonEngine:
 
     async def _launch(self, pw) -> BrowserContext:
         cfg, mp = self.cfg, self.cfg.marketplace
+        user_agent, proxy = random_user_agent(), proxy_settings()
+        launch_args = ["--disable-blink-features=AutomationControlled"]
         opts = dict(
             headless=cfg.headless, locale=mp.locale, timezone_id=mp.timezone,
             viewport={"width": 1440, "height": 900},
-            user_agent=random_user_agent(),
-            proxy=proxy_settings(),
+            user_agent=user_agent,
+            proxy=proxy,
             extra_http_headers={"Accept-Language": mp.accept_language},
-            args=["--disable-blink-features=AutomationControlled"],
+            args=list(launch_args),
         )
         _log.info("event=browser_launching channel=%s headless=%s profile=%s",
                   cfg.browser_channel, cfg.headless, cfg.profile_dir)
-        # Keep Chrome's sandbox on: Playwright otherwise passes --no-sandbox,
-        # which shows "unsupported command-line flag" and weakens isolation.
-        if cfg.profile_dir:
-            Path(cfg.profile_dir).mkdir(parents=True, exist_ok=True)
-            ctx = await pw.chromium.launch_persistent_context(
-                cfg.profile_dir, channel=cfg.browser_channel, chromium_sandbox=True, **opts)
-        else:
+
+        async def _do_launch():
+            # Keep Chrome's sandbox on: Playwright otherwise passes --no-sandbox,
+            # which shows "unsupported command-line flag" and weakens isolation.
+            if cfg.profile_dir:
+                Path(cfg.profile_dir).mkdir(parents=True, exist_ok=True)
+                return await pw.chromium.launch_persistent_context(
+                    cfg.profile_dir, channel=cfg.browser_channel, chromium_sandbox=True, **opts)
             browser = await pw.chromium.launch(
                 headless=cfg.headless, channel=cfg.browser_channel, chromium_sandbox=True,
-                args=opts.pop("args"))
-            ctx = await browser.new_context(**{k: v for k, v in opts.items() if k != "headless"})
+                args=launch_args)
+            return await browser.new_context(**{k: v for k, v in opts.items() if k not in ("headless", "args")})
+
+        ctx = await with_chrome_fallback(
+            _do_launch, platform="amazon", pw=pw, profile_dir=cfg.profile_dir, headless=cfg.headless,
+            user_agent=user_agent, locale=mp.locale, proxy=proxy,
+            viewport={"width": 1440, "height": 900}, extra_args=launch_args,
+        )
         await ctx.add_init_script(
             "Object.defineProperty(navigator, 'webdriver', {get: () => undefined});")
         ctx.on("close", lambda *_: setattr(self, "_closed", True))
