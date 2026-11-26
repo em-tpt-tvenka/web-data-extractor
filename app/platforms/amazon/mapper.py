@@ -6,16 +6,23 @@ from app.core import identifiers
 from app.core.logging import get_logger
 from app.core.periods import in_window, resolve_window
 from app.platforms.amazon.options import resolve_marketplace
-from app.platforms.amazon.parsing import to_number
+from app.platforms.amazon.parsing import parse_review_variant_text, to_number
 from app.platforms.categories import RECORD_TYPE_LISTING
 from app.platforms.common import (
+    best_offer_amount,
+    best_variant_match,
+    canonical_ids,
+    detect_spec_conflicts,
+    effective_prices,
     empty_campaign,
     is_blank,
     media_items,
     now_iso,
     parse_date,
+    parse_offer_amount,
     placeholder_tenant,
     sha_hash,
+    variant_id as make_variant_id,
     warranty_months,
 )
 from app.processing.language import detect_language, detect_languages
@@ -88,6 +95,40 @@ def _infer_industry(text: str) -> str:
     return "Consumer Goods"
 
 
+def _variant_mapping_fields(variant_text: str | None, combinations: list[dict]) -> dict:
+    """variant_id / platform_variant_id / variant_name / variant_attributes /
+    variant_mapping for one review, from Amazon's own "bought: Colour: Black |
+    Size: 256GB" text matched against this product's known variant
+    combinations (parent included). Never guesses: a review with no variant
+    text is parent_level; one with text that can't be confidently matched to
+    exactly one known combination is unknown rather than assigned at random."""
+    parsed_attrs = parse_review_variant_text(variant_text)
+    if not parsed_attrs:
+        return {
+            "variant_id": None, "platform_variant_id": None, "variant_name": None,
+            "variant_attributes": None,
+            "variant_mapping": {"status": "parent_level", "method": None, "confidence": None},
+        }
+    match, confidence = best_variant_match(parsed_attrs, combinations)
+    if match is None:
+        return {
+            "variant_id": None, "platform_variant_id": None, "variant_name": variant_text,
+            "variant_attributes": parsed_attrs,
+            "variant_mapping": {"status": "unknown", "method": "source_metadata", "confidence": 0.0},
+        }
+    return {
+        "variant_id": match.get("variant_id"),
+        "platform_variant_id": match.get("platform_variant_id"),
+        "variant_name": match.get("variant_name"),
+        "variant_attributes": match.get("attributes"),
+        "variant_mapping": {
+            "status": "verified" if confidence >= 0.999 else "inferred",
+            "method": "source_metadata",
+            "confidence": confidence,
+        },
+    }
+
+
 def _source_item_id(review: dict, asin: str) -> str:
     """Amazon's own review id (R...) when present; otherwise a clearly-marked
     content-derived fallback over the FULL review text. Never the product id."""
@@ -130,6 +171,7 @@ class _ProductContext:
         self.breadcrumbs = model.get("breadcrumbs") or []
 
         self.model_number = None if is_blank(model.get("model_number")) else model["model_number"]
+        self.model_name = None if is_blank(model.get("model_name")) else model["model_name"]
         self.color = None if is_blank(model.get("color")) else model["color"]
         self.capacity = model.get("capacity")
         self.energy_rating = model.get("energy_rating")
@@ -143,9 +185,12 @@ class _ProductContext:
 
     def entities(self) -> EntitiesBlock:
         brands = [BrandEntity(brand_name=self.brand)] if self.brand else []
+        canonical_product_id, variant_key = canonical_ids(
+            self.brand, self.subject, self.capacity, self.color)
         products = [ProductEntity(
             product_id=self.product_id, product_name=self.subject,
             sku=self.sku, model_number=self.model_number, product_url=self.product_url,
+            canonical_product_id=canonical_product_id, variant_key=variant_key,
         )]
         # Retailer is the platform (as Flipkart); the marketplace seller that
         # owns the buy box is kept alongside it.
@@ -173,6 +218,7 @@ class _ProductContext:
                 specs["Available Variants"] = summary
         return ProductAttributesBlock(
             model_number=self.model_number,
+            model_name=self.model_name,
             capacity=Capacity(**self.capacity) if self.capacity else None,
             color=self.color,
             energy_rating=self.energy_rating,
@@ -180,6 +226,7 @@ class _ProductContext:
             variants=self.variants,
             manufacturer=self.manufacturer,
             specifications=specs,
+            variant_details=self.model.get("variant_details") or [],
         )
 
     def commercial(self) -> CommercialBlock:
@@ -211,6 +258,17 @@ class _ProductContext:
         delivery_type = "free_delivery" if cost == 0 else ("paid_delivery" if cost else None)
         avail = self.model.get("availability") or {}
 
+        # Distinct per-offer-type effective prices - only computed from a real
+        # numeric amount we can parse, never estimated from a bare boolean.
+        bank_offer_amount = best_offer_amount(offers.get("bank_offers"), base_price=final_selling)
+        exchange_amount = parse_offer_amount(offers.get("exchange_offer"), base_price=final_selling)
+        coupon_amount = (
+            parse_offer_amount(self.promotion.get("promotion_name"), base_price=final_selling)
+            if self.promotion.get("coupon_available") else None
+        )
+        ep = effective_prices(final_selling, self.currency, bank_offer_amount=bank_offer_amount,
+                              coupon_amount=coupon_amount, exchange_amount=exchange_amount)
+
         return CommercialBlock(
             price=PriceBlock(
                 listed_price=_money(listed, self.currency),
@@ -223,6 +281,14 @@ class _ProductContext:
                 lowest_price_with_offers=_money(special, self.currency) if special else None,
                 offer_discount_amount=price.get("offer_discount_amount"),
                 extra_discount_amount=price.get("extra_discount_amount"),
+                bank_offer_adjusted_price=MoneyAmount(**ep["bank_offer_adjusted_price"])
+                if ep["bank_offer_adjusted_price"] else None,
+                coupon_adjusted_price=MoneyAmount(**ep["coupon_adjusted_price"])
+                if ep["coupon_adjusted_price"] else None,
+                exchange_adjusted_price=MoneyAmount(**ep["exchange_adjusted_price"])
+                if ep["exchange_adjusted_price"] else None,
+                final_effective_price=MoneyAmount(**ep["final_effective_price"])
+                if ep["final_effective_price"] else None,
             ),
             price_range=PriceRangeBlock(
                 minimum=min_p, maximum=max_p,
@@ -289,6 +355,7 @@ class _ProductContext:
         self.reviews_outside_window = 0
         raw_reviews = self.model.get("reviews") or []
         self.reviews_before_filter = len(raw_reviews)
+        combinations = self.model.get("variant_details") or []
         for r in raw_reviews:
             try:
                 if not in_window(parse_date(r.get("posted_date")), window):
@@ -305,6 +372,8 @@ class _ProductContext:
                 entry.update({k: r.get(k) for k in _AMAZON_REVIEW_KEYS})
                 entry["review_id"] = rid
                 entry["reviewer_id_hash"] = sha_hash(r["reviewer_name"]) if r.get("reviewer_name") else None
+                entry["parent_product_id"] = self.product_id
+                entry.update(_variant_mapping_fields(entry.get("variant"), combinations))
                 out.append(entry)
             except Exception as exc:  # one malformed review must not drop the product
                 _log.warning("event=review_map_failed product=%s error=%s", self.product_id, exc)
@@ -346,6 +415,8 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
     breakdown = ctx.ratings.get("breakdown") or {}
     body = ctx.description or ctx.subject
     reviews = ctx.reviews(request)
+    attrs = ctx.product_attributes()
+    spec_conflicts = detect_spec_conflicts(ctx.subject, attrs.specifications)
 
     return SocialMentionRecord(
         _id=record_id,
@@ -374,7 +445,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         ),
         entities=ctx.entities(),
         taxonomy=ctx.taxonomy(request),
-        product_attributes=ctx.product_attributes(),
+        product_attributes=attrs,
         commercial=ctx.commercial(),
         metrics=MetricsBlock(
             rating=RatingMetric(value=rating) if rating is not None else None,
@@ -389,7 +460,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         campaign=empty_campaign(),
         deduplication=DeduplicationBlock(content_hash=content_hash, canonical_record_id=record_id),
         provenance=_provenance(run_id),
-        quality=QualityBlock(),
+        quality=QualityBlock(validation_errors=spec_conflicts) if spec_conflicts else QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
         review_summary=ctx.review_summary(len(reviews), request),
         reviews=reviews,

@@ -73,6 +73,33 @@ def _decode_after(html: str, pattern: str):
     return None
 
 
+def _decode_parsejson_after(html: str, pattern: str):
+    """Decode a JSON value Amazon embeds as a single-quoted JS string literal
+    passed to ``A.$.parseJSON('...')`` instead of inline JSON (current
+    amazon.in does this for ``colorImages.initial``; ``_decode_after`` alone
+    finds the match but fails to parse past the ``A.$.parseJSON(`` call)."""
+    for m in re.finditer(pattern, html):
+        wrap = re.match(r"\s*[\w$.]*parseJSON\(\s*'", html[m.end():m.end() + 60])
+        if not wrap:
+            continue
+        i = m.end() + wrap.end()
+        buf = []
+        while i < len(html):
+            c = html[i]
+            if c == "\\" and i + 1 < len(html):
+                buf.append(html[i + 1])
+                i += 2
+                continue
+            if c == "'":
+                try:
+                    return json.loads("".join(buf))
+                except ValueError:
+                    break
+            buf.append(c)
+            i += 1
+    return None
+
+
 def looks_blocked(html: str) -> bool:
     return any(marker in (html or "") for marker in _BLOCK_MARKERS)
 
@@ -249,11 +276,20 @@ def extract_variants(html: str, base_url: str) -> dict[str, list[dict]]:
     out: dict[str, list[dict]] = {}
     by_asin = _decode_after(html, r'"dimensionValuesDisplayData"\s*:\s*')
     # Current Amazon twister: dimension labels come from variationDisplayLabels
-    # ({"size_name": "Size", "color_name": "Colour", ...}); the dimension ORDER
-    # (to line up with each ASIN's value list) comes from variationValues keys.
+    # ({"size_name": "Size", "color_name": "Colour", ...}). The dimension ORDER
+    # that lines up with each ASIN's value list in dimensionValuesDisplayData is
+    # NOT variationValues' own key order (verified live: e.g. variationValues
+    # orders its keys ["size_name", "color_name"] while every ASIN's value array
+    # is ["<colour>", "<size>"] - size and colour swapped). The twister's own
+    # ``"dimensions"`` array (e.g. ["color_name", "size_name"]) is the
+    # authoritative order; confirmed live on 2-dimension (colour+storage) and
+    # 3-dimension (colour+storage+configuration) products.
     labels_map = _decode_after(html, r'"variationDisplayLabels"\s*:\s*')
     var_values = _decode_after(html, r'"variationValues"\s*:\s*')
-    dim_keys = list(var_values.keys()) if isinstance(var_values, dict) else []
+    dim_order = _decode_after(html, r'"dimensions"\s*:\s*')
+    dim_keys = (dim_order if isinstance(dim_order, list)
+                and isinstance(var_values, dict) and set(dim_order) == set(var_values.keys())
+                else [])
     if isinstance(by_asin, dict) and dim_keys and isinstance(labels_map, dict):
         for asin, values in by_asin.items():
             if not ASIN_RE.match(str(asin)) or not isinstance(values, list):
@@ -294,6 +330,97 @@ def extract_variants(html: str, base_url: str) -> dict[str, list[dict]]:
             if opts:
                 out[label] = opts
     return {k: v for k, v in out.items() if v}
+
+
+def extract_variant_combinations(html: str, base_url: str) -> list[dict]:
+    """Per-ASIN full attribute combinations (e.g. ASIN123 -> {"Colour": "Black",
+    "Size": "256GB"}), for independent per-variant scraping. Unlike
+    extract_variants() above (which groups by dimension for the existing
+    swatch-metadata shape and only keeps one representative ASIN per distinct
+    option value), this keeps every distinct ASIN with its OWN full
+    combination - needed to visit each child ASIN's own page and to match a
+    review's "bought: Colour: Black | Size: 256GB" text back to the right SKU.
+    Read from the same embedded twister data as extract_variants(); never
+    guessed, and returns [] when the dimension order can't be confirmed."""
+    by_asin = _decode_after(html, r'"dimensionValuesDisplayData"\s*:\s*')
+    labels_map = _decode_after(html, r'"variationDisplayLabels"\s*:\s*')
+    var_values = _decode_after(html, r'"variationValues"\s*:\s*')
+    dim_order = _decode_after(html, r'"dimensions"\s*:\s*')
+    dim_keys = (dim_order if isinstance(dim_order, list)
+                and isinstance(var_values, dict) and set(dim_order) == set(var_values.keys())
+                else (_decode_after(html, r'"dimensionsDisplay"\s*:\s*')
+                      if isinstance(labels_map, dict) else None))
+    # dimensionsDisplay (legacy) is already an ordered LABEL list, not dimension
+    # keys - detect which shape we got by checking against labels_map's keys.
+    legacy_labels = isinstance(dim_keys, list) and dim_keys and dim_keys[0] not in (labels_map or {})
+
+    out: list[dict] = []
+    if isinstance(by_asin, dict) and isinstance(dim_keys, list) and dim_keys:
+        for asin, values in by_asin.items():
+            if not ASIN_RE.match(str(asin)) or not isinstance(values, list):
+                continue
+            attrs: dict[str, str] = {}
+            for idx, value in enumerate(values):
+                if idx >= len(dim_keys):
+                    break
+                if legacy_labels:
+                    label = clean_text(dim_keys[idx])
+                else:
+                    dim_key = dim_keys[idx]
+                    label = clean_text((labels_map or {}).get(dim_key)
+                                       or re.sub(r"_name$", "", str(dim_key)).replace("_", " ").title())
+                value = clean_text(value)
+                if label and value:
+                    attrs[label] = value
+            if attrs:
+                out.append({
+                    "platform_variant_id": asin,
+                    "product_url": f"{base_url}/dp/{asin}",
+                    "attributes": attrs,
+                })
+    return out
+
+
+# Amazon draws variation dimensions from a documented, finite set of
+# "variation themes" - matching against that known vocabulary (rather than
+# "any capitalized word") is required because a value itself is very often
+# capitalized words too ("Fresh Blue"), which a generic capitalized-label
+# heuristic cannot tell apart from a real label with no separator between
+# dimensions (confirmed live: "Colour: Fresh Blue Size: 8GB+128GB").
+_KNOWN_VARIANT_LABELS = sorted({
+    "colour", "color", "size", "style", "pattern", "flavour", "flavor", "scent",
+    "capacity", "storage", "ram", "configuration", "edition", "model",
+    "package quantity", "count", "length", "width", "material", "fit",
+    "network", "connectivity", "variant", "finish", "design", "number of items",
+}, key=len, reverse=True)
+_VARIANT_LABEL_RE = re.compile(
+    r"(?i)\b(" + "|".join(re.escape(w) for w in _KNOWN_VARIANT_LABELS) + r")(?:\s*name)?\s*:\s*"
+)
+
+
+def parse_review_variant_text(text: str | None) -> dict[str, str]:
+    """Amazon's own per-review "bought" line (data-hook='format-strip'), seen in
+    several real layouts: "Colour: Black | Size: 256GB", "Colour Name: Black
+    Size Name: 256GB", or, confirmed live, no separator at all between values
+    - "Colour: Fresh Blue Size: 8GB+128GB". A fixed delimiter (pipe / double
+    space) can't be relied on, so each known-label position is found directly
+    (against _KNOWN_VARIANT_LABELS) and a value runs until the next
+    recognized label (or the end of the string). Returns {} when the text
+    doesn't look like a label:value list at all (e.g. "Verified Purchase"),
+    or when no known label is recognized - never guessed from free text."""
+    if not text:
+        return {}
+    matches = list(_VARIANT_LABEL_RE.finditer(text))
+    if not matches:
+        return {}
+    out: dict[str, str] = {}
+    for i, m in enumerate(matches):
+        label = m.group(1).strip().title()
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+        value = clean_text(text[m.end():end].strip(" |"))
+        if label and value:
+            out[label] = value
+    return out
 
 
 # ── Product page: pricing ────────────────────────────────────────────────────
@@ -432,7 +559,31 @@ def extract_delivery(soup) -> dict:
 
 
 def extract_offers(soup) -> list[dict]:
+    """Bank/card discount, EMI and partner offers from the "See all offers &
+    discounts" popover (class prefix ``aop-``; opened by the engine before
+    the page is captured - see ``AmazonEngine._scroll``). Each payment method
+    is its own ``.aop-payment-method-card``, holding either an instant-discount
+    description (``span.aop-payment-voucher-details``) or a "No Cost EMI" plan
+    (``.aop-payment-method-emi``); ``.aop-voucher-box`` holds partner offers
+    (network/business vouchers) shown alongside them. The older carousel/
+    itembox layout is kept as a fallback in case Amazon ever serves it again
+    instead of the popover."""
     offers = []
+    for card in soup.select(".aop-payment-method-card"):
+        name = _first_text(card, ".aop-payment-method-info .a-size-base")
+        if not name:
+            continue
+        detail = _first_text(card, "span.aop-payment-voucher-details")
+        if detail:
+            offers.append({"offer_type": name, "offer_details": detail})
+            continue
+        emi = _first_text(card, ".aop-payment-method-emi")
+        if emi:
+            offers.append({"offer_type": f"{name} EMI", "offer_details": emi})
+    for box in soup.select(".aop-voucher-box"):
+        detail = _first_text(box, ".a-truncate-full") or _text(box)
+        if detail:
+            offers.append({"offer_type": "Partner Offer", "offer_details": detail})
     for card in soup.select("#vsxoffers_feature_div .a-carousel-card, div.offers-items, div[id^='itembox-']"):
         title = _first_text(card, ".offers-items-title", "h6", ".a-text-bold")
         detail = _first_text(card, ".a-truncate-full", ".offers-items-content", "span.a-size-base")
@@ -479,6 +630,49 @@ def group_offers(offers: list[dict], payment: dict, promotion: dict, exchange_te
     }
 
 
+_CURRENCY_CODE_RE = re.compile(r"currency([A-Z]{3})")
+
+
+def extract_exchange_offer(soup, default_currency: str) -> str | None:
+    """Just the exchange/trade-in value Amazon's buy-back accordion header
+    shows (e.g. "Up to ₹36,100 off"), not the whole accordion's text: the
+    accordion also holds the expanded modal (device picker, IMEI form,
+    buttons) and hidden error-state copy ("We are sorry. Amazon has
+    encountered an error...") that ``get_text()`` on the whole container
+    picks up regardless of what is actually displayed. Amazon marks the
+    header's two possible states (a percentage-off estimate, or a fixed
+    "You Pay" amount once an item is chosen) with its own literal "show"/
+    "hide" classes, so only the one actually shown is read. The currency
+    symbol itself is drawn as an empty, CSS-styled span (e.g.
+    ``<span class="currencyINR">``) rather than a text character, so it is
+    restored from that span's class."""
+    root = soup.select_one("#buyBackAccordionRow, #tradeInBuyboxFeature_feature_div")
+    if not root:
+        return None
+    box = None
+    for sel in ("#maxBuyBackDiscountSection", "#priceAfterBuyBackDiscountSection"):
+        el = root.select_one(sel)
+        if el and "hide" not in (el.get("class") or []):
+            box = el.select_one(".a-color-price")
+            if box:
+                break
+    if box is None:
+        return None
+    text = _text(box)
+    if not text:
+        return None
+    sym_el = box.select_one("[class*='currency']")
+    code = None
+    if sym_el:
+        m = _CURRENCY_CODE_RE.search(" ".join(sym_el.get("class") or []))
+        code = m.group(1) if m else None
+    symbol = next((s for s, c in _CURRENCY_SYMBOLS if c == (code or default_currency)), "")
+    m = re.search(r"(\d[\d,]*)(?:\.0+)?", text)
+    if not m:
+        return clean_text(text)
+    return clean_text(f"{text[:m.start()]}{symbol}{m.group(1)}{text[m.end():]}")
+
+
 def payment_signals(offers: list[dict], badges: list[str], soup) -> dict:
     """True only on explicit page evidence; None when the page says nothing."""
     blob = " | ".join([f"{o['offer_type']} {o['offer_details']}" for o in offers] + badges)
@@ -509,12 +703,20 @@ def _deal_label(soup) -> str | None:
 
 def extract_promotion(soup, offers: list[dict]) -> dict:
     deal = _deal_label(soup)
-    coupon = _first_text(soup, "#promoPriceBlockMessage_feature_div label[id^='couponText']",
-                         "#vpcButton", "#couponBadgeRegularVpc", "[id^='couponText']")
-    if coupon and "coupon" not in coupon.lower():
-        coupon = None
-    if coupon:
-        coupon = clean_text(re.sub(r"\s*(Terms|Details|Shop items)\s*$", "", coupon, flags=re.I))
+    # Current Amazon coupon badge: a "Coupon Discount" card
+    # (#couponsCard_feature_div) with the clip condition in its own
+    # sub-heading, e.g. "Save 6% now." (no literal word "coupon" in the text,
+    # so it is read directly rather than through the generic "coupon" word
+    # check below, which is for the older/legacy badge selectors that still
+    # follow it as a fallback).
+    coupon = _first_text(soup, "#coupons-card-sub-heading-before-apply")
+    if not coupon:
+        coupon = _first_text(soup, "#promoPriceBlockMessage_feature_div label[id^='couponText']",
+                             "#vpcButton", "#couponBadgeRegularVpc", "[id^='couponText']")
+        if coupon and "coupon" not in coupon.lower():
+            coupon = None
+        if coupon:
+            coupon = clean_text(re.sub(r"\s*(Terms|Details|Shop items)\s*$", "", coupon, flags=re.I))
     if not coupon:
         coupon = next((o["offer_details"] for o in offers if "coupon" in o["offer_type"].lower()), None)
     if deal and not re.search(r"deal", deal, re.I):
@@ -552,11 +754,15 @@ def parse_availability(text: str | None) -> dict:
 
 def extract_media(soup, html: str) -> dict:
     images, thumbs = [], []
-    initial = _decode_after(html, r"'colorImages'\s*:\s*\{\s*'initial'\s*:\s*")
+    pattern = r"'colorImages'\s*:\s*\{\s*'initial'\s*:\s*"
+    initial = _decode_after(html, pattern) or _decode_parsejson_after(html, pattern)
     if isinstance(initial, list):
         for img in initial:
             if isinstance(img, dict):
-                images.append(img.get("hiRes") or img.get("large"))
+                # "hiRes" is not always the unscaled original (seen live with a
+                # "_SL1500_" size token still on it); normalize it the same way
+                # as the #altImages fallback below instead of using it raw.
+                images.append(full_size_image(img.get("hiRes") or img.get("large")))
                 thumbs.append(img.get("thumb"))
     if not any(images):
         land = soup.select_one("#landingImage, #imgBlkFront")
@@ -902,7 +1108,7 @@ def parse_product_page(html: str, asin: str, base_url: str, default_currency: st
     media = extract_media(soup, html)
     rating = extract_rating_summary(soup)
     aspects, customers_say = extract_aspects(soup)
-    exchange_text = _text(soup.select_one("#buyBackAccordionRow, #tradeInBuyboxFeature_feature_div"))
+    exchange_text = extract_exchange_offer(soup, default_currency)
     warranty_lines = dedupe([t for t in [warranty_text] + badges + bullets
                              if t and "warranty" in t.lower()])[:8]
 
@@ -968,7 +1174,12 @@ def parse_product_page(html: str, asin: str, base_url: str, default_currency: st
         "videos": media["videos"],
         "variants": extract_variants(html, base_url),
         # ── attributes Amazon exposes directly
-        "model_number": spec_get(specs, "Item model number", "Model Number", "Model Name", "Model"),
+        # "Model Name" (e.g. "Galaxy S26 5G") is a different, marketing-name
+        # field from "Item model number"/"Model Number" (e.g. "SM-S938B") and
+        # must not be used as a model_number fallback - confirmed conflation
+        # bug on Flipkart using the same alias pattern.
+        "model_number": spec_get(specs, "Item model number", "Model Number", "Model"),
+        "model_name": spec_get(specs, "Model Name"),
         "color": spec_get(specs, "Colour", "Color"),
         "capacity": parse_capacity(capacity_spec, title),
         "energy_rating": parse_energy_rating(energy_spec, title),

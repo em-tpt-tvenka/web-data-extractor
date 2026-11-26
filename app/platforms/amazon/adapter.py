@@ -3,6 +3,7 @@ from __future__ import annotations
 from app.core.config import settings
 from app.core.logging import get_logger
 from app.core.periods import resolve_window
+from app.platforms import common
 from app.platforms.amazon import mapper
 from app.platforms.amazon.engine import AmazonEngine, AmazonEngineConfig
 from app.platforms.amazon.options import AmazonOptions, config_schema, resolve_marketplace
@@ -158,6 +159,11 @@ class AmazonAdapter(PlatformAdapter):
         # such as "RAM" or "SSD" are used to exclude accessories.
         if options.fulfilled_by_amazon_only and (model.get("seller") or {}).get("fulfilled_by_amazon") is not True:
             return False  # unknown fulfilment is excluded rather than guessed
+        product_name = model.get("product_name")
+        if not common.matches_requested_model(product_name, request.search):
+            return False  # a different model/generation than the one requested
+        if common.is_accessory_listing(product_name, request.search):
+            return False  # case/charger/screen-guard listing, not the product itself
         return True
 
     @staticmethod

@@ -14,6 +14,7 @@ from pathlib import Path
 from playwright.async_api import BrowserContext, Page, async_playwright
 
 from app.core.logging import get_logger
+from app.platforms import common
 from app.platforms.amazon import parsing
 from app.platforms.browser import proxy_settings, random_user_agent
 from app.platforms.browser_launch import with_chrome_fallback
@@ -39,6 +40,12 @@ _EXPANDER_SELS = (
     "#productDetails_expanderTables_depthRightSections a.a-expander-header[aria-expanded='false']",
     "#prodDetails a.a-expander-header[aria-expanded='false']",
 )
+# "See all offers & discounts" trigger, next to the price. Bank/card discounts,
+# EMI plans and partner offers only render (as .aop-* elements) once this is
+# opened; nothing requests them otherwise (verified live - they are absent
+# from the page until clicked).
+_OFFERS_TRIGGER_SELS = ("#cardification-secondary-view-id", "span:has-text('See all offers & discounts')")
+_OFFERS_POPOVER_SEL = ".aop-payment-method-card, .aop-voucher-box"
 
 
 class BlockedError(Exception):
@@ -313,7 +320,25 @@ class AmazonEngine:
                         await el.click(timeout=1_500)
             except Exception:
                 pass
+        await self._open_offers_popover(page)
         await asyncio.sleep(0.6)
+
+    async def _open_offers_popover(self, page: Page) -> None:
+        """Click "See all offers & discounts" so bank/card, EMI and partner
+        offers (the ``.aop-*`` elements ``parsing.extract_offers`` reads) are
+        rendered into the page before it is captured. Not every product has
+        eligible payment offers, so a missing trigger or popover is not an
+        error."""
+        for sel in _OFFERS_TRIGGER_SELS:
+            try:
+                el = page.locator(sel).first
+                if await el.count() == 0 or not await el.is_visible():
+                    continue
+                await el.click(timeout=1_500)
+                await page.wait_for_selector(_OFFERS_POPOVER_SEL, timeout=4_000)
+                return
+            except Exception:
+                continue
 
     async def _goto(self, page: Page, url: str, wait_for: str | None = None,
                     scroll_steps: int = 0) -> str:
@@ -795,6 +820,75 @@ class AmazonEngine:
         out["incomplete_reason"] = reason
         return out
 
+    async def _scrape_variant_details(self, ctx: BrowserContext, parent_asin: str, combinations: list[dict],
+                                      base_url: str, currency: str) -> list[dict]:
+        """Independently visit each OTHER child ASIN's own page (the parent's
+        own page is already fully scraped by the caller) to get that variant's
+        own price/specs/images/availability - reusing the exact same
+        parse_product_page extraction as the parent product, just applied to a
+        different page. Bounded by the same detail_concurrency used for
+        products; a new tab per variant in the same browser context, never a
+        new browser. One variant's failure never fails the product or the
+        others. Reviews are deliberately NOT re-scraped per variant - they are
+        already collected once at the parent listing and matched to a variant
+        via each review's own "bought" text (see mapper.py)."""
+        others = [c for c in combinations if c.get("platform_variant_id") != parent_asin]
+        if not others:
+            return []
+        sem = asyncio.Semaphore(max(1, self.cfg.detail_concurrency))
+
+        async def _one(combo: dict) -> dict:
+            asin = combo["platform_variant_id"]
+            variant_name = ", ".join(f"{k}: {v}" for k, v in combo["attributes"].items())
+            base = {
+                "variant_id": common.variant_id(parent_asin, asin),
+                "parent_product_id": parent_asin,
+                "platform_variant_id": asin,
+                "variant_name": variant_name,
+                "attributes": combo["attributes"],
+                "product_url": combo["product_url"],
+            }
+            async with sem:
+                page = None
+                try:
+                    page = await ctx.new_page()
+                    html = await self._goto(page, combo["product_url"], wait_for="#productTitle",
+                                            scroll_steps=random.randint(4, 6))
+                    parsed = await asyncio.to_thread(parsing.parse_product_page, html, asin, base_url, currency)
+                    ratings = parsed.get("ratings") or {}
+                    base.update({
+                        "images": parsed.get("images", []),
+                        "videos": parsed.get("videos", []),
+                        "specifications": parsed.get("specifications", {}),
+                        "availability": parsed.get("availability"),
+                        "commercial": {
+                            "price": parsed.get("price"),
+                            "offers": parsed.get("offers"),
+                            "promotion": parsed.get("promotion"),
+                            "payment": parsed.get("payment"),
+                        },
+                        "metrics": {
+                            "rating": ratings.get("average_rating"),
+                            "total_ratings": ratings.get("total_ratings"),
+                            "total_reviews": ratings.get("total_reviews"),
+                        },
+                        "variant_extraction": {"status": "completed", "source": "platform"},
+                    })
+                except Exception as exc:
+                    _log.warning("event=variant_detail_failed parent=%s asin=%s error=%s",
+                                 parent_asin, asin, exc)
+                    base["variant_extraction"] = {"status": "failed", "source": "platform",
+                                                  "error": str(exc)[:200]}
+                finally:
+                    if page is not None:
+                        try:
+                            await page.close()
+                        except Exception:
+                            pass
+            return base
+
+        return list(await asyncio.gather(*[_one(c) for c in others]))
+
     async def _scrape_product(self, ctx: BrowserContext, card: dict) -> dict | None:
         asin = card["asin"]
         url = f"{self.cfg.marketplace.base_url}/dp/{asin}"
@@ -829,6 +923,41 @@ class AmazonEngine:
                 "product_detail_url": url, "scraped_at": data["scraped_at"],
             }
             data["review_summary"], data["reviews"] = await self._scrape_reviews(page, data)
+            try:
+                combos = parsing.extract_variant_combinations(html, self.cfg.marketplace.base_url)
+                variant_details = await self._scrape_variant_details(
+                    ctx, asin, combos, self.cfg.marketplace.base_url, self.cfg.marketplace.currency)
+                # The parent ASIN's own combination (if the twister includes
+                # it, which it normally does) is folded in using data already
+                # scraped above - no second visit to its own page - so the
+                # mapper's review-to-variant matching has a complete,
+                # consistently-labeled set including the default/current SKU.
+                parent_combo = next((c for c in combos if c.get("platform_variant_id") == asin), None)
+                if parent_combo:
+                    ratings = data["ratings"]
+                    variant_details.insert(0, {
+                        "variant_id": common.variant_id(asin, asin),
+                        "parent_product_id": asin,
+                        "platform_variant_id": asin,
+                        "variant_name": ", ".join(f"{k}: {v}" for k, v in parent_combo["attributes"].items()),
+                        "attributes": parent_combo["attributes"],
+                        "product_url": url,
+                        "images": data["images"],
+                        "videos": data["videos"],
+                        "specifications": data["specifications"],
+                        "availability": data["availability"],
+                        "commercial": {"price": data["price"], "offers": data["offers"],
+                                      "promotion": data["promotion"], "payment": data["payment"]},
+                        "metrics": {"rating": ratings.get("average_rating"),
+                                    "total_ratings": ratings.get("total_ratings"),
+                                    "total_reviews": ratings.get("total_reviews")},
+                        "variant_extraction": {"status": "completed", "source": "platform",
+                                               "note": "parent/default listing - already scraped above"},
+                    })
+                data["variant_details"] = variant_details
+            except Exception as exc:
+                _log.warning("event=variant_details_failed asin=%s error=%s", asin, exc)
+                data["variant_details"] = []
 
             s = data["review_summary"]
             ps.reviews_available = s.get("reviews_available")
