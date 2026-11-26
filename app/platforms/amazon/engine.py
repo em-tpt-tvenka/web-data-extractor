@@ -86,10 +86,8 @@ class AmazonEngineConfig:
 
     max_pages: int = 1
     max_products: int = 20
-    review_pages: int = 1
     review_sort: str = "recent"
     verified_reviews_only: bool = False
-    collect_all_reviews: bool = True
     review_click_min_delay: float = 0.8
     review_click_max_delay: float = 1.8
     keyword_stall_limit: int = 15
@@ -408,16 +406,13 @@ class AmazonEngine:
         """Load the rest of the open review listing with "Show 10 more reviews"
         (Amazon appends each batch in place; URL page numbers are ignored).
         Returns ``(batches_loaded, stop_reason)``. Each click is retried; a
-        CAPTCHA is handled as on page loads. Stops when the button is gone (the
-        listing is exhausted), never on a review count - unless the caller
-        asked for a fixed number of pages (collect_all_reviews off)."""
+        CAPTCHA is handled as on page loads. Always loads every review the
+        listing offers, stopping only when the button is gone (the listing is
+        exhausted) -- never on a review count."""
         cfg = self.cfg
-        limit = None if cfg.collect_all_reviews else max(1, cfg.review_pages)
         review_count_js = "n => document.querySelectorAll(\"[data-hook='review']\").length > n"
         batches, throttled = 1, 0
         while True:
-            if limit is not None and batches >= limit:
-                return batches, f"reached review_pages_per_product ({limit})"
             btn = page.locator(parsing.SHOW_MORE_SEL).first
             if await btn.count() == 0 or not await btn.is_visible():
                 return batches, "listing exhausted"
@@ -598,11 +593,8 @@ class AmazonEngine:
             first = await window({}, "all")
             total = first["total"] if first else None
             out["total_reviews"] = total
-            _log.info("event=review_total_found asin=%s available=%s mode=%s", asin, total,
-                      "all" if cfg.collect_all_reviews else f"pages({cfg.review_pages})")
-            if not cfg.collect_all_reviews:
-                out["stop_reason"] = (first or {}).get("stop_reason") or "listing failed"
-            elif (total is not None and len(found) < total) or \
+            _log.info("event=review_total_found asin=%s available=%s", asin, total)
+            if (total is not None and len(found) < total) or \
                     (total is None and (first is None or capped(first))):
                 # Partition whenever the base listing did not deliver everything it
                 # reports - full at 100, or cut short below it (seen live: 53 of 118).
@@ -688,7 +680,7 @@ class AmazonEngine:
         elif login_known_required:
             self.review_login_required += 1
             info.update(login_required=True, stop_reason="sign-in required (known from earlier product)")
-        elif cfg.review_pages > 0:
+        else:
             try:
                 info = await self._collect_review_pages(page, asin)
             except BrowserClosedError:
@@ -735,7 +727,7 @@ class AmazonEngine:
             "login_required": info["login_required"],
             # Completeness: what the review listing reports vs. what was extracted.
             **coverage,
-            "collection_mode": "all" if cfg.collect_all_reviews else "pages",
+            "collection_mode": "all",
             "listing_cap": LISTING_CAP,
             "listings_scraped": len(info.get("listings") or []),
             "star_coverage": info.get("star_coverage") or {},
@@ -764,8 +756,6 @@ class AmazonEngine:
                       "review URLs = rate limit); reviews collected before that are kept")
         elif info.get("login_required"):
             reason = "review pages need a signed-in Amazon session"
-        elif not self.cfg.collect_all_reviews:
-            reason = "collect_all_reviews is off; only review_pages_per_product pages were loaded"
         elif info.get("failed_listings"):
             reason = f"{len(info['failed_listings'])} review listing(s) failed to load"
         else:
@@ -902,9 +892,8 @@ class AmazonEngine:
                 f"Amazon rate-limited this session at {limited_at:%Y-%m-%d %H:%M} UTC; to avoid extending the "
                 f"block, the next run is allowed after {allowed:%Y-%m-%d %H:%M} UTC "
                 f"(amazon_cooldown_minutes={cfg.cooldown_minutes:g}; set 0 to disable)")
-        _log.info("event=engine_start marketplace=%s search=%r sort=%s max_pages=%s max_products=%s "
-                  "review_pages=%s", cfg.marketplace.domain, cfg.search_text, cfg.sort_by,
-                  cfg.max_pages, cfg.max_products, cfg.review_pages)
+        _log.info("event=engine_start marketplace=%s search=%r sort=%s max_pages=%s max_products=%s",
+                  cfg.marketplace.domain, cfg.search_text, cfg.sort_by, cfg.max_pages, cfg.max_products)
 
         async with async_playwright() as pw:
             try:
@@ -915,7 +904,7 @@ class AmazonEngine:
             try:
                 page = ctx.pages[0] if ctx.pages else await ctx.new_page()
                 await self._open_home(page)
-                if cfg.review_pages > 0 and self.signed_in is False:
+                if self.signed_in is False:
                     _log.warning("event=not_signed_in message=review pages need a signed-in Amazon "
                                  "session; sign in manually once in the scraper browser profile. "
                                  "Only product-page reviews will be collected.")

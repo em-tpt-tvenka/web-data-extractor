@@ -110,10 +110,8 @@ class AmazonAdapter(PlatformAdapter):
             exclude_keywords=filters.exclude_keywords,
             max_pages=opts.max_pages,
             max_products=opts.max_products,
-            review_pages=opts.review_pages_per_product,
             review_sort=options.review_sort.value,
             verified_reviews_only=options.verified_reviews_only,
-            collect_all_reviews=options.collect_all_reviews,
             review_click_min_delay=settings.amazon_review_click_min_delay,
             review_click_max_delay=settings.amazon_review_click_max_delay,
             keyword_stall_limit=settings.amazon_review_keyword_stall_limit,
@@ -170,7 +168,6 @@ class AmazonAdapter(PlatformAdapter):
                 "search_text": engine.cfg.search_text,
                 "max_products": opts.max_products,
                 "max_pages": opts.max_pages,
-                "review_pages_per_product": opts.review_pages_per_product,
                 "sort_by": opts.sort_by.value,
                 "date_range": opts.date_range.type.value,
                 "currency": filters.currency,
@@ -181,7 +178,6 @@ class AmazonAdapter(PlatformAdapter):
                 "fulfilled_by_amazon_only": options.fulfilled_by_amazon_only,
                 "review_sort": options.review_sort.value,
                 "verified_reviews_only": options.verified_reviews_only,
-                "collect_all_reviews": options.collect_all_reviews,
             },
             "actual": {
                 "products_discovered": len(models),
@@ -224,9 +220,9 @@ class AmazonAdapter(PlatformAdapter):
                 "date_range": "reviews without a parseable date are kept",
                 "reviews": "Amazon serves review pages only to signed-in sessions; sign-in is never "
                            "automated. Without it, only reviews shown on the product page are collected.",
-                "review_coverage": "Amazon shows at most 100 reviews per review listing; with "
-                                   "collect_all_reviews the listings are partitioned (star, sort, media, "
-                                   "format, verified, keyword) to reach every accessible review. Each "
+                "review_coverage": "Amazon shows at most 100 reviews per review listing; the listings "
+                                   "are partitioned (star, sort, media, format, verified, keyword) to "
+                                   "reach every accessible review. Each "
                                    "product's review_summary compares reviews_available with "
                                    "reviews_extracted; reviews_extracted counts before the date_range filter.",
             },

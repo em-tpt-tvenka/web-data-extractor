@@ -59,9 +59,6 @@ class AmazonOptions(BaseModel):
     fulfilled_by_amazon_only: bool = False
     review_sort: ReviewSort = ReviewSort.recent
     verified_reviews_only: bool = False
-    # Collect every review Amazon makes reachable (default), instead of only
-    # ``review_pages_per_product`` batches of 10 from one listing.
-    collect_all_reviews: bool = True
 
     model_config = {"extra": "forbid"}
 
@@ -100,17 +97,6 @@ def config_schema() -> PlatformConfigSchema:
             type=FieldType.boolean,
             default=False,
             description="Collect only reviews marked 'Verified Purchase'.",
-        ),
-        ConfigField(
-            name="collect_all_reviews",
-            label="Collect all reviews",
-            type=FieldType.boolean,
-            default=True,
-            description="Collect every review Amazon makes reachable for each product (review "
-                        "listings are split by star rating, sort, media/format and keyword, since "
-                        "Amazon shows at most 100 reviews per listing). When off, only "
-                        "review_pages_per_product pages of 10 reviews are collected. "
-                        "review_pages_per_product = 0 disables review pages either way.",
         ),
     ]
     return PlatformConfigSchema(platform="amazon", fields=fields)

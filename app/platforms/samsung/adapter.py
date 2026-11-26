@@ -59,7 +59,6 @@ class SamsungAdapter(PlatformAdapter):
             exclude_keywords=request.filters.exclude_keywords,
             max_pages=opts.max_pages,
             max_products=opts.max_products,
-            review_pages_per_product=opts.review_pages_per_product,
             fetch_reviews=True,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
@@ -117,7 +116,7 @@ class SamsungAdapter(PlatformAdapter):
             "notes": {
                 "currency": "prices preserved in source/display currency (INR); no conversion performed",
                 "reviews": ("Bazaarvoice reviews are fetched via the passkey + product id read "
-                            "from the product page; review_pages_per_product caps pagination "
-                            "(each page = 100 reviews, 0 = all). JSON-LD review nodes are merged in."),
+                            "from the product page and paginated to a hard safety ceiling of 60 "
+                            "pages (6000 reviews). JSON-LD review nodes are merged in."),
             },
         }

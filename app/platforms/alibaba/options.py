@@ -26,9 +26,6 @@ class AlibabaOptions(BaseModel):
     supplier_type: SupplierType = SupplierType.all
     include_sponsored: bool = False
     verified_reviews_only: bool = False
-    # Collect every review page of each source (product reviews, supplier
-    # feedback) instead of only review_pages_per_product pages (as Amazon).
-    collect_all_reviews: bool = True
 
     model_config = {"extra": "forbid"}
 
@@ -107,15 +104,6 @@ def config_schema() -> PlatformConfigSchema:
             type=FieldType.boolean,
             default=False,
             description="Collect only reviews and supplier feedback marked 'Verified Purchase'.",
-        ),
-        ConfigField(
-            name="collect_all_reviews",
-            label="Collect all reviews",
-            type=FieldType.boolean,
-            default=True,
-            description="Load every review page of each source (product reviews and supplier "
-                        "feedback) until the last page. When off, only review_pages_per_product "
-                        "pages are loaded. review_pages_per_product = 0 disables review pages either way.",
         ),
     ]
     return PlatformConfigSchema(platform="alibaba", fields=fields)

@@ -467,7 +467,7 @@ def review_key(r: dict) -> tuple:
             r.get("posted_relative"), r.get("helpful_count"))
 
 
-def review_coverage(available, extracted, collect_all: bool, listings: list[dict], blocked: bool = False) -> dict:
+def review_coverage(available, extracted, listings: list[dict], blocked: bool = False) -> dict:
     """Reported review count vs. reviews extracted (same keys as Amazon /
     Alibaba). ``complete`` is None when Flipkart shows no review count."""
     out = {"reviews_available": available, "reviews_extracted": extracted,
@@ -482,8 +482,6 @@ def review_coverage(available, extracted, collect_all: bool, listings: list[dict
     failed = [l for l in listings if l.get("failed")]
     if blocked:
         reason = "Flipkart blocked the review pages (captcha / access denied)"
-    elif not collect_all:
-        reason = "collect_all_reviews is off; only review_pages_per_product pages were loaded"
     elif failed:
         reason = (f"{len(failed)} review listing(s) could not be loaded (Flipkart kept redirecting "
                   "to login); see review_summary.listings")

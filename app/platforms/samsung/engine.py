@@ -40,7 +40,6 @@ class EngineConfig:
     exclude_keywords: list[str] = field(default_factory=list)
     max_pages: int = 1
     max_products: int = 20
-    review_pages_per_product: int = 1
     fetch_reviews: bool = True
     headless: bool = False
     browser_channel: str = "chrome"
@@ -321,10 +320,9 @@ class SamsungEngine:
         out: list[dict] = []
         summary = None
         offset, total, pages = 0, None, 0
-        # Each BV page holds up to 100 reviews; review_pages_per_product<=0 means
-        # collect everything (hard safety ceiling of 60 pages = 6000 reviews).
-        rpp = cfg.review_pages_per_product
-        max_pages = 60 if rpp is None or rpp <= 0 else min(60, rpp)
+        # Each BV page holds up to 100 reviews; always collect everything
+        # (hard safety ceiling of 60 pages = 6000 reviews).
+        max_pages = 60
         while pages < max_pages:
             q["Offset"] = str(offset)
             page_url = urlunsplit((sp.scheme, sp.netloc, sp.path, urlencode(q, safe=":,"), ""))

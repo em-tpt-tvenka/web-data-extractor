@@ -107,13 +107,6 @@ class EngineConfig:
     fetch_reviews: bool = True
     review_concurrency: int = 3
     feedback_concurrency: int = 2
-    # Review pages to load beyond the reviews the product page already shows
-    # (= request.review_pages_per_product, capped by settings.feedback_max_pages).
-    # Applies to every review source: feedback API, review DOM, store feedback.
-    feedback_max_pages: int = 80
-    # Load every review page each source offers (until its last page / no new
-    # reviews) instead of ``feedback_max_pages``; 0 pages still disables review pages.
-    collect_all_reviews: bool = False
     verified_reviews_only: bool = False
     max_retries: int = 3
     min_delay_seconds: float = 1.2
@@ -412,19 +405,10 @@ class AlibabaEngine:
         self.reviews_incomplete = 0  # products whose extracted reviews < the reported count
 
     def _review_pages(self, cap: int | None = None):
-        """Further review pages a source may load. With ``collect_all_reviews``
-        there is no page limit - every loop using this stops on its own at the
-        source's last page or when pages bring no new reviews; otherwise
-        ``feedback_max_pages`` (optionally also capped at ``cap``).
-
-        ``review_pages_per_product == 0`` (``feedback_max_pages == 0``) must NOT
-        silently disable product-review pagination when ``collect_all_reviews``
-        is on: under collect-all the budget is unbounded regardless, and 0 is
-        treated as "collect everything" rather than "collect nothing"."""
-        if self.cfg.collect_all_reviews:
-            return itertools.count()
-        n = self.cfg.feedback_max_pages if cap is None else min(self.cfg.feedback_max_pages, cap)
-        return range(max(0, n))
+        """Further review pages a source may load. Always collects until the
+        source's own last page or until pages stop bringing new reviews;
+        ``cap`` (when given) is an internal safety bound on this loop only."""
+        return itertools.count() if cap is None else range(max(0, cap))
 
     async def _throttle(self) -> None:
         """Polite, randomized gap between navigations, shared across workers (as Amazon)."""
@@ -660,9 +644,9 @@ class AlibabaEngine:
         Returns ``(items, pages_scraped, stop_reason)``.
 
         ``target`` (``max(tab_count, product_review_summary.total_review_count)``)
-        is only a progress goal for logging. Under ``collect_all_reviews`` it is
-        NOT a terminator: pagination runs until a true natural end (no next page,
-        no pagination parameter, or two consecutive pages with no new reviews)."""
+        is only a progress goal for logging, never a terminator: pagination
+        always runs until a true natural end (no next page, no pagination
+        parameter, or two consecutive pages with no new reviews)."""
         collected: dict[str, dict] = {}
         for it in _raw_review_items(cap["body"]):
             collected[_item_key(it)] = it
@@ -694,14 +678,8 @@ class AlibabaEngine:
         page_no = start_page
         empty_streak = 0
         pages = 1  # the captured response is the first page
-        stop = ("reached max pages" if (self.cfg.feedback_max_pages or self.cfg.collect_all_reviews)
-                else "review pagination not requested")
+        stop = "reached max pages"
         for _ in self._review_pages():
-            # tab_count/target is a hard stop ONLY when not collecting everything;
-            # under collect_all we continue to a natural end regardless of it.
-            if not self.cfg.collect_all_reviews and tab_count and len(collected) >= tab_count:
-                stop = "collected all reported reviews"
-                break
             page_no += 1
             new_url, new_post = _next_request(cap["url"], cap.get("post_data"), page_no)
             if new_url is None:
@@ -731,9 +709,6 @@ class AlibabaEngine:
                     break
             else:
                 empty_streak = 0
-        else:
-            if not self.cfg.collect_all_reviews and tab_count and len(collected) >= tab_count:
-                stop = "collected all reported reviews"
         _log.info("event=feedback_paginated collected=%d tab_count=%d target=%d pages=%d stop=%s",
                   len(collected), tab_count, target, pages, stop)
         return list(collected.values()), pages, stop
@@ -763,24 +738,17 @@ class AlibabaEngine:
 
     async def _paginate_review_dom(self, page, block: dict, tab_count: int,
                                    target: int = 0) -> dict:
-        """Click through review pages on the product page. With
-        ``collect_all_reviews`` on, pages through fully until the source's last
-        page / no new reviews (no page cap, and tab_count/target is NOT a
-        terminator). Otherwise loads at most ``feedback_max_pages`` further pages
-        (the request's review_pages_per_product), capped at 40."""
+        """Click through review pages on the product page. Pages through fully
+        until the source's last page / no new reviews (tab_count/target is NOT
+        a terminator), capped at 40 clicks per call as an internal safety bound."""
         if block is None:
             return block
         target = max(target or 0, tab_count or 0)
         reviews = block.get("reviews", []) or []
         seen = {_dom_review_key(r) for r in reviews}
         pages = block.get("pages_scraped") or 1
-        extra = min(self.cfg.feedback_max_pages, 40)
-        stop = ("reached max pages" if (extra or self.cfg.collect_all_reviews)
-                else "review pagination not requested")
+        stop = "reached max pages"
         for _ in self._review_pages(cap=40):
-            if not self.cfg.collect_all_reviews and tab_count and len(reviews) >= tab_count:
-                stop = "collected all reported reviews"
-                break
             clicked = False
             for sel in _REVIEW_NEXT_SELS:
                 try:
@@ -875,11 +843,8 @@ class AlibabaEngine:
                 block["stop_reason"] = stop
                 return block
 
-        # "View all reviews" opens further review pages, so it counts against
-        # the same page budget (skipped when no review pages were requested).
-        # Under collect_all the budget is unbounded even when review pages == 0.
-        if ((self.cfg.feedback_max_pages or self.cfg.collect_all_reviews)
-                and tab_count and len(block.get("reviews", []) or []) < tab_count):
+        # "View all reviews" opens further review pages to reach everything.
+        if tab_count and len(block.get("reviews", []) or []) < tab_count:
             if await self._open_full_reviews(page):
                 try:
                     dom = await page.evaluate(scripts.REVIEWS_JS)
@@ -1005,8 +970,7 @@ class AlibabaEngine:
                                 "termination": "no_template", "pages": 0}
 
             no_new_streak = 0
-            for _ in (self._review_pages() if self.cfg.collect_all_reviews
-                      else range(max(1, self.cfg.feedback_max_pages))):
+            for _ in self._review_pages():
                 pages += 1
                 try:
                     items = await page.evaluate(scripts.FEEDBACK_JS)
@@ -1293,7 +1257,7 @@ class AlibabaEngine:
             cid = seller.get("companyId")
             store_bk = result.get("store_reviews")
             store_tab = (store_bk or {}).get("tab_count", 0) or 0
-            if fb_url and self.cfg.feedback_max_pages > 0 and (store_tab or store_bk):
+            if fb_url and (store_tab or store_bk):
                 try:
                     fb_res = await self._get_feedback(ctx, fb_url, store_tab, cid)
                 except _FATAL:
@@ -1339,9 +1303,9 @@ class AlibabaEngine:
 
         _log.info(
             "event=engine_start search=%r sort=%s max_pages=%s max_products=%s "
-            "fetch_reviews=%s review_pages=%s headless=%s channel=%s",
+            "fetch_reviews=%s headless=%s channel=%s",
             cfg.search_text, cfg.sort_by, cfg.max_pages, cfg.max_products,
-            cfg.fetch_reviews, cfg.feedback_max_pages, cfg.headless, cfg.browser_channel,
+            cfg.fetch_reviews, cfg.headless, cfg.browser_channel,
         )
 
         async with async_playwright() as pw:
@@ -1522,8 +1486,7 @@ class AlibabaEngine:
         m["review_summary"] = parsing.build_review_summary(
             rv, card_rating=m["reviews"]["product_reviews"].get("rating"),
             product_url=m["product_details"]["product_detail_url"],
-            detail_status="failed" if rv.get("error") else None,
-            collect_all=self.cfg.collect_all_reviews)
+            detail_status="failed" if rv.get("error") else None)
         s = m["review_summary"]
         store = s.get("store_reviews") or {}
         pid = m["product_details"]["product_id"]

@@ -897,8 +897,7 @@ _NATURAL_END = ("last review page", "no new reviews", "collected all reported", 
                 "no_new_reviews", "listing exhausted")
 
 
-def review_coverage(available, extracted, stop: str | None, collect_all: bool | None,
-                    failed: bool = False) -> dict:
+def review_coverage(available, extracted, stop: str | None, failed: bool = False) -> dict:
     """Reported review count vs. reviews extracted (as on Amazon).
     ``complete`` is None when either count is unknown."""
     out = {"reviews_available": available, "reviews_extracted": extracted,
@@ -922,16 +921,12 @@ def review_coverage(available, extracted, stop: str | None, collect_all: bool | 
     if any(s in stop for s in _NATURAL_END):
         out["complete"] = True
         return out
-    if collect_all is False:
-        reason = "collect_all_reviews is off; only review_pages_per_product pages were loaded"
-    else:
-        reason = f"review pagination stopped early ({stop or 'unknown'})"
-    out["incomplete_reason"] = reason
+    out["incomplete_reason"] = f"review pagination stopped early ({stop or 'unknown'})"
     return out
 
 
 def build_review_summary(detail: dict | None, card_rating=None, product_url: str | None = None,
-                         detail_status: str | None = None, collect_all: bool | None = None) -> dict:
+                         detail_status: str | None = None) -> dict:
     """Review aggregate in Amazon's ``review_summary`` shape (same keys, same
     meaning), followed by Alibaba-only keys: the review source used and the
     supplier-level (store) review aggregate. Values the page does not show
@@ -974,13 +969,13 @@ def build_review_summary(detail: dict | None, card_rating=None, product_url: str
         }
         sc = review_coverage(store["total_reviews"],
                              sr.get("extracted_before_filter", len(sr.get("reviews") or [])) if sr else None,
-                             store["stop_reason"], collect_all)
+                             store["stop_reason"])
         store.update(reviews_extracted=sc["reviews_extracted"], coverage_percent=sc["coverage_percent"],
                      coverage_complete=sc["complete"], incomplete_reason=sc["incomplete_reason"])
 
     product_extracted = pr.get("extracted_before_filter", len(pr.get("reviews") or [])) if pr else \
         (0 if detail and detail_status is None else None)
-    coverage = review_coverage(total, product_extracted, stop, collect_all,
+    coverage = review_coverage(total, product_extracted, stop,
                                failed=detail_status == "failed" and not pr)
 
     summary = {
@@ -1002,7 +997,7 @@ def build_review_summary(detail: dict | None, card_rating=None, product_url: str
         "review_tab": pr.get("tab_label"),
         # Completeness of product reviews (as Amazon); store feedback carries its own.
         **coverage,
-        "collection_mode": None if collect_all is None else ("all" if collect_all else "pages"),
+        "collection_mode": "all",
         "store_reviews": store,
     }
     if detail.get("error"):

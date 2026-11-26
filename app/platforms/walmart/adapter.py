@@ -58,7 +58,6 @@ class WalmartAdapter(PlatformAdapter):
             max_products=opts.max_products,
             fetch_reviews=True,
             review_sort=options.review_sort.value,
-            review_pages_per_product=opts.review_pages_per_product,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
             chrome_profile_dir=settings.profile_for("walmart"),
@@ -86,7 +85,6 @@ class WalmartAdapter(PlatformAdapter):
             "requested": {
                 "max_products": opts.max_products,
                 "max_pages": opts.max_pages,
-                "review_pages_per_product": opts.review_pages_per_product,
                 "date_range": opts.date_range.type.value,
                 "currency": filters.currency,
                 "min_price": float(filters.min_price) if filters.min_price is not None else None,

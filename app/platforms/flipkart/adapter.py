@@ -41,8 +41,6 @@ class FlipkartAdapter(PlatformAdapter):
         run_meta = self._run_meta(request, options, models, kept, engine.pages_processed)
         summaries = [m.get("review_summary") or {} for m in kept]
         run_meta["actual"].update({
-            "review_pages_per_product": "all" if engine.cfg.collect_all_reviews
-            and engine.cfg.review_pages_per_product > 0 else engine.cfg.review_pages_per_product,
             "reviews_available": sum(s.get("reviews_available") or 0 for s in summaries),
             "reviews_extracted": sum(s.get("reviews_extracted") or 0 for s in summaries),
             "products_reviews_incomplete": engine.reviews_incomplete,
@@ -80,9 +78,7 @@ class FlipkartAdapter(PlatformAdapter):
             include_sponsored=options.include_sponsored,
             fetch_reviews=True,
             review_sort=options.review_sort.value,
-            review_pages_per_product=opts.review_pages_per_product,
             verified_purchase_only=options.verified_purchase_only,
-            collect_all_reviews=options.collect_all_reviews,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
             chrome_profile_dir=settings.profile_for("flipkart"),
@@ -113,7 +109,6 @@ class FlipkartAdapter(PlatformAdapter):
             "requested": {
                 "max_products": opts.max_products,
                 "max_pages": opts.max_pages,
-                "review_pages_per_product": opts.review_pages_per_product,
                 "date_range": opts.date_range.type.value,
                 "currency": filters.currency,
                 "min_price": float(filters.min_price) if filters.min_price is not None else None,
@@ -122,7 +117,6 @@ class FlipkartAdapter(PlatformAdapter):
                 "review_sort": options.review_sort.value,
                 "verified_purchase_only": options.verified_purchase_only,
                 "include_sponsored": options.include_sponsored,
-                "collect_all_reviews": options.collect_all_reviews,
             },
             "actual": {
                 "products_discovered": len(models),

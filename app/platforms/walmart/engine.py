@@ -57,7 +57,6 @@ class EngineConfig:
     max_products: int = 20
     fetch_reviews: bool = True
     review_sort: str = "submission-desc"
-    review_pages_per_product: int = 1
     headless: bool = False
     browser_channel: str = "chrome"
     chrome_profile_dir: str | None = None
@@ -227,7 +226,9 @@ class WalmartEngine:
         cfg = self.cfg
         collected: list[dict] = []
         seen: set = set()
-        for page_no in range(1, max(1, cfg.review_pages_per_product) + 1):
+        # Always collect every review page the listing offers, stopping only
+        # when a page brings no new reviews (hard safety ceiling of 60 pages).
+        for page_no in range(1, 61):
             url = parsing.review_url(product_id, page_no, cfg.review_sort)
             try:
                 await page.goto(url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)

@@ -58,11 +58,7 @@ class EngineConfig:
     include_sponsored: bool = False
     fetch_reviews: bool = True
     review_sort: str = "recent"
-    review_pages_per_product: int = 1
     verified_purchase_only: bool = False
-    # Load every review listing (all sort orders) to its last page instead of
-    # review_pages_per_product pages (as Amazon / Alibaba).
-    collect_all_reviews: bool = False
     review_retries: int = 3           # retries of a page Flipkart redirected to /login
     review_retry_backoff: float = 4.0  # seconds, doubled per retry
     headless: bool = False
@@ -393,7 +389,6 @@ class FlipkartEngine:
         }
 
     async def _scrape_reviews(self, page: Page, product_url: str):
-        cfg = self.cfg
         review_url = parsing.build_review_url(product_url)
         await self._load_review_page(page, review_url)
         text = await self._inner_text(page)
@@ -402,61 +397,7 @@ class FlipkartEngine:
         summary["aspect_ratings"] = await self._scrape_aspects(page)
         summary["review_url"] = review_url
 
-        if cfg.collect_all_reviews and cfg.review_pages_per_product > 0:
-            return await self._scrape_all_reviews(page, review_url, summary)
-
-        await self._load_review_page(page, review_url)
-        base = await self._apply_sort(page, review_url)
-
-        seen: set = set()
-        all_reviews: list = []
-        empty_streak = 0
-        stop_reason = "reached max pages"
-        pages_done = 0
-        max_pages = max(1, cfg.review_pages_per_product)
-
-        for p in range(1, max_pages + 1):
-            url = parsing.with_page(base, p)
-            await self._load_review_page(page, url)
-            page_text = await self._inner_text(page)
-            if _BLOCK_RE.search(page_text):
-                stop_reason = f"blocked on page {p}"
-                break
-            got = parsing.parse_reviews(page_text)
-            if not got:
-                await page.wait_for_timeout(3000)
-                page_text = await self._inner_text(page)
-                got = parsing.parse_reviews(page_text)
-            pages_done = p
-            await self._attach_review_media(page, got)
-
-            new = 0
-            for r in got:
-                if cfg.verified_purchase_only and not r.get("verified_purchase"):
-                    continue
-                key = (r["reviewer_name"], r["rating"], r["title"], (r["review_text"] or "")[:80],
-                       r["posted_relative"], r["helpful_count"])
-                if key in seen:
-                    continue
-                seen.add(key)
-                all_reviews.append(r)
-                new += 1
-
-            if not got:
-                empty_streak += 1
-                if empty_streak >= 2:
-                    stop_reason = f"no reviews on pages {p - 1} and {p}"
-                    break
-            else:
-                empty_streak = 0
-            await asyncio.sleep(random.uniform(1.0, 2.0))
-
-        summary["pages_scraped"] = pages_done
-        summary["stop_reason"] = stop_reason
-        summary["sort_used"] = cfg.review_sort
-        summary.update(parsing.review_coverage(summary.get("total_reviews"), len(seen), False, []))
-        summary["collection_mode"] = "pages"
-        return summary, all_reviews
+        return await self._scrape_all_reviews(page, review_url, summary)
 
     async def _scrape_all_reviews(self, page: Page, review_url: str, summary: dict):
         """Every review Flipkart lists: each sort order (the requested one
@@ -520,7 +461,7 @@ class FlipkartEngine:
                 stop_reason = info["stop"]
                 break
 
-        coverage = parsing.review_coverage(total, len(seen), True, listings, blocked)
+        coverage = parsing.review_coverage(total, len(seen), listings, blocked)
         if coverage["complete"] is False:
             self.reviews_incomplete += 1
             _log.warning("event=reviews_incomplete url=%s available=%s extracted=%d reason=%s",

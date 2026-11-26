@@ -70,7 +70,6 @@ class ScrapingOptions(BaseModel):
     max_products: int = Field(default=20, ge=1, le=500)
     max_pages: int = Field(default=1, ge=0, le=50)
     sort_by: SortBy = SortBy.relevance
-    review_pages_per_product: int = Field(default=1, ge=0, le=50)
     date_range: DateRange = Field(default_factory=DateRange)
 
 class TrackingOptions(BaseModel):
@@ -103,7 +102,6 @@ _REQUEST_EXAMPLE = {
         "max_products": 20,
         "max_pages": 1,
         "sort_by": "relevance",
-        "review_pages_per_product": 1,
         "date_range": {"type": "last_1_year", "start_date": None, "end_date": None},
     },
     "platform_options": {
@@ -137,7 +135,6 @@ _AMAZON_REQUEST_EXAMPLE = {
         "max_products": 5,
         "max_pages": 1,
         "sort_by": "relevance",
-        "review_pages_per_product": 1,
         "date_range": {"type": "last_1_year", "start_date": None, "end_date": None},
     },
     "platform_options": {
