@@ -130,7 +130,7 @@ class _ProductContext:
         )
 
     def taxonomy(self, request: ScrapeJobRequest) -> TaxonomyBlock:
-        category = request.search.category
+        category = request.search.product
         has = bool(category)
         return TaxonomyBlock(
             category=category,

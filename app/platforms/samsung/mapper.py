@@ -238,7 +238,7 @@ class _ProductContext:
                 category=cat, subcategory=subcat, product_type=ptype,
                 mapping_method="source_breadcrumb", mapping_status="mapped",
             )
-        category = request.search.category or self.model.get("category")
+        category = self.model.get("category")
         return TaxonomyBlock(
             industry=infer_industry(category or self.subject or ""),
             category=category,

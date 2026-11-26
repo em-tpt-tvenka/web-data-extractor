@@ -335,10 +335,9 @@ class _ProductContext:
             )
 
         gen_name = (self.manufacturer or {}).get("generic_name") if self.manufacturer else None
-        search_cat = request.search.category or ""
         search_query = request.search.product or request.search.search_text or self.subject or ""
 
-        hint = gen_name or search_cat or search_query
+        hint = gen_name or search_query
         industry = _infer_industry(hint)
 
         hint_lower = hint.lower()
@@ -366,10 +365,6 @@ class _ProductContext:
             cat = gen_name
             subcat = gen_name
             ptype = gen_name
-        elif search_cat:
-            cat = search_cat
-            subcat = None
-            ptype = search_query or search_cat
         else:
             cat = search_query
             subcat = None

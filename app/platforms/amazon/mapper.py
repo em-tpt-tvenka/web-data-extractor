@@ -269,12 +269,11 @@ class _ProductContext:
         # No breadcrumb: fall back to the search context (Amazon's own category
         # names are not guessed from keywords).
         gen_name = (self.manufacturer or {}).get("generic_name")
-        search_cat = request.search.category
         search_query = request.search.product or self.subject
-        cat = search_cat or gen_name or search_query
+        cat = gen_name or search_query
         has = bool(cat)
         return TaxonomyBlock(
-            industry=_infer_industry(" ".join(filter(None, [gen_name, search_cat, search_query]))) if has else None,
+            industry=_infer_industry(" ".join(filter(None, [gen_name, search_query]))) if has else None,
             category=cat if has else None,
             subcategory=gen_name if (gen_name and gen_name != cat) else None,
             product_type=(gen_name or search_query) if has else None,

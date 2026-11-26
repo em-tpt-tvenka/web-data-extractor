@@ -45,7 +45,6 @@ class DateRange(BaseModel):
 
 class SearchParams(BaseModel):
     product: str = Field(min_length=1)
-    category: str | None = None
     brand: str | None = None
     keywords: list[str] = Field(default_factory=list)
     marketplace: str = Field(min_length=1)
@@ -89,7 +88,6 @@ _REQUEST_EXAMPLE = {
     "platform": "alibaba",
     "search": {
         "product": "stainless steel water bottle",
-        "category": "Drinkware",
         "brand": "",
         "keywords": ["insulated", "750ml"],
         "marketplace": "alibaba.com",
@@ -124,7 +122,6 @@ _AMAZON_REQUEST_EXAMPLE = {
     "platform": "amazon",
     "search": {
         "product": "refrigerator",
-        "category": "Refrigerators",
         "brand": "",
         "keywords": ["double door"],
         "marketplace": "amazon.in",

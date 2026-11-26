@@ -328,12 +328,11 @@ class _ProductContext:
                 category=cat, subcategory=subcat, product_type=ptype,
                 mapping_method="source_breadcrumb", mapping_status="mapped",
             )
-        search_cat = request.search.category
         search_query = request.search.product or self.subject
-        cat = search_cat or search_query
+        cat = search_query
         has = bool(cat)
         return TaxonomyBlock(
-            industry=infer_industry(" ".join(filter(None, [search_cat, search_query]))) if has else None,
+            industry=infer_industry(search_query or "") if has else None,
             category=cat if has else None,
             subcategory=None,
             product_type=search_query if has else None,

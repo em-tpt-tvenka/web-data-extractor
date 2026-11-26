@@ -55,7 +55,7 @@ class SamsungAdapter(PlatformAdapter):
         return EngineConfig(
             search_text=search_text,
             base_url=settings.samsung_base_url,
-            category=options.category or search.category,
+            category=options.category,
             exclude_keywords=request.filters.exclude_keywords,
             max_pages=opts.max_pages,
             max_products=opts.max_products,
@@ -97,7 +97,7 @@ class SamsungAdapter(PlatformAdapter):
                 "min_price": float(filters.min_price) if filters.min_price is not None else None,
                 "max_price": float(filters.max_price) if filters.max_price is not None else None,
                 "exclude_keywords": filters.exclude_keywords,
-                "category": options.category or request.search.category,
+                "category": options.category,
             },
             "actual": {
                 "products_discovered": len(models),
