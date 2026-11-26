@@ -28,17 +28,30 @@ _BLOCK_RE = re.compile(r"access denied|are you a human|verify you are|captcha|un
 
 _JS_LINKS = r"""
 (maxProducts) => {
-  const anchors = Array.from(document.querySelectorAll('a[href*=".p"], a[href*="/product/"], a[href*="/site/"]'));
+  const anchors = Array.from(document.querySelectorAll(
+    'a[href*=".p"], a[href*="/product/"], a[href*="/site/"], a[href*="skuId="]'
+  ));
   const seen = new Set(); const out = [];
+  // Mirrors app/platforms/bestbuy/parsing.py's product_id_from_url: legacy
+  // numeric SKUs before ".p", current alphanumeric SKUs as the last
+  // /product/.../ segment, or a skuId= query param, in that order.
+  const extractSku = (href) => {
+    let m = href.match(/(\d{5,})\.p(?:[/?#]|$)/);
+    if (m) return m[1];
+    m = href.match(/\/product\/[^?#]*\/([A-Za-z0-9]{6,12})(?:[/?#]|$)/i);
+    if (m && /\d/.test(m[1])) return m[1].toUpperCase();
+    m = href.match(/skuId=([A-Za-z0-9]{5,12})/i);
+    if (m) return m[1].toUpperCase();
+    // Last resort: a bare 5+ digit run, but only as a whole token (word
+    // boundary both sides) so digits embedded in category/campaign ids like
+    // "abcat0010000.c" or "pcmcat1774297472214.c" aren't mistaken for SKUs.
+    m = href.match(/\b(\d{5,})\b/);
+    return m ? m[1] : null;
+  };
   for (const a of anchors) {
     const href = a.href || "";
-    if (href && (href.includes('.p') || href.includes('/product/') || href.includes('skuId='))) {
-      const m = href.match(/(\d{5,})/);
-      if (m) {
-        const sku = m[1];
-        if (!seen.has(sku)) { seen.add(sku); out.push(href); if (out.length >= maxProducts) break; }
-      }
-    }
+    const sku = extractSku(href);
+    if (sku && !seen.has(sku)) { seen.add(sku); out.push(href); if (out.length >= maxProducts) break; }
   }
   return out;
 }
@@ -52,18 +65,57 @@ _JS_DOM = r"""
   const brandEl = document.querySelector('a[href*="/site/brands/"], [class*="brand"] a');
   const descEl = document.querySelector('[class*="product-description"], [data-testid*="description"], #product-description');
   const availEl = document.querySelector('[class*="fulfillment-add-to-cart-button"] button, [data-button-state]');
-  const images = [];
+  // bbystatic.com's image server (Scene7-style) encodes the requested size as
+  // ";maxHeight=N;maxWidth=N" path segments BEFORE any "?" query string, so
+  // splitting on "?" alone (the previous approach) does not normalize size
+  // variants: the same image (identified by its UUID filename) was observed
+  // live appearing at several different maxWidth values on one page and
+  // being kept as separate "duplicate" images. Dedupe by the URL with the
+  // size segment and query string stripped, keeping whichever observed
+  // variant has the larger maxWidth (never inventing an un-observed size).
+  const seenImg = new Map();
   document.querySelectorAll('img[src*="bbystatic.com"], img[src*="bestbuy.com"]').forEach(img => {
     let src = img.src || img.currentSrc || img.getAttribute('data-src');
     if (src && !src.includes('icon') && !src.includes('logo') && !src.includes('svg')) {
-      src = src.split('?')[0];
-      if (!images.includes(src)) images.push(src);
+      const noQuery = src.split('?')[0];
+      const m = noQuery.match(/;maxHeight=(\d+);maxWidth=(\d+)/i);
+      const key = noQuery.replace(/;maxHeight=\d+;maxWidth=\d+/i, '');
+      const width = m ? parseInt(m[2], 10) : 0;
+      const cur = seenImg.get(key);
+      if (!cur || width > cur.width) seenImg.set(key, {url: src, width});
     }
   });
+  const images = Array.from(seenImg.values()).map(v => v.url);
   const videos = [];
   document.querySelectorAll('video source, video').forEach(v => {
     const s = v.src || v.currentSrc; if (s && s.startsWith('http') && !videos.includes(s)) videos.push(s);
   });
+  // Rating fallback: Best Buy's shared rating-widget component (used both on
+  // product tiles and, confirmed by the same "c-ratings-reviews"/"c-reviews"
+  // class names and ReviewStatsContextualized component on the product
+  // detail page's own review-summary block) renders a visually-hidden string
+  // "Rating 4.7 out of 5 stars with 35 reviews" (or "Not Yet Reviewed (0
+  // reviews)" when there are none) - the single most reliable source since
+  // it is plain text rather than a computed star-width style.
+  let ratingValue = null, reviewCount = null;
+  const hiddenRating = Array.from(document.querySelectorAll('.visually-hidden, [class*="visually-hidden"]'))
+    .map(e => clean(e.innerText)).find(t => /rating[^.]*out of 5 stars/i.test(t) || /not yet reviewed/i.test(t));
+  if (hiddenRating) {
+    const rm = hiddenRating.match(/([\d.]+)\s*out of 5 stars(?:\s*with\s*([\d,]+)\s*reviews?)?/i);
+    if (rm) {
+      ratingValue = parseFloat(rm[1]);
+      if (rm[2]) reviewCount = parseInt(rm[2].replace(/,/g, ''), 10);
+    } else if (/not yet reviewed/i.test(hiddenRating)) {
+      reviewCount = 0;
+    }
+  }
+  if (reviewCount === null) {
+    const reviewsEl = document.querySelector('.c-reviews, [class*="c-reviews"]');
+    if (reviewsEl) {
+      const cm = clean(reviewsEl.innerText).match(/([\d,]+)/);
+      if (cm) reviewCount = parseInt(cm[1].replace(/,/g, ''), 10);
+    }
+  }
   return {
     title: clean(titleEl && titleEl.innerText),
     priceText: clean(priceEl && priceEl.innerText),
@@ -71,6 +123,7 @@ _JS_DOM = r"""
     brand: clean(brandEl && brandEl.innerText),
     description: clean(descEl && descEl.innerText),
     availabilityText: clean(availEl && availEl.innerText),
+    ratingValue, reviewCount,
     images, videos
   };
 }
@@ -127,6 +180,45 @@ _JS_REVIEWS = r"""
     });
   });
   return out;
+}
+"""
+
+# Count of review-ish nodes currently rendered in the DOM, used by
+# _load_all_reviews to tell whether a "Show More Reviews" click actually
+# added anything (same node selector as _JS_REVIEWS).
+_JS_REVIEW_COUNT = r"""
+() => document.querySelectorAll(
+  'li.review-item, [class*="review-item"], .ugc-review, [data-testid*="review"] li, [itemprop="review"]'
+).length
+"""
+
+# Best Buy's product page reviews are lazy-loaded: only the first batch is
+# embedded in JSON-LD at page load, with the rest revealed by a "Show More
+# Reviews"-style control (no separate review URL/tab was found; a proxy
+# outage on product pages prevented inspecting the backing network request,
+# so this clicks the visible control rather than assuming an unverified
+# internal API shape). Scoped to a review-ish ancestor so it doesn't fire on
+# an unrelated "Show more" control elsewhere on the page (e.g. specs).
+_JS_CLICK_SHOW_MORE_REVIEWS = r"""
+() => {
+  const re = /show more review|load more review|see more review|more reviews|show more|load more/i;
+  const btns = Array.from(document.querySelectorAll('button, a[role="button"], a'));
+  for (const b of btns) {
+    const t = (b.innerText || '').trim();
+    if (!t || !re.test(t)) continue;
+    let el = b, scoped = false;
+    for (let d = 0; d < 6 && el; d++, el = el.parentElement) {
+      const cls = (el.className || '').toString().toLowerCase();
+      const id = (el.id || '').toLowerCase();
+      if (cls.includes('review') || cls.includes('ugc') || id.includes('review')) { scoped = true; break; }
+    }
+    if (scoped) {
+      b.scrollIntoView({block: 'center'});
+      b.click();
+      return true;
+    }
+  }
+  return false;
 }
 """
 
@@ -263,11 +355,24 @@ class BestBuyEngine:
                     await page.goto(url, wait_until="domcontentloaded", timeout=goto_timeout)
                 await page.wait_for_timeout(2500 + attempt * 1000)
                 try:
-                    await page.wait_for_selector("a[href*='.p'], a[href*='/site/']", timeout=8000)
+                    # Wait specifically for real product-tile links (current
+                    # alphanumeric-SKU "/product/" URLs, or legacy numeric
+                    # ".p" URLs) rather than any "/site/" link: "/site/" also
+                    # matches header/footer nav chrome (e.g. "/site/deals",
+                    # "/site/trade-in/..."), which is already present before
+                    # the result grid hydrates, so waiting on it resolves
+                    # instantly and lets us scrape too early.
+                    await page.wait_for_selector("a[href*='/product/'], a[href*='.p']", timeout=12000)
                 except Exception:
                     pass
+                # The result grid continues to hydrate/lazy-render for several
+                # seconds after the first product link appears; scroll twice
+                # with pauses so later tiles in the grid render before we read
+                # the DOM (observed live: ~8-12s total needed via the proxy).
                 await page.evaluate("window.scrollBy(0, 1200)")
-                await page.wait_for_timeout(1200)
+                await page.wait_for_timeout(1800)
+                await page.evaluate("window.scrollBy(0, 1200)")
+                await page.wait_for_timeout(1800)
             except Exception as exc:
                 _log.warning("event=search_page_failed attempt=%d/%d error=%s", attempt, attempts, exc)
                 await asyncio.sleep(random.uniform(1.5, 2.5))
@@ -339,7 +444,7 @@ class BestBuyEngine:
         script_texts = await self._script_texts(page)
         blocks = parsing.parse_blocks(script_texts)
         info = parsing.product_from_blocks(blocks)
-        reviews = parsing.reviews_from_blocks(blocks) if cfg.fetch_reviews else []
+        ld_reviews = parsing.reviews_from_blocks(blocks) if cfg.fetch_reviews else []
 
         dom = await self._eval(page, _JS_DOM, {}) or {}
         if not info["product_name"] and dom.get("title"):
@@ -358,18 +463,41 @@ class BestBuyEngine:
                 info["availability"] = "in_stock"
             elif "sold out" in avail or "unavailable" in avail:
                 info["availability"] = "out_of_stock"
-        for img in dom.get("images", []):
-            if img not in info["images"]:
-                info["images"].append(img)
+        if info["average_rating"] is None and dom.get("ratingValue") is not None:
+            info["average_rating"] = dom["ratingValue"]
+        if info["total_reviews"] is None and dom.get("reviewCount") is not None:
+            info["total_reviews"] = dom["reviewCount"]
+        info["images"].extend(dom.get("images", []))
+        info["images"] = parsing.dedupe_images(info["images"])
         for vid in dom.get("videos", []):
             if vid not in info["videos"]:
                 info["videos"].append(vid)
 
         specs = await self._eval(page, _JS_SPECS, {}) or {}
 
-        if cfg.fetch_reviews and not reviews:
-            dom_reviews = await self._eval(page, _JS_REVIEWS, []) or []
-            reviews = self._normalize_dom_reviews(dom_reviews)
+        reviews = ld_reviews
+        show_more_clicks = 0
+        if cfg.fetch_reviews:
+            show_more_clicks = await self._load_all_reviews(page)
+            dom_reviews_raw = await self._eval(page, _JS_REVIEWS, []) or []
+            dom_reviews = self._normalize_dom_reviews(dom_reviews_raw)
+            if dom_reviews:
+                reviews = parsing.merge_reviews(ld_reviews, dom_reviews)
+            _log.info("event=reviews_collected ld=%d dom=%d merged=%d show_more_clicks=%d",
+                      len(ld_reviews), len(dom_reviews), len(reviews), show_more_clicks)
+
+        # Commercial-surface extras (item 3): manufacturer/warranty come from
+        # the already-captured spec table (generic, defensive key search, see
+        # parsing.extract_manufacturer/extract_warranty); delivery/trade-in
+        # are read from the page's own visible text since no fixed CSS
+        # selector for them could be live-confirmed this pass (proxy blocked
+        # all product-page navigation - see report). All four are None/empty
+        # when not actually present, never fabricated.
+        page_text = await self._text(page)
+        manufacturer = parsing.extract_manufacturer(specs, info["brand"])
+        warranty = parsing.extract_warranty(specs, page_text)
+        delivery = parsing.extract_delivery(page_text)
+        trade_in = parsing.extract_trade_in(page_text)
 
         pid = parsing.product_id_from_url(url) or info.get("sku")
         return {
@@ -381,9 +509,14 @@ class BestBuyEngine:
             "description": info["description"],
             "model_number": info["model_number"] or info["sku"],
             "specifications": specs,
+            "manufacturer": manufacturer,
+            "warranty": warranty,
+            "delivery": delivery,
+            "trade_in": trade_in,
             "images": info["images"],
             "videos": info["videos"],
             "availability": info["availability"],
+            "stock_quantity": info["stock_quantity"],
             "price": {"currency": "USD", "selling_price": info["price_amount"],
                       "original_price": info["original_price"]},
             "ratings": {"average_rating": info["average_rating"], "total_reviews": info["total_reviews"]},
@@ -419,6 +552,39 @@ class BestBuyEngine:
             pass
         await page.wait_for_timeout(500)
 
+    async def _load_all_reviews(self, page: Page) -> int:
+        """Best Buy lazy-loads reviews behind a "Show More Reviews"-style
+        control rather than a URL-paginated listing (no separate review
+        page/tab was found, and a proxy outage on product pages prevented
+        inspecting any backing network request - see report): click it
+        repeatedly, re-checking the rendered review-node count each time, so
+        every available review ends up in the DOM for _JS_REVIEWS to read.
+        Stops when the control disappears, the count stops growing for two
+        consecutive clicks, or a generous safety cap is hit (a ceiling, not
+        an expected page count - consistent with this codebase's
+        completeness-first review pagination elsewhere, e.g. Alibaba's
+        next-button loop and Flipkart's page-by-page review listing).
+        Returns the number of successful clicks, for logging."""
+        SAFETY_CAP = 150
+        clicks = 0
+        prev_count = -1
+        stagnant = 0
+        for _ in range(SAFETY_CAP):
+            count = await self._eval(page, _JS_REVIEW_COUNT, 0)
+            if count == prev_count:
+                stagnant += 1
+                if stagnant >= 2:
+                    break
+            else:
+                stagnant = 0
+            prev_count = count
+            clicked = await self._eval(page, _JS_CLICK_SHOW_MORE_REVIEWS, False)
+            if not clicked:
+                break
+            clicks += 1
+            await page.wait_for_timeout(1200)
+        return clicks
+
     @staticmethod
     def _normalize_dom_reviews(rows: list) -> list[dict]:
         out = []
@@ -436,7 +602,18 @@ class BestBuyEngine:
                 "verified_purchase": bool(r.get("verified")),
                 "helpful_count": None,
             })
-        return out
+        # DOM review cards carry no identifier, so duplicates (the same card
+        # matched twice by overlapping selectors) are only catchable by the
+        # composite key - same review_key used for the JSON-LD source.
+        seen: set = set()
+        deduped: list[dict] = []
+        for r in out:
+            k = parsing.review_key(r)
+            if k in seen:
+                continue
+            seen.add(k)
+            deduped.append(r)
+        return deduped
 
     async def _script_texts(self, page: Page) -> list[str]:
         texts: list[str] = []

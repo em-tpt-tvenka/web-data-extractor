@@ -8,6 +8,12 @@ from app.core import identifiers
 from app.core.logging import get_logger
 from app.core.periods import in_window, resolve_window
 from app.platforms.categories import RECORD_TYPE_LISTING, RECORD_TYPE_MENTION
+from app.platforms.common import (
+    canonical_ids,
+    detect_spec_conflicts,
+    effective_prices,
+    parse_offer_amount,
+)
 from app.processing.language import detect_language
 from app.schemas.record import (
     AuthorBlock,
@@ -18,6 +24,7 @@ from app.schemas.record import (
     CommercialBlock,
     ContentBlock,
     DeduplicationBlock,
+    DeliveryBlock,
     EntitiesBlock,
     LifecycleBlock,
     LocationBlock,
@@ -37,6 +44,7 @@ from app.schemas.record import (
     SourceBlock,
     TaxonomyBlock,
     TenantBlock,
+    WarrantyBlock,
 )
 from app.schemas.scraping import ScrapeJobRequest
 
@@ -129,13 +137,26 @@ class _ProductContext:
         self.color = _find_spec(self.specs, "Color", "Colour", "Finish")
         self.capacity = _capacity(_find_spec(self.specs, "Capacity", "Total Capacity", "Storage Capacity"))
         self.energy_rating = _energy(_find_spec(self.specs, "Energy Star Certified", "Energy Rating", "ENERGY STAR Certified"))
+        self.manufacturer = model.get("manufacturer")
+        self.warranty = model.get("warranty") or {}
+        self.delivery = model.get("delivery") or {}
+        self.trade_in = model.get("trade_in") or {}
+        self.stock_quantity = model.get("stock_quantity")
 
     def entities(self) -> EntitiesBlock:
         brands = [BrandEntity(brand_name=self.brand)] if self.brand else []
+        # Best Buy currently exposes only the single-SKU regex-extracted
+        # color/capacity (no variants/colors/storage list yet), so the
+        # resulting variant_key is necessarily less rich than Amazon's until
+        # variant support is implemented for this platform.
+        capacity_dict = self.capacity.model_dump() if self.capacity else None
+        canonical_product_id, variant_key = canonical_ids(
+            self.brand, self.subject, capacity_dict, self.color)
         return EntitiesBlock(
             brands=brands,
             products=[ProductEntity(product_id=self.product_id, product_name=self.subject,
-                                    sku=self.product_id, model_number=self.model_number, product_url=self.product_url)],
+                                    sku=self.product_id, model_number=self.model_number, product_url=self.product_url,
+                                    canonical_product_id=canonical_product_id, variant_key=variant_key)],
             retailer=RetailerEntity(retailer_id="RETAILER_BESTBUY", retailer_name="Best Buy"),
         )
 
@@ -145,6 +166,7 @@ class _ProductContext:
             capacity=self.capacity,
             color=self.color,
             energy_rating=self.energy_rating,
+            manufacturer=self.manufacturer,
             specifications=self.specs,
         )
 
@@ -156,6 +178,44 @@ class _ProductContext:
             disc_amt = round(original - selling, 2)
             disc_pct = round(disc_amt / original * 100, 2)
         is_promo = bool(disc_amt)
+
+        delivery_block = None
+        if self.delivery:
+            delivery_block = DeliveryBlock(
+                delivery_charge=_money(0, self.currency) if self.delivery.get("free_delivery") else None,
+                estimated_delivery_date=self.delivery.get("estimated_delivery_date"),
+                delivery_type="free_delivery" if self.delivery.get("free_delivery")
+                else ("standard" if self.delivery.get("delivery_text") else None),
+            )
+
+        warranty_block = None
+        if self.warranty.get("duration_months") or self.warranty.get("warranty_type"):
+            warranty_block = WarrantyBlock(
+                duration_months=self.warranty.get("duration_months"),
+                warranty_type=self.warranty.get("warranty_type"),
+            )
+
+        offers_detail = {}
+        if self.delivery.get("delivery_text"):
+            offers_detail["delivery_text"] = self.delivery["delivery_text"]
+        if self.warranty.get("warranty_text"):
+            offers_detail["warranty_text"] = self.warranty["warranty_text"]
+        if self.manufacturer and self.manufacturer.get("country_of_origin"):
+            offers_detail["country_of_origin"] = self.manufacturer["country_of_origin"]
+        if self.trade_in.get("trade_in_text"):
+            offers_detail["trade_in_text"] = self.trade_in["trade_in_text"]
+        if self.trade_in.get("trade_in_value_estimate") is not None:
+            offers_detail["trade_in_value_estimate"] = self.trade_in["trade_in_value_estimate"]
+
+        # Bank offers / no-cost EMI are not applicable to Best Buy (confirmed by
+        # earlier audits), so bank_offer_amount and coupon_amount are left None
+        # rather than guessed. Trade-in/exchange is the one offer type Best Buy
+        # genuinely has - only wired through when the on-page trade-in text
+        # carries an actual parseable numeric amount.
+        exchange_amount = parse_offer_amount(self.trade_in.get("trade_in_text"), base_price=selling)
+        ep = effective_prices(selling, self.currency, bank_offer_amount=None,
+                              coupon_amount=None, exchange_amount=exchange_amount)
+
         return CommercialBlock(
             price=PriceBlock(
                 listed_price=_money(original or selling, self.currency),
@@ -165,10 +225,22 @@ class _ProductContext:
                 discount_percentage=disc_pct,
                 price_type="promotional" if is_promo else "regular",
                 price_observed_at=self.scraped_at,
+                bank_offer_adjusted_price=MoneyAmount(**ep["bank_offer_adjusted_price"])
+                if ep["bank_offer_adjusted_price"] else None,
+                coupon_adjusted_price=MoneyAmount(**ep["coupon_adjusted_price"])
+                if ep["coupon_adjusted_price"] else None,
+                exchange_adjusted_price=MoneyAmount(**ep["exchange_adjusted_price"])
+                if ep["exchange_adjusted_price"] else None,
+                final_effective_price=MoneyAmount(**ep["final_effective_price"])
+                if ep["final_effective_price"] else None,
             ),
             price_range=PriceRangeBlock(currency=self.currency),
             promotion=PromotionBlock(is_promotional=is_promo),
-            availability=AvailabilityBlock(status=self.model.get("availability")),
+            availability=AvailabilityBlock(status=self.model.get("availability"),
+                                           stock_quantity=self.stock_quantity),
+            delivery=delivery_block,
+            warranty=warranty_block,
+            offers_detail=offers_detail or None,
         )
 
     def taxonomy(self, request: ScrapeJobRequest) -> TaxonomyBlock:
@@ -232,6 +304,8 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
     content_hash = identifiers.content_hash(ctx.product_id, ctx.subject or "")
     record_id = identifiers.record_id(PLATFORM)
     rating = ctx.ratings.get("average_rating")
+    attrs = ctx.product_attributes()
+    spec_conflicts = detect_spec_conflicts(ctx.subject, attrs.specifications)
 
     return SocialMentionRecord(
         _id=record_id,
@@ -250,7 +324,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         ),
         entities=ctx.entities(),
         taxonomy=ctx.taxonomy(request),
-        product_attributes=ctx.product_attributes(),
+        product_attributes=attrs,
         commercial=ctx.commercial(),
         metrics=MetricsBlock(
             rating=RatingMetric(value=rating) if rating is not None else None,
@@ -261,7 +335,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         campaign=CampaignBlock(),
         deduplication=DeduplicationBlock(content_hash=content_hash, canonical_record_id=record_id),
         provenance=_provenance(run_id),
-        quality=QualityBlock(),
+        quality=QualityBlock(validation_errors=spec_conflicts) if spec_conflicts else QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
     )
 
