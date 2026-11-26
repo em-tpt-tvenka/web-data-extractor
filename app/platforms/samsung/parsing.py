@@ -258,6 +258,39 @@ def canonical_buy_url(url: str, base: str) -> str:
     return clean + "/buy/"
 
 
+def overview_url(buy_url: str) -> str:
+    """The per-SKU overview ("about") page for a canonical ``/buy/`` PDP URL --
+    the same path with the trailing ``/buy/`` segment removed.
+
+    Confirmed live: Samsung's commercial ``/buy/`` page carries no full
+    specification table at all (only commerce/cart state plus a short
+    "Features"/"Review" tab pair) -- the full spec table lives on this
+    separate overview page instead (the ``pdd32-product-spec__*`` template,
+    verified on Galaxy A-series)."""
+    if not buy_url:
+        return buy_url
+    clean = buy_url.split("?")[0].split("#")[0].rstrip("/")
+    clean = _BUY_PATH_RE.sub("", clean).rstrip("/")
+    return clean + "/"
+
+
+def find_specs_page_url(html: str, base_url: str) -> str | None:
+    """A link to Samsung's family-level full-specifications page, when the
+    overview page exposes one.
+
+    Confirmed live: some lines (e.g. Galaxy S flagships) serve a per-SKU
+    overview page that is purely a visual/marketing page with NO spec table;
+    their real tabular specs (the ``specification__*`` template) live on a
+    separate family-level ``.../specs/`` page instead, which the overview
+    page links to directly -- read from that link rather than guessing the
+    family slug, since the URL shape is not a simple truncation of the SKU
+    slug (it drops the line's sub-folder segment entirely)."""
+    m = re.search(r'href="([^"]*?/specs/?)"', html, re.I)
+    if not m:
+        return None
+    return urljoin(base_url, m.group(1))
+
+
 def buy_url_fallback_candidates(url: str, base: str) -> list[str]:
     """Progressively shorter ``/buy/`` candidates for when the full deep slug
     404s. Samsung's server-side URL normalization (confirmed live) resolves the
@@ -352,6 +385,48 @@ def _variants(product_group: dict | None, hidden: dict, base_url: str) -> dict:
         return {}
     label = "Storage & Colour" if (product_group.get("variesBy") and
                                    len(product_group["variesBy"]) > 1) else "Variant"
+    return {label: options}
+
+
+def _variants_from_buying_option_data(hidden: dict) -> dict:
+    """Fallback variant family parsed from the hidden ``BV-buyingOptionData``
+    input (a JSON map of SKU -> {colour, memory, storage}), for products whose
+    ld+json carries only plain ``Product`` nodes with no ``ProductGroup``
+    (confirmed live: Galaxy A-series) -- this hidden field is already
+    captured verbatim by :func:`_hidden_inputs` but was previously unused."""
+    raw = (hidden or {}).get("BV-buyingOptionData")
+    if not raw:
+        return {}
+    try:
+        data = json.loads(raw)
+    except Exception:
+        return {}
+    if not isinstance(data, dict):
+        return {}
+    options: list[dict] = []
+    seen: set[str] = set()
+    for sku, info in data.items():
+        if not isinstance(info, dict) or not sku:
+            continue
+        colour = _clean_variant_text(info.get("colour") or info.get("color"))
+        if colour and colour.islower():
+            colour = colour.title()
+        storage = _clean_variant_text(info.get("storage"))
+        memory = _clean_variant_text(info.get("memory"))
+        option = " ".join(x for x in (storage, colour) if x) or sku
+        key = str(sku).lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        options.append({
+            "option": option, "color": colour, "storage": storage, "memory": memory,
+            "product_id": str(sku), "url": None, "image": None,
+        })
+    if not options:
+        return {}
+    colours = {o["color"] for o in options if o.get("color")}
+    storages = {o["storage"] for o in options if o.get("storage")}
+    label = "Storage & Colour" if (len(colours) > 1 and len(storages) > 1) else "Variant"
     return {label: options}
 
 
@@ -480,7 +555,8 @@ def _category(url: str, products: list[dict]) -> str | None:
     return None
 
 
-def _price(html: str, soup: BeautifulSoup, products: list[dict], hidden: dict | None = None) -> dict:
+def _price(html: str, soup: BeautifulSoup, products: list[dict], hidden: dict | None = None,
+           url: str | None = None) -> dict:
     hidden = hidden or {}
     currency = (hidden.get("priceCurrency") or hidden.get("gPriceCurrency") or "INR").upper()
     selling = mrp = None
@@ -552,10 +628,27 @@ def _price(html: str, soup: BeautifulSoup, products: list[dict], hidden: dict | 
 
     # "Get at ₹ 31999*Plus, ₹1000 off with First Purchase Benefit" is the lowest
     # price reachable with stacked offers (exchange / first-purchase benefit).
+    # Samsung ships ONE shared promo-banner script across every PDP, with a
+    # separate "Get at ₹X" block per product gated behind
+    # ``window.location.href.includes("<that product's own URL>")`` (plus
+    # dead copies of the same pattern sitting inside JS comments) -- a bare
+    # search for the phrase anywhere in the page (confirmed live) matches
+    # whichever OTHER product's gated block happens to appear first in the
+    # document, not this page's own banner. Only accept a match that is
+    # either ungated (this page's own server-rendered banner JSON, which
+    # carries no such gate at all) or gated on this exact page's own URL.
     lowest_with_offers = None
-    m = re.search(r"Get at\s*₹\s*([\d,]+(?:\.\d+)?)", html)
-    if m:
-        lowest_with_offers = _to_number(m.group(1))
+    clean_url = (url or "").split("?")[0].split("#")[0].rstrip("/")
+    for m in re.finditer(r"Get at\s*₹\s*([\d,]+(?:\.\d+)?)", html):
+        preceding = html[max(0, m.start() - 2000):m.start()]
+        gates = re.findall(r"window\.location\.href\.includes\(['\"]([^'\"]+)['\"]\)", preceding)
+        gate = gates[-1].rstrip("/") if gates else None
+        if gate and clean_url and gate != clean_url:
+            continue
+        val = _to_number(m.group(1))
+        if val:
+            lowest_with_offers = val
+            break
 
     return {"currency": currency, "selling_price": selling, "mrp": mrp,
             "discount_percent": discount, "availability": availability,
@@ -611,12 +704,15 @@ def _media(html: str, soup: BeautifulSoup, extra_images=None) -> dict:
 def _specifications(soup: BeautifulSoup, products: list[dict]) -> dict:
     specs: dict[str, dict] = {}
 
+    _NOISE_RE = re.compile(
+        r"\b(price|purchase|offer|emi|cart|checkout|coupon|cashback|wishlist|buy now|add to)\b")
+
     def add(section, k, v):
         k = re.sub(r"\s+", " ", str(k or "")).strip().rstrip(":").strip()
         v = re.sub(r"\s+", " ", str(v or "")).strip()
         if not (2 <= len(k) <= 75 and 1 <= len(v) <= 240) or "{{" in k or "{{" in v:
             return
-        if re.search(r"\b(price|purchase|offer|emi|cart|checkout|coupon|cashback|wishlist|buy now|add to)\b", k.lower()):
+        if _NOISE_RE.search(k.lower()) or _NOISE_RE.search(v.lower()):
             return
         specs.setdefault(section or "General", {}).setdefault(k, v)
 
@@ -628,6 +724,8 @@ def _specifications(soup: BeautifulSoup, products: list[dict]) -> dict:
             if isinstance(prop, dict):
                 add("General", prop.get("name"), prop.get("value"))
 
+    # The overview-page ("pdd32") spec template: one accordion item per
+    # section, each holding a list of title/description rows.
     for block in soup.select("div.pdd32-product-spec__item, [class*='specification__item']"):
         if block.find_parent(["header", "nav", "footer"]):
             continue
@@ -639,17 +737,67 @@ def _specifications(soup: BeautifulSoup, products: list[dict]) -> dict:
             if t and v and t is not v:
                 add(section, t.get_text(" ", strip=True), v.get_text(" ", strip=True))
 
+    # The family-level "/specs/" page template: one row per section
+    # (``specification__row``), each holding a ``<ul>`` of name/detail pairs.
+    # Confirmed live on Galaxy S flagships, whose per-SKU overview page above
+    # is a visual/marketing page with no spec table of its own.
+    for row in soup.select("div.specification__row"):
+        if row.find_parent(["header", "nav", "footer"]):
+            continue
+        th = row.select_one(".specification__th")
+        section = th.get_text(" ", strip=True) if th else "General"
+        td = row.select_one(".specification__td")
+        if not td:
+            continue
+        items = td.select("li")
+        if not items:
+            continue
+        for li in items:
+            name_el = li.select_one(".name")
+            detail_el = li.select_one(".detail")
+            if name_el and detail_el:
+                add(section, name_el.get_text(" ", strip=True), detail_el.get_text(" ", strip=True))
+            elif detail_el and not name_el:
+                # A section-level spec with no sub-label (e.g. "S Pen
+                # Support" row whose only content is "Yes") -- the section
+                # title doubles as the key.
+                add("General", section, detail_el.get_text(" ", strip=True))
+
     for tr in soup.find_all("tr"):
-        if tr.find_parent(["header", "nav", "footer"]):
+        if tr.find_parent(["header", "nav", "footer", "thead"]):
             continue
         cells = tr.find_all(["th", "td"])
-        if len(cells) == 2:
+        # A 2-cell row where BOTH cells are <th> is a header row (column
+        # labels), not a key/value spec pair -- confirmed live: a popup's
+        # <thead><tr><th>Model Name</th><th>Purchase Price</th></tr> was
+        # otherwise misread as a spec "Model Name: Purchase Price".
+        if len(cells) == 2 and not (cells[0].name == "th" and cells[1].name == "th"):
             add("General", cells[0].get_text(" ", strip=True), cells[1].get_text(" ", strip=True))
 
     for dl in soup.find_all("dl"):
         for dt, dd in zip(dl.find_all("dt"), dl.find_all("dd")):
             add("General", dt.get_text(" ", strip=True), dd.get_text(" ", strip=True))
     return specs
+
+
+def specs_from_html(html: str) -> dict:
+    """Parse the specification table out of any one Samsung PDP-family page
+    (buy / overview / family specs page) in isolation, for merging."""
+    soup = BeautifulSoup(html, "html.parser")
+    products = _json_ld_products(soup)
+    return _specifications(soup, products)
+
+
+def merge_specs(*spec_dicts: dict) -> dict:
+    """Merge ``{section: {key: value}}`` spec dicts, earlier dicts taking
+    priority on a key conflict (first non-empty value wins)."""
+    out: dict[str, dict] = {}
+    for specs in spec_dicts:
+        for sec, rows in (specs or {}).items():
+            target = out.setdefault(sec, {})
+            for k, v in rows.items():
+                target.setdefault(k, v)
+    return out
 
 
 def flatten_specs(specs: dict) -> dict:
@@ -779,7 +927,13 @@ def _model_number(html: str, url: str, products: list[dict], flat: dict, hidden:
         v = _valid_model_number(m.group(1).upper())
         if v:
             return v
-    return _valid_model_number(_flat_find(flat, "Model Number", "Model Code", "Model Name", "Model"))
+    # "Model Name" (e.g. "Galaxy S26 5G") is a different, marketing-name field
+    # from "Model Number"/"Model Code" (e.g. "SM-S938B") and must not be used
+    # as a model_number fallback here - confirmed cross-platform conflation
+    # bug (Flipkart surfaced "Galaxy S26" as model_number from this exact
+    # alias). "Model" alone is kept since Samsung sometimes labels the real
+    # code just "Model".
+    return _valid_model_number(_flat_find(flat, "Model Number", "Model Code", "Model"))
 
 
 def _color_from_text(text: str | None) -> str | None:
@@ -846,9 +1000,32 @@ def _commerce(html: str, soup: BeautifulSoup, hidden: dict) -> dict:
     }
     offers = {k: v for k, v in offers.items() if v}
 
-    # Availability: a live add-to-cart post handler means the product is buyable.
+    # Availability. ``addToCartPostYn`` is NOT a reliable positive signal on
+    # its own -- confirmed live: it stays "Y" even on a genuinely out-of-stock
+    # product. The authoritative signal is Samsung's own disabled/"notify me"
+    # CTA for the selected SKU (``tg-out-stock`` class / an
+    # aria-label="Out of Stock" button), which is present only when that SKU
+    # truly cannot be bought right now.
+    #
+    # Confirmed live (Galaxy A36 5G, SM-A366ELVNINS -- 256GB/12GB Awesome
+    # Lavender): Samsung's newer "Hubble" buy-page template renders neither of
+    # the two patterns above for an out-of-stock SKU; its primary CTA instead
+    # reads "Get stock alert" (vs. "Buy now"/"Add to cart" when purchasable),
+    # tagged ``an-ac="stock alert"`` on the live sticky price bar, and the SKU
+    # carries ``data-modelqty="0"``. Without this check, the two older
+    # patterns both miss it, detection falls through to the unreliable
+    # ``addToCartPostYn=="Y"`` signal, and the product is wrongly reported
+    # in_stock even though it has no purchasable price at all (verified
+    # against a genuinely in_stock Hubble-template page, e.g. Galaxy S26,
+    # whose CTA carries ``an-ac="addToCart"`` and never ``an-ac="stock
+    # alert"``).
+    out_of_stock = bool(re.search(r"\btg-out-stock\b", html)) or \
+        bool(re.search(r'aria-label="Out of Stock"', html, re.I)) or \
+        bool(re.search(r'an-ac="stock alert"', html, re.I))
     availability = None
-    if (hidden.get("addToCartPostYn") or "").upper() == "Y":
+    if out_of_stock:
+        availability = "out_of_stock"
+    elif (hidden.get("addToCartPostYn") or "").upper() == "Y":
         availability = "in_stock"
 
     return {
@@ -868,6 +1045,96 @@ def _selected_variant(variants: dict, hidden: dict) -> dict | None:
             if pid and (pid == current or pid.startswith(base) or base.startswith(pid)):
                 return o
     return opts[0] if opts else None
+
+
+# Recognized colour/storage/RAM/SKU labels a Bazaarvoice review's own
+# ContextDataValues might carry, for honest review-to-variant mapping -- see
+# ``review_variant_attrs``.
+_REVIEW_VARIANT_KEYS = {
+    "color": "Colour", "colour": "Colour", "storage": "Storage", "capacity": "Storage",
+    "ram": "RAM", "memory": "RAM", "sku": "SKU", "model": "Model", "modelcode": "Model",
+}
+
+
+def review_variant_attrs(context_data_values) -> dict:
+    """Recognizable colour/storage/RAM/SKU attributes from a Bazaarvoice
+    review's own ``ContextDataValues``, when real evidence of one exists.
+
+    Confirmed live against ~1,700 real reviews (Galaxy A16 5G, both its Gold
+    and Blue Black SKUs): Samsung's Bazaarvoice ContextDataValues today carry
+    only survey-style context (``IncentivizedReview``, ``Age``) -- never a
+    colour/storage/SKU field -- so this returns ``{}`` for every review
+    observed in practice. Kept as real matching logic against a known
+    vocabulary (not hardcoded to always return empty) in case some other
+    product line's reviews do carry one of these recognized keys; never
+    guessed from free text."""
+    out: dict[str, str] = {}
+    for k, v in (context_data_values or {}).items():
+        label = _REVIEW_VARIANT_KEYS.get(str(k).strip().lower())
+        if label and v not in (None, ""):
+            out[label] = str(v).strip()
+    return out
+
+
+def sibling_variant_url(raw_url: str | None, sku: str | None, current_url: str | None, base: str) -> str | None:
+    """The real, navigable PDP URL for one OTHER sibling SKU in the same
+    variant family, or ``None`` when no reliable one exists -- never guessed.
+
+    Samsung's ld+json ``ProductGroup`` gives each sibling's own ``url``/``@id``,
+    but on the shared single-template flagship PDPs (confirmed live: Galaxy
+    S25 Ultra) that URL's query portion is a bare SKU (``?SM-S938BZBB``) which
+    Samsung's own page does NOT act on -- navigating to it silently keeps
+    rendering whichever SKU was already selected. The query form that DOES
+    work (confirmed live: switches both the rendered colour AND a genuinely
+    different price/availability for a different storage config) is
+    ``?modelCode=<SKU>INS`` appended to the CURRENT page's own base path. That
+    reconstruction is only valid when the sibling's own path is the SAME
+    shared template as the current page; a sibling parsed instead from a
+    genuinely distinct per-SKU path (as on Galaxy A-series, confirmed live:
+    appending ``?modelCode=`` to one SKU's own dedicated slug page does NOT
+    switch it to another SKU) must use that distinct path as-is. A sibling
+    with no URL at all (the ``BV-buyingOptionData`` fallback, which carries no
+    URL field) has no evidence it belongs to a shared template at all, so the
+    ``?modelCode=`` reconstruction is never attempted for it either -- that
+    would be guessing a URL shape from a SKU string alone, which was tried for
+    the unrelated 404-fallback case elsewhere in this module and confirmed
+    fragile; such a sibling has no reliable navigable URL."""
+    if not sku or not current_url or not raw_url:
+        return None
+    cur_path = current_url.split("?")[0].split("#")[0].rstrip("/")
+    raw = raw_url if raw_url.startswith("http") else ("https:" + raw_url if raw_url.startswith("//") else raw_url)
+    raw_path = raw.split("?")[0].split("#")[0].rstrip("/")
+    if raw_path and raw_path != cur_path:
+        # A genuinely distinct per-SKU path -- use it as its own PDP, never
+        # the shared-template query convention.
+        return canonical_buy_url(raw, base)
+    # Real evidence (this sibling's own ld+json ProductGroup entry) confirms
+    # this IS a shared-template family; its own literal query is confirmed
+    # not to work, so the confirmed-working form is used on the same path.
+    return f"{cur_path}/?modelCode={sku}INS"
+
+
+def split_variant_options(variants: dict, current_sku: str | None) -> tuple[dict | None, list[dict]]:
+    """``(current_option, other_options)`` within a variant family: the option
+    whose SKU matches ``current_sku`` (the same base / "INS"-suffix matching
+    :func:`_selected_variant` already uses to pick the selected swatch), and
+    every other known sibling SKU option, for building ``variant_details``
+    without re-deriving the match logic at the engine layer."""
+    opts = [o for lst in (variants or {}).values() if isinstance(lst, list) for o in lst]
+    if not opts:
+        return None, []
+    current = None
+    if current_sku:
+        base = str(current_sku).replace("INS", "")
+        for o in opts:
+            pid = o.get("product_id") or ""
+            if pid and (pid == current_sku or pid.startswith(base) or base.startswith(pid)):
+                current = o
+                break
+    if current is None:
+        current = opts[0]
+    others = [o for o in opts if o is not current]
+    return current, others
 
 
 def _source_country(url: str | None) -> str | None:
@@ -910,14 +1177,77 @@ def _breadcrumbs(soup: BeautifulSoup) -> list[str]:
     return []
 
 
-def parse_product(html: str, url: str) -> dict:
+_MFG_SPEC_KEYS = {
+    "manufactured_by": ("Manufactured by", "Manufacturer", "Manufacturer Name"),
+    "imported_by": ("Imported by", "Importer", "Importer Details"),
+    "packed_by": ("Packed by", "Packer", "Packer Details"),
+    "marketed_by": ("Marketed by", "Marketer"),
+    "country_of_origin": ("Country of Origin",),
+    "net_quantity": ("Net Quantity",),
+}
+
+
+def _manufacturer(flat: dict, url: str, products: list[dict]) -> dict:
+    """Manufacturer / importer / country-of-origin, read from the page's own
+    "Manufacturer's Information" spec section (a legal e-commerce disclosure
+    on Indian mobile PDPs) once that section is actually extracted -- falling
+    back to the bare Samsung-brand stub when no such section is present."""
+    out: dict[str, str] = {}
+    for key, names in _MFG_SPEC_KEYS.items():
+        v = _flat_find(flat, *names)
+        if v:
+            out[key] = common.clean_text(v)
+    name = out.get("manufactured_by") or out.get("marketed_by") or "Samsung"
+    # The legal entity name is only the lead of this field -- the remainder
+    # is its registered-office address, introduced either by a comma
+    # ("Dixon Technologies (India) Ltd., Plot No. 6, Sector-90...") or, for
+    # Samsung's own legal boilerplate, by "having its Registered Office at"
+    # with no comma before it at all ("Samsung India Electronics Pvt. Ltd.
+    # having its Registered Office at: 6th Floor, DLF Centre...").
+    office_m = re.search(r"\s+(?:having|with)\s+(?:its\s+)?(?:registered|regd\.?)\s+office", name, re.I)
+    if office_m:
+        name = name[:office_m.start()]
+    out["name"] = name.split(",")[0].strip()
+    out["generic_name"] = _category(url, products)
+    return out
+
+
+def _warranty_text(hidden: dict, flat: dict) -> str | None:
+    """Warranty text, preferring the page's own hidden ``warranty`` input
+    (confirmed live: carries the full correct text, e.g. "12 month warranty
+    for handset and battery...") over the specification table, which may not
+    expose a warranty row at all (confirmed on Galaxy S flagships)."""
+    raw = (hidden or {}).get("warranty")
+    if raw:
+        text = re.sub(r"<[^>]+>", " ", unescape(str(raw)))
+        text = re.sub(r"\s+", " ", text).strip()
+        if text:
+            return text
+    return _flat_find(flat, "Warranty", "Warranty Period", "Warranty Information")
+
+
+def parse_product(html: str, url: str, extra_spec_html: list[str] | None = None) -> dict:
     soup = BeautifulSoup(html, "html.parser")
     products = _json_ld_products(soup)
     group = _product_group(products)
     hidden = _hidden_inputs(soup)
-    specs = _specifications(soup, products)
+    # The commercial '/buy/' page carries no full spec table of its own (just
+    # commerce state); when the caller has fetched the overview page and/or
+    # the family specs page too, their (richer, cleaner) specs win over
+    # anything found on this page, which only fills gaps.
+    own_specs = _specifications(soup, products)
+    if extra_spec_html:
+        extra_specs = [specs_from_html(h) for h in extra_spec_html if h]
+        specs = merge_specs(*extra_specs, own_specs)
+    else:
+        specs = own_specs
     reviews, agg = _reviews_from_json_ld(products)
     variants = _variants(group, hidden, url)
+    if not variants:
+        # No ld+json ProductGroup (confirmed live: Galaxy A-series ld+json
+        # carries only plain Product nodes) -- recover the real variant list
+        # from the hidden BV-buyingOptionData input instead.
+        variants = _variants_from_buying_option_data(hidden)
 
     desc = None
     for p in products:
@@ -934,7 +1264,6 @@ def parse_product(html: str, url: str) -> dict:
     # rather than /p6pim/...) still yield product images.
     variant_images = [o.get("image") for lst in variants.values() for o in lst if o.get("image")]
     media = _media(html, soup, extra_images=variant_images)
-    flat = flatten_specs(specs)
     name = _product_name(html, soup, products)
 
     # Fold variant storage/colour into specifications so they are not lost even
@@ -958,6 +1287,8 @@ def parse_product(html: str, url: str) -> dict:
                 sec.setdefault("Storage", parts[0])
             if len(parts) > 1:
                 sec.setdefault("RAM", parts[1])
+        if selected and selected.get("memory"):
+            specs.setdefault("General", {}).setdefault("RAM", selected["memory"])
 
     commerce = _commerce(html, soup, hidden)
 
@@ -969,10 +1300,11 @@ def parse_product(html: str, url: str) -> dict:
     if total_reviews is not None:
         agg["total_reviews"] = total_reviews
 
-    price = _price(html, soup, products, hidden)
+    price = _price(html, soup, products, hidden, url)
     if not price.get("availability") and commerce.get("availability"):
         price["availability"] = commerce["availability"]
     delivery = {"free_delivery": True} if commerce.get("free_delivery") else {}
+    flat = flatten_specs(specs)
 
     return {
         "url": url,
@@ -985,18 +1317,18 @@ def parse_product(html: str, url: str) -> dict:
         "color": _color(flat, name, url, variants, hidden),
         "source_country": _source_country(url),
         "breadcrumbs": _breadcrumbs(soup),
-        "warranty_text": _flat_find(flat, "Warranty", "Warranty Period", "Warranty Information"),
+        "warranty_text": _warranty_text(hidden, flat),
         "description": desc,
         "price": price,
         "offers": commerce.get("offers") or {},
         "delivery": delivery,
         "ratings": agg,
         "specifications": specs,
-        "specifications_flat": flatten_specs(specs),
+        "specifications_flat": flat,
         "images": media["images"],
         "videos": media["videos"],
         "variants": variants,
-        "manufacturer": {"name": "Samsung", "generic_name": _category(url, products)},
+        "manufacturer": _manufacturer(flat, url, products),
         "introduced_date": _introduced_date(html, soup, products),
         "reviews": reviews,
         "seller": {"name": "Samsung Official Store"},
@@ -1004,7 +1336,15 @@ def parse_product(html: str, url: str) -> dict:
         # without relying on the widget's own network request firing.
         "bv_passkey": hidden.get("BV-bvPassKey"),
         "bv_api_url": hidden.get("bvApiUrl"),
-        "bv_product_id": hidden.get("current_model_code"),
+        # Confirmed live: the "current_model_code" hidden input used here is
+        # sometimes rendered with NO value attribute at all (Galaxy A-series),
+        # which made this always None and the engine fall back to the
+        # marketing-slug product_id -- a Bazaarvoice ProductId that returns
+        # zero reviews. modelCode / resourceModelCode carry the same SKU code
+        # and are populated on exactly those pages (confirmed against the
+        # live Bazaarvoice API: both ids return the page's true review count).
+        "bv_product_id": (hidden.get("current_model_code") or hidden.get("modelCode")
+                           or hidden.get("resourceModelCode")),
         "scraped_at": datetime.now(timezone.utc).isoformat(),
     }
 

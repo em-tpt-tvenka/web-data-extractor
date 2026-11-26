@@ -10,6 +10,7 @@ from urllib.parse import quote_plus
 from playwright.async_api import Page, async_playwright
 
 from app.core.logging import get_logger
+from app.platforms import common
 from app.platforms.browser import proxy_settings, random_user_agent
 from app.platforms.browser_launch import with_chrome_fallback
 from app.platforms.samsung import parsing
@@ -54,6 +55,10 @@ class EngineConfig:
     bv_api_url: str | None = None
     bv_passkey: str | None = None
     debug_dir: str | None = None
+    # Bounded concurrency for independently visiting OTHER known sibling SKUs'
+    # own /buy/ pages (new tab per variant, same browser context) when a real
+    # URL for that SKU is known -- see ``SamsungEngine._build_variant_details``.
+    variant_detail_concurrency: int = 3
 
 
 class SamsungEngine:
@@ -271,6 +276,42 @@ class SamsungEngine:
                 _log.error("event=all_buy_url_candidates_failed url=%s candidates_tried=%d",
                           url[:100], len(candidates))
                 return None
+
+            # The commercial '/buy/' page just scraped carries no full
+            # specification table (confirmed live: only a short "Features"/
+            # "Review" tab pair). The real spec table lives on the per-SKU
+            # overview page (same URL with '/buy/' dropped) and/or, for lines
+            # whose overview page is itself a visual/marketing page with no
+            # spec table (confirmed on Galaxy S flagships), on a separate
+            # family-level '/specs/' page that overview page links to.
+            # Fetch both, re-parse with the richer specs merged in, and keep
+            # that result; fall back to the '/buy/'-only model on any failure.
+            resolved_url = page.url
+            extra_spec_html: list[str] = []
+            try:
+                ov_url = parsing.overview_url(resolved_url)
+                await page.goto(ov_url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
+                await page.wait_for_timeout(1500)
+                await self._dismiss(page)
+                await self._expand(page)
+                for _ in range(6):
+                    await page.evaluate("window.scrollBy(0, 1200)")
+                    await page.wait_for_timeout(350)
+                ov_html = await self._html(page)
+                extra_spec_html.append(ov_html)
+                specs_url = parsing.find_specs_page_url(ov_html, page.url)
+                if specs_url:
+                    await page.goto(specs_url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
+                    await page.wait_for_timeout(1500)
+                    await self._expand(page)
+                    extra_spec_html.append(await self._html(page))
+            except Exception as exc:
+                _log.warning("event=spec_pages_fetch_failed url=%s error=%s", resolved_url[:100], exc)
+            if extra_spec_html:
+                enriched = parsing.parse_product(html, resolved_url, extra_spec_html=extra_spec_html)
+                if enriched.get("product_name"):
+                    model = enriched
+
             if model.get("product_name") and cfg.fetch_reviews:
                 jsonld = model.get("reviews") or []
                 bv, summary = await self._bazaarvoice(
@@ -292,6 +333,13 @@ class SamsungEngine:
                     if summary.get("rating_breakdown"):
                         ratings["breakdown"] = summary["rating_breakdown"]
                     model["ratings"] = ratings
+
+            if model.get("product_name"):
+                try:
+                    model["variant_details"] = await self._build_variant_details(ctx, model)
+                except Exception as exc:
+                    _log.warning("event=variant_details_failed url=%s error=%s", resolved_url[:100], exc)
+                    model["variant_details"] = []
             # Internal BV handles are not part of the normalized output.
             for k in ("bv_passkey", "bv_api_url", "bv_product_id"):
                 model.pop(k, None)
@@ -379,6 +427,156 @@ class SamsungEngine:
         _log.info("event=bazaarvoice_done id=%s collected=%d total=%s pages=%d stop=%s",
                   product_id, len(out), total, pages, stop_reason or "natural_end")
         return out, summary
+
+    def _variant_attrs(self, option: dict) -> dict:
+        return {k: v for k, v in (
+            ("Colour", option.get("color")), ("Storage", option.get("storage")),
+            ("RAM", option.get("memory")),
+        ) if v}
+
+    async def _build_variant_details(self, ctx, model: dict) -> list[dict]:
+        """``variant_details`` for this discovered SKU's own record: its own
+        (already-scraped) entry plus one entry per OTHER known sibling SKU in
+        the same colour/storage family.
+
+        Samsung's variant family is read from either the ld+json
+        ``ProductGroup`` (which carries each sibling's own real page URL) or,
+        when that is absent (confirmed live on Galaxy A-series), from the
+        hidden ``BV-buyingOptionData`` map (colour/storage/SKU only, no URL --
+        see ``parsing._variants_from_buying_option_data``). A sibling with a
+        real URL is independently visited (new tab, same browser context,
+        bounded concurrency, isolated failure) exactly like the current page
+        was; a sibling with no URL is honestly reported as ``not_visited``
+        with its known colour/storage/SKU, never a fabricated price."""
+        variants = model.get("variants") or {}
+        opts = [o for lst in variants.values() if isinstance(lst, list) for o in lst]
+        if not opts:
+            return []
+        parent_id = model.get("product_id")
+        current_opt, others = parsing.split_variant_options(variants, model.get("sku"))
+        details: list[dict] = []
+        if current_opt is not None:
+            attrs = self._variant_attrs(current_opt)
+            ratings = model.get("ratings") or {}
+            current_sku = current_opt.get("product_id") or model.get("sku") or parent_id
+            details.append({
+                "variant_id": common.variant_id(parent_id, current_sku),
+                "parent_product_id": parent_id,
+                "platform_variant_id": current_sku,
+                "variant_name": current_opt.get("option")
+                or ", ".join(f"{k}: {v}" for k, v in attrs.items()) or parent_id,
+                "attributes": attrs,
+                "product_url": model.get("url"),
+                "images": model.get("images", []),
+                "videos": model.get("videos", []),
+                "specifications": model.get("specifications", {}),
+                "availability": (model.get("price") or {}).get("availability"),
+                "commercial": {
+                    "price": model.get("price") or {},
+                    "offers": model.get("offers") or {},
+                    "delivery": model.get("delivery") or {},
+                },
+                "metrics": {
+                    "rating": ratings.get("average_rating"),
+                    "total_ratings": ratings.get("total_ratings"),
+                    "total_reviews": ratings.get("total_reviews"),
+                },
+                "variant_extraction": {
+                    "status": "completed", "source": "platform",
+                    "note": "current/selected SKU for this discovered URL - already scraped above",
+                },
+            })
+        if not others:
+            return details
+        sem = asyncio.Semaphore(max(1, self.cfg.variant_detail_concurrency))
+
+        parent_url = model.get("url")
+
+        async def _one(option: dict) -> dict:
+            async with sem:
+                page = await ctx.new_page()
+                try:
+                    return await self._scrape_sibling_variant(page, parent_id, parent_url, option)
+                finally:
+                    try:
+                        await page.close()
+                    except Exception:
+                        pass
+
+        results = await asyncio.gather(*[_one(o) for o in others])
+        details.extend(results)
+        return details
+
+    async def _scrape_sibling_variant(self, page: Page, parent_id: str | None, parent_url: str | None,
+                                      option: dict) -> dict:
+        """One OTHER sibling SKU's own ``variant_details`` entry: independently
+        visited and parsed when a real, confirmed-working URL can be derived
+        (see ``parsing.sibling_variant_url``), else honestly marked
+        ``not_visited`` -- never a guessed/fabricated price."""
+        cfg = self.cfg
+        sku = option.get("product_id")
+        attrs = self._variant_attrs(option)
+        base = {
+            "variant_id": common.variant_id(parent_id, sku),
+            "parent_product_id": parent_id,
+            "platform_variant_id": sku,
+            "variant_name": option.get("option") or ", ".join(f"{k}: {v}" for k, v in attrs.items()) or sku,
+            "attributes": attrs,
+            "product_url": option.get("url"),
+        }
+        url = parsing.sibling_variant_url(option.get("url"), sku, parent_url, cfg.base_url)
+        if not url:
+            base["variant_extraction"] = {
+                "status": "not_visited", "source": "platform",
+                "reason": ("no independently-visitable URL could be confirmed for this SKU from the "
+                           "source data (BV-buyingOptionData carries colour/storage/SKU but no page URL, "
+                           "and guessing a marketing-slug URL from the SKU alone is unreliable); its "
+                           "price and availability are therefore not reported rather than guessed"),
+            }
+            return base
+        base["product_url"] = url
+        try:
+            resp = await page.goto(url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
+            await page.wait_for_timeout(1500)
+            await self._dismiss(page)
+            await self._expand(page)
+            for _ in range(8):
+                await page.evaluate("window.scrollBy(0, 1200)")
+                await page.wait_for_timeout(350)
+            await page.wait_for_timeout(800)
+            html = await self._html(page)
+            status = resp.status if resp else None
+            parsed = parsing.parse_product(html, page.url)
+            if self._looks_failed(parsed, status):
+                raise ValueError(f"sibling buy page did not resolve to a real product (status={status})")
+            price = parsed.get("price") or {}
+            ratings = parsed.get("ratings") or {}
+            base.update({
+                "images": parsed.get("images", []),
+                "videos": parsed.get("videos", []),
+                "specifications": parsed.get("specifications", {}),
+                "availability": price.get("availability"),
+                "commercial": {
+                    "price": price,
+                    "offers": parsed.get("offers") or {},
+                    "delivery": {"free_delivery": True} if (parsed.get("offers") or {}).get("free_delivery") else {},
+                },
+                "metrics": {
+                    "rating": ratings.get("average_rating"),
+                    "total_reviews": ratings.get("total_reviews"),
+                },
+                "variant_extraction": {
+                    "status": "completed", "source": "platform",
+                    "note": ("fetched from its own /buy/ page only - the overview/family-specs pages are "
+                             "not re-fetched per sibling, to bound execution time, so its specifications "
+                             "may be less complete than the parent SKU's own"),
+                },
+            })
+        except Exception as exc:
+            _log.warning("event=sibling_variant_failed parent=%s sku=%s url=%s error=%s",
+                        parent_id, sku, url[:90], exc)
+            base["variant_extraction"] = {"status": "failed", "source": "platform", "error": str(exc)[:200]}
+        return base
 
     async def _expand(self, page: Page) -> None:
         for sel in (
