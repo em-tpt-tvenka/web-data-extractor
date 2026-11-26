@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.core.config import settings
 from app.core.logging import get_logger
+from app.core.periods import resolve_window
 from app.platforms.base import PlatformAdapter, ScrapeResult
 from app.platforms.samsung import mapper
 from app.platforms.samsung.engine import EngineConfig, SamsungEngine
@@ -52,6 +53,7 @@ class SamsungAdapter(PlatformAdapter):
         search_text = " ".join(t for t in terms if t).strip()
 
         opts = request.scraping_options
+        window_start, _window_end = resolve_window(opts.date_range)
         return EngineConfig(
             search_text=search_text,
             base_url=settings.samsung_base_url,
@@ -60,6 +62,7 @@ class SamsungAdapter(PlatformAdapter):
             max_pages=opts.max_pages,
             max_products=opts.max_products,
             fetch_reviews=True,
+            review_window_start=window_start,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
             chrome_profile_dir=settings.profile_for("samsung"),

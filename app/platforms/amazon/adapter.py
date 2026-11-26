@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.core.config import settings
 from app.core.logging import get_logger
+from app.core.periods import resolve_window
 from app.platforms.amazon import mapper
 from app.platforms.amazon.engine import AmazonEngine, AmazonEngineConfig
 from app.platforms.amazon.options import AmazonOptions, config_schema, resolve_marketplace
@@ -100,6 +101,7 @@ class AmazonAdapter(PlatformAdapter):
 
     def _engine_config(self, request: ScrapeJobRequest, options: AmazonOptions) -> AmazonEngineConfig:
         filters, opts = request.filters, request.scraping_options
+        window_start, _window_end = resolve_window(opts.date_range)
         return AmazonEngineConfig(
             marketplace=resolve_marketplace(request.search.marketplace),
             search_text=self._search_text(request),
@@ -112,6 +114,7 @@ class AmazonAdapter(PlatformAdapter):
             max_products=opts.max_products,
             review_sort=options.review_sort.value,
             verified_reviews_only=options.verified_reviews_only,
+            review_window_start=window_start,
             review_click_min_delay=settings.amazon_review_click_min_delay,
             review_click_max_delay=settings.amazon_review_click_max_delay,
             keyword_stall_limit=settings.amazon_review_keyword_stall_limit,

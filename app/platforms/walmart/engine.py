@@ -5,6 +5,7 @@ import json
 import random
 import re
 from dataclasses import dataclass, field
+from datetime import date
 
 from playwright.async_api import Page, async_playwright
 
@@ -57,6 +58,9 @@ class EngineConfig:
     max_products: int = 20
     fetch_reviews: bool = True
     review_sort: str = "submission-desc"
+    # Start of the requested date window (None = collect all time). Only used
+    # to stop early when review_sort is confirmed newest-first ("submission-desc").
+    review_window_start: date | None = None
     headless: bool = False
     browser_channel: str = "chrome"
     chrome_profile_dir: str | None = None
@@ -251,6 +255,14 @@ class WalmartEngine:
                 new += 1
             if new == 0:
                 break
+            # Early-stop by date: only safe when confirmed newest-first; other
+            # sorts (helpful/rating) are not date-ordered and must run to their
+            # natural end (new == 0 above) to avoid missing anything.
+            if cfg.review_sort == "submission-desc" and cfg.review_window_start is not None:
+                page_dates = [date.fromisoformat(d) for r in parsed
+                             if (d := r.get("posted_date"))]
+                if page_dates and all(d < cfg.review_window_start for d in page_dates):
+                    break
             await asyncio.sleep(random.uniform(0.8, 1.5))
         return collected
 

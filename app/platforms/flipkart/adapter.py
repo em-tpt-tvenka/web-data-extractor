@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.core.config import settings
 from app.core.logging import get_logger
+from app.core.periods import resolve_window
 from app.platforms.base import PlatformAdapter, ScrapeResult
 from app.platforms.flipkart import mapper
 from app.platforms.flipkart.engine import EngineConfig, FlipkartEngine
@@ -66,6 +67,7 @@ class FlipkartAdapter(PlatformAdapter):
 
         filters = request.filters
         opts = request.scraping_options
+        window_start, _window_end = resolve_window(opts.date_range)
         return EngineConfig(
             search_text=search_text,
             marketplace=search.marketplace,
@@ -79,6 +81,7 @@ class FlipkartAdapter(PlatformAdapter):
             fetch_reviews=True,
             review_sort=options.review_sort.value,
             verified_purchase_only=options.verified_purchase_only,
+            review_window_start=window_start,
             headless=settings.browser_headless,
             browser_channel=settings.browser_channel,
             chrome_profile_dir=settings.profile_for("flipkart"),

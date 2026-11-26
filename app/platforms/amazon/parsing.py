@@ -676,6 +676,15 @@ def _review_id(block) -> str | None:
     return m.group(1) if m else None
 
 
+def extract_review_date(date_block_text: str) -> str | None:
+    """Parse one review's 'Reviewed in X on <date>' block text (the exact text
+    content of a '[data-hook=review-date]' node) into an ISO date string, the
+    same way ``parse_reviews`` does. Used for a cheap incremental date check
+    during pagination, without a full page re-parse."""
+    dm = re.search(r"Reviewed in (.+?) on (.+)$", date_block_text or "")
+    return iso_date(clean_text(dm.group(2))) if dm else None
+
+
 def parse_reviews(soup) -> list[dict]:
     blocks = soup.select("[data-hook='review']") or \
         soup.select("[id^='customer_review-'], [id^='customer_review_foreign-']")

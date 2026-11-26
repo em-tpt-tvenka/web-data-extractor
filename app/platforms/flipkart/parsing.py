@@ -480,11 +480,18 @@ def review_coverage(available, extracted, listings: list[dict], blocked: bool = 
     if out["complete"]:
         return out
     failed = [l for l in listings if l.get("failed")]
+    # A listing that stopped because it reached the requested date window (not
+    # a cap, block, or failure) deliberately did not collect Flipkart's
+    # all-time review count; that is expected, not an incomplete collection.
+    date_scoped = any(str(l.get("stop") or "").startswith("reached date window") for l in listings)
     if blocked:
         reason = "Flipkart blocked the review pages (captcha / access denied)"
     elif failed:
         reason = (f"{len(failed)} review listing(s) could not be loaded (Flipkart kept redirecting "
                   "to login); see review_summary.listings")
+    elif date_scoped:
+        out["complete"] = True
+        return out
     else:
         reason = (f"Flipkart lists at most {LISTING_CAP} reviews per sort order; all "
                   f"{len(listings)} sort orders were loaded to their last page")

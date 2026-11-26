@@ -5,7 +5,7 @@ import itertools
 import random
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from urllib.parse import quote_plus
 
 from playwright.async_api import Page, async_playwright
@@ -60,6 +60,11 @@ class EngineConfig:
     fetch_reviews: bool = True
     review_sort: str = "recent"
     verified_purchase_only: bool = False
+    # Start of the requested date window (None = collect all time). Lets the
+    # "recent" (MOST_RECENT) sort stop paging early once a page is entirely
+    # older than this; the other sort orders are not date-ordered and are
+    # never early-stopped by it.
+    review_window_start: date | None = None
     review_retries: int = 3           # retries of a page Flipkart redirected to /login
     review_retry_backoff: float = 4.0  # seconds, doubled per retry
     headless: bool = False
@@ -462,6 +467,15 @@ class FlipkartEngine:
                 if total is not None and len(seen) >= total:
                     info["stop"] = "collected all reported reviews"
                     break
+                # Early-stop by date: only safe on MOST_RECENT (newest-first);
+                # other sorts are not date-ordered and must run to their natural
+                # end to avoid missing a recent review buried after an old one.
+                if sort == "recent" and cfg.review_window_start is not None:
+                    page_dates = [date.fromisoformat(r["posted_date"]) for r in got
+                                 if r.get("posted_date")]
+                    if page_dates and all(d < cfg.review_window_start for d in page_dates):
+                        info["stop"] = f"reached date window (newest-first, page {p})"
+                        break
                 await asyncio.sleep(random.uniform(1.0, 2.0))
             _log.info("event=review_listing_done sort=%s pages=%d found=%d new=%d total_unique=%d stop=%s",
                       sort, info["pages"], info["found"], info["new"], len(seen), info["stop"])

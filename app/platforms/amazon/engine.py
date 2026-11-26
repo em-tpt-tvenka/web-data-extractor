@@ -8,7 +8,7 @@ import random
 import re
 import urllib.parse
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from playwright.async_api import BrowserContext, Page, async_playwright
@@ -89,6 +89,9 @@ class AmazonEngineConfig:
     max_products: int = 20
     review_sort: str = "recent"
     verified_reviews_only: bool = False
+    # Start of the requested date window (None = collect all time). Only used
+    # to stop a listing early when it is confirmed opened with sortBy=recent.
+    review_window_start: date | None = None
     review_click_min_delay: float = 0.8
     review_click_max_delay: float = 1.8
     keyword_stall_limit: int = 15
@@ -412,13 +415,20 @@ class AmazonEngine:
 
     # ── Product + reviews ────────────────────────────────────────────────
 
-    async def _show_more(self, page: Page, asin: str, label: str) -> tuple[int, str]:
+    async def _show_more(self, page: Page, asin: str, label: str, date_sorted: bool = False) -> tuple[int, str]:
         """Load the rest of the open review listing with "Show 10 more reviews"
         (Amazon appends each batch in place; URL page numbers are ignored).
         Returns ``(batches_loaded, stop_reason)``. Each click is retried; a
         CAPTCHA is handled as on page loads. Always loads every review the
         listing offers, stopping only when the button is gone (the listing is
-        exhausted) -- never on a review count."""
+        exhausted) -- never on a review count.
+
+        ``date_sorted`` is True only for listings the caller opened with
+        ``sortBy=recent`` (Amazon's own newest-first order). Only then is an
+        extra early-stop applied: once a freshly-loaded batch is entirely
+        older than the requested date window, further batches (strictly
+        older still) cannot contain anything in range, so pagination stops.
+        Listings sorted any other way are never stopped this way."""
         cfg = self.cfg
         review_count_js = "n => document.querySelectorAll(\"[data-hook='review']\").length > n"
         batches, throttled = 1, 0
@@ -458,6 +468,16 @@ class AmazonEngine:
                 return batches, f"show-more failed after {cfg.max_retries} attempts (batch {batches + 1})"
             batches += 1
             _log.debug("event=review_batch_loaded asin=%s listing=%s batch=%d", asin, label, batches)
+            if date_sorted and cfg.review_window_start is not None:
+                try:
+                    date_texts = await page.locator("[data-hook='review-date']").all_inner_texts()
+                except Exception:
+                    date_texts = []
+                new_dates = [d for t in date_texts[before:]
+                            if (d := parsing.extract_review_date(t))]
+                parsed_dates = [date.fromisoformat(d) for d in new_dates]
+                if parsed_dates and all(d < cfg.review_window_start for d in parsed_dates):
+                    return batches, "reached date window (newest-first)"
 
     async def _load_listing(self, page: Page, asin: str, filters: dict[str, str], label: str,
                             have=None) -> dict:
@@ -506,7 +526,8 @@ class AmazonEngine:
             if first["total_reviews"] is not None and known is not None and first["total_reviews"] <= known:
                 out["batches"], out["stop_reason"] = 1, "already collected"
             elif 'data-hook="review"' in html or "data-hook='review'" in html:
-                out["batches"], out["stop_reason"] = await self._show_more(page, asin, label)
+                out["batches"], out["stop_reason"] = await self._show_more(
+                    page, asin, label, date_sorted=filters.get("sortBy") == "recent")
             else:
                 out["stop_reason"] = "no reviews in listing"
             html = await page.content()

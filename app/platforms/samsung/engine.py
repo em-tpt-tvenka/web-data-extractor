@@ -4,6 +4,7 @@ import asyncio
 import random
 import re
 from dataclasses import dataclass, field
+from datetime import date
 from urllib.parse import quote_plus
 
 from playwright.async_api import Page, async_playwright
@@ -42,6 +43,10 @@ class EngineConfig:
     max_pages: int = 1
     max_products: int = 20
     fetch_reviews: bool = True
+    # Start of the requested date window (None = no window / collect all time).
+    # Lets review pagination stop early once a confirmed newest-first page is
+    # entirely older than this -- never used to skip anything within range.
+    review_window_start: date | None = None
     headless: bool = False
     browser_channel: str = "chrome"
     chrome_profile_dir: str | None = None
@@ -325,9 +330,14 @@ class SamsungEngine:
         q.setdefault("Stats", "Reviews")
         q["Limit"] = "100"
         q.setdefault("Sort", "SubmissionTime:desc")
+        # Early-stop by date is only valid when this request is CONFIRMED sorted
+        # newest-first -- a captured widget URL may carry its own different
+        # Sort value, so check the value actually in effect, never assume it.
+        date_sorted = q.get("Sort", "").strip().lower() == "submissiontime:desc"
         out: list[dict] = []
         summary = None
         offset, total, pages = 0, None, 0
+        stop_reason = None
         # Each BV page holds up to 100 reviews; always collect everything
         # (hard safety ceiling of 60 pages = 6000 reviews).
         max_pages = 60
@@ -355,9 +365,19 @@ class SamsungEngine:
             pages += 1
             if got == 0 or (total is not None and len(out) >= total):
                 break
+            if date_sorted and cfg.review_window_start is not None and batch:
+                batch_dates = [date.fromisoformat(r["posted_date"]) for r in batch
+                              if r.get("posted_date")]
+                # Only trust the signal when every dated review in this page is
+                # parseable and all are before the window: with a confirmed
+                # newest-first sort, nothing on a later page can be newer, so
+                # anything further is guaranteed outside the requested window.
+                if batch_dates and all(d < cfg.review_window_start for d in batch_dates):
+                    stop_reason = "reached date window (newest-first)"
+                    break
             offset += 100
-        _log.info("event=bazaarvoice_done id=%s collected=%d total=%s pages=%d",
-                  product_id, len(out), total, pages)
+        _log.info("event=bazaarvoice_done id=%s collected=%d total=%s pages=%d stop=%s",
+                  product_id, len(out), total, pages, stop_reason or "natural_end")
         return out, summary
 
     async def _expand(self, page: Page) -> None:
