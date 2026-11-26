@@ -332,18 +332,30 @@ SELLER_JS = """
     // Stock per SKU and dispatch place, as the page's inventory data gives it.
     const inv = g.inventory || {};
     const stockCounts = [];
+    // Per-SKU stock, keyed by the SAME sku id skuInfoMap gives (confirmed live:
+    // repoSkuInventory/skuInventory are keyed by that id), for independent
+    // per-variant availability - additive alongside the flattened stockCounts
+    // list above (used by the aggregate availability() below).
+    const skuStockMap = {};
     Object.values(inv.repoSkuInventory || {}).forEach(place =>
-        Object.values((place || {}).skuMap || {}).forEach(s => {
+        Object.entries((place || {}).skuMap || {}).forEach(([skuId, s]) => {
             const n = Number((s || {}).inventoryCount);
-            if (Number.isFinite(n)) stockCounts.push(n);
+            if (Number.isFinite(n)) {
+                stockCounts.push(n);
+                skuStockMap[skuId] = (skuStockMap[skuId] || 0) + n;
+            }
         }));
-    if (!stockCounts.length) Object.values(inv.skuInventory || {}).forEach(s =>
+    if (!stockCounts.length) Object.entries(inv.skuInventory || {}).forEach(([skuId, s]) => {
+        let total = 0;
         ((s || {}).warehouseInventoryList || []).forEach(w => {
             const n = Number((w || {}).inventoryCount);
-            if (Number.isFinite(n)) stockCounts.push(n);
-        }));
+            if (Number.isFinite(n)) { stockCounts.push(n); total += n; }
+        });
+        if (((s || {}).warehouseInventoryList || []).length) skuStockMap[skuId] = total;
+    });
     const inventory = (Object.keys(inv).length || pr.tradable !== undefined) ? {
         sku_stock:       stockCounts,
+        sku_stock_map:   skuStockMap,
         dispatch_places: (inv.placeOfDispatches || []).map(p => p && p.name).filter(Boolean),
         ships_to:        inv.shippingToCountry || null,
         tradable:        pr.tradable === undefined ? null : !!pr.tradable,
@@ -654,6 +666,41 @@ EXTRACT_JS = """
         });
     }
     return { selector: matchedSel, count: cards.length, items: out };
+}
+"""
+
+# The seller-funded coupon banner shown on some listings (live-confirmed as a
+# <button data-testid="coupon-floor"> near the price, text e.g. "₹9,464.85 off
+# ₹1,89,297"), auto-applied at checkout: Alibaba does not print a redeemable
+# code for a buyer to enter, so `code` stays null unless the page itself ever
+# shows one. `data-testid="coupon-floor"` is the live-confirmed attribute;
+# broader class/id/testid matches are kept as a fallback since Alibaba has
+# changed this markup before. SVG icon sprites (<symbol id="icon-coupon">,
+# used elsewhere on the page) are excluded -- they carry no visible text.
+COUPON_JS = r"""
+() => {
+    const clean = s => String(s || '').replace(/\s+/g, ' ').trim();
+    const sels = ['[data-testid="coupon-floor"]', '[data-testid*="coupon" i]',
+                  '[class*="coupon" i]', '[id*="coupon" i]'];
+    let el = null;
+    for (const sel of sels) {
+        el = Array.from(document.querySelectorAll(sel)).find(
+            e => e.tagName !== 'SYMBOL' && clean(e.innerText || e.textContent));
+        if (el) break;
+    }
+    if (!el) return null;
+    const text = clean(el.innerText || el.textContent || '');
+    if (!text) return null;
+    const codeMatch = text.match(/\bcode[:\s]+([A-Z0-9][A-Z0-9-]{3,})\b/i);
+    // The page's own structured benefit data (activity id / coupon type),
+    // when it exposes one via data-auto-exp, carried through as-is.
+    let benefit = null;
+    const exp = el.getAttribute('data-auto-exp') || '';
+    const m = exp.match(/couponBenefit=([^&]+)/);
+    if (m) {
+        try { benefit = JSON.parse(decodeURIComponent(m[1])); } catch (e) { benefit = null; }
+    }
+    return { text: text.slice(0, 300), code: codeMatch ? codeMatch[1] : null, benefit };
 }
 """
 

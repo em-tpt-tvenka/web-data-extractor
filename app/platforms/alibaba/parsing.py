@@ -824,8 +824,157 @@ def wholesale_terms(ex: dict | None, card_moq) -> dict | None:
     return terms or None
 
 
+def delivery_info(ex: dict | None) -> dict | None:
+    """Delivery in the shared ``commercial.delivery`` shape, from the detail
+    page's inventory data (``window.detailData.globalData.inventory``). Alibaba
+    is a B2B wholesale marketplace: no delivery charge or ETA is shown for a
+    listing, but the warehouse's dispatch place(s) (e.g. "China") and the
+    destination country the page resolved shipping to (e.g. "IN") genuinely
+    are, so those are carried through as extra fields. None when the page
+    exposed neither."""
+    inv = (ex or {}).get("inventory") or {}
+    dispatch = dedupe(p for p in inv.get("dispatch_places") or [] if not _blank(p))
+    ships_to = inv.get("ships_to")
+    if isinstance(ships_to, (list, tuple)):
+        ships_to = dedupe(s for s in ships_to if not _blank(s)) or None
+    elif _blank(ships_to):
+        ships_to = None
+    if not dispatch and not ships_to:
+        return None
+    out: dict = {}
+    if dispatch:
+        out["dispatch_places"] = dispatch
+    if ships_to:
+        out["ships_to"] = ships_to
+    return out
+
+
 # Alibaba reports untracked / unlimited stock as this count.
 _UNTRACKED_STOCK = 9_999_999
+
+
+# ── independent per-SKU extraction ──────────────────────────────────────────
+# Live investigation (Nov 2026, two real multi-attribute listings - a phone
+# case with colour + "compatible model", and a search for an apparel listing
+# that found none live at the time): Alibaba's own window.detailData has NO
+# per-SKU price field anywhere (skuInfoMap entries are only {"id": sku_id});
+# the page's price is a single quantity-order-tier ladder
+# (product.price.productLadderPrices) for the WHOLE listing. Clicking a
+# different colour/spec swatch does not change the displayed price and fires
+# no SKU- or price-specific network request (only generic page/chat/
+# recommendation widgets were observed). So, unlike Amazon, there is no
+# per-SKU price to capture and none is fabricated here. What genuinely DOES
+# vary per SKU, and is already present on the one page already scraped (no
+# extra request needed): each SKU's own stock (inventory.repoSkuInventory /
+# skuInventory, keyed by the same sku id skuInfoMap gives - see scripts.py's
+# sku_stock_map) and, for an IMAGE-type attribute (e.g. colour), that value's
+# own swatch image.
+
+def sku_availability(stock) -> dict:
+    """Per-SKU stock status, same scale/semantics as availability() above but
+    for one SKU's own inventory count instead of the whole listing's total."""
+    if not _is_number(stock) or stock < 0:
+        return {"status": None, "stock_quantity": None}
+    if stock == 0:
+        return {"status": "out_of_stock", "stock_quantity": 0}
+    tracked = stock < _UNTRACKED_STOCK
+    return {"status": "in_stock", "stock_quantity": int(stock) if tracked else None}
+
+
+def sku_variant_combinations(ex: dict | None) -> list[dict]:
+    """Every purchasable SKU of this listing (``window.detailData``'s
+    ``sku.skuAttrs`` + ``skuInfoMap``, captured by scripts.py's SELLER_JS into
+    ``ex["variants"]``/``ex["sku_map"]``), each with its own full attribute
+    combination, swatch image (when the attribute is an image-type one, e.g.
+    colour) and stock (from ``ex["inventory"]["sku_stock_map"]``). Unlike
+    Amazon's child ASINs, an Alibaba SKU is not a separate page: every SKU here
+    is read from data already on the ONE product page already scraped - no
+    extra request, no extra concurrency to bound. Returns [] when the page
+    exposed no SKU attribute data (not every Alibaba listing has SKU
+    attributes at all - a single-configuration product has none)."""
+    ex = ex or {}
+    attrs = ex.get("variants") or []
+    sku_map = ex.get("sku_map") or []
+    if not attrs or not sku_map:
+        return []
+    stock_map = (ex.get("inventory") or {}).get("sku_stock_map") or {}
+
+    attr_names: dict[str, str] = {}
+    value_index: dict[str, dict[str, dict]] = {}
+    for a in attrs:
+        if not isinstance(a, dict):
+            continue
+        aid = _id_str(a.get("id"))
+        name = re.sub(r"\s+", " ", str(a.get("name") or "")).strip()
+        if not aid or not name:
+            continue
+        attr_names[aid] = name
+        vi = value_index.setdefault(aid, {})
+        for o in a.get("options") or []:
+            if not isinstance(o, dict) or not o.get("name"):
+                continue
+            vid = _id_str(o.get("value_id"))
+            if vid:
+                vi[vid] = {"name": re.sub(r"\s+", " ", str(o["name"])).strip(), "image": o.get("image")}
+
+    out: list[dict] = []
+    for entry in sku_map:
+        if not isinstance(entry, dict):
+            continue
+        sku_id = _id_str(entry.get("sku_id"))
+        combo = entry.get("combo")
+        if not sku_id or not combo:
+            continue
+        attributes: dict[str, str] = {}
+        image = None
+        for token in str(combo).split(";"):
+            token = token.strip()
+            if not token or ":" not in token:
+                continue
+            aid, vid = token.split(":", 1)
+            name = attr_names.get(aid)
+            val = value_index.get(aid, {}).get(vid)
+            if name and val:
+                attributes[name] = val["name"]
+                if not image and val.get("image"):
+                    image = val["image"]
+        if not attributes:
+            continue
+        stock = stock_map.get(sku_id)
+        out.append({
+            "platform_variant_id": sku_id,
+            "attributes": attributes,
+            "image": image,
+            "stock_quantity": stock if _is_number(stock) else None,
+        })
+    return out
+
+
+def parse_listing_variant_text(text, attribute_names) -> dict[str, str]:
+    """"Label: Value" pairs from a review's own SKU/model text, recognizing
+    ONLY this listing's own SKU attribute names as labels - Alibaba has no
+    fixed, platform-wide variant vocabulary the way Amazon does (every
+    listing names its own attributes, e.g. "color", "compatible model"), so a
+    generic known-label list cannot be reused across listings. Returns {}
+    when the text contains none of this listing's own attribute names as a
+    label - never guessed from unrelated free text."""
+    names = sorted({str(n).strip() for n in (attribute_names or []) if str(n).strip()}, key=len, reverse=True)
+    if _blank(text) or not names:
+        return {}
+    pattern = re.compile(r"(?i)\b(" + "|".join(re.escape(n) for n in names) + r")\s*:\s*")
+    s = str(text)
+    matches = list(pattern.finditer(s))
+    if not matches:
+        return {}
+    out: dict[str, str] = {}
+    for i, m in enumerate(matches):
+        label = m.group(1).strip()
+        canon = next((n for n in names if n.lower() == label.lower()), label)
+        end = matches[i + 1].start() if i + 1 < len(matches) else len(s)
+        value = re.sub(r"\s+", " ", s[m.end():end].strip(" |;,")).strip()
+        if value:
+            out[canon] = value
+    return out
 
 
 def availability(ex: dict | None) -> dict:
@@ -842,18 +991,33 @@ def availability(ex: dict | None) -> dict:
     return {"status": "in_stock", "stock_quantity": int(sum(stock)) if tracked else None}
 
 
-def promotion_info(ex: dict | None, price: dict) -> dict:
+def promotion_info(ex: dict | None, price: dict, coupon: dict | None = None) -> dict:
     """Promotion in Amazon's ``promotion`` shape: the detail page's running
-    discount when present, else the card's struck-through price / badge."""
+    discount when present, else the card's struck-through price / badge, plus
+    the seller coupon banner (``coupon``, the engine's ``COUPON_JS`` capture)
+    when the page shows one. Alibaba auto-applies a seller coupon at checkout
+    and does not print a redeemable code for the buyer, so ``coupon_code``
+    stays unset unless the banner itself ever shows one."""
     promo = (ex or {}).get("promotion") or {}
     has_discount = price.get("discount_percentage") is not None or price.get("original_min") is not None
     if promo:
         name = promo.get("text")
         if not name and promo.get("discount_rate") not in (None, ""):
             name = f"{promo['discount_rate']}% off"
-        return {"is_promotional": True, "promotion_type": "discount", "promotion_name": name}
-    return {"is_promotional": has_discount, "promotion_type": "discount" if has_discount else None,
-            "promotion_name": None}
+        out = {"is_promotional": True, "promotion_type": "discount", "promotion_name": name}
+    else:
+        out = {"is_promotional": has_discount, "promotion_type": "discount" if has_discount else None,
+               "promotion_name": None}
+    if coupon:
+        out["is_promotional"] = True
+        out["promotion_type"] = out["promotion_type"] or "coupon"
+        out["promotion_name"] = out["promotion_name"] or coupon.get("text")
+        out["coupon_available"] = True
+        if not _blank(coupon.get("code")):
+            out["coupon_code"] = coupon["code"]
+    else:
+        out["coupon_available"] = None
+    return out
 
 
 _INVISIBLE_RE = re.compile(r"[​-‏‪-‮⁠﻿]")

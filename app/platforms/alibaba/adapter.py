@@ -9,7 +9,7 @@ from app.platforms.alibaba.engine import AlibabaEngine, EngineConfig
 from app.platforms.alibaba.options import AlibabaOptions, SupplierType, config_schema
 from app.platforms.alibaba.parsing import parse_moq, resolve_price
 from app.platforms.base import PlatformAdapter, ScrapeResult
-from app.platforms.common import country_code
+from app.platforms.common import country_code, is_accessory_listing, matches_requested_model
 from app.schemas.config_schema import PlatformConfigSchema
 from app.schemas.record import SocialMentionRecord
 from app.schemas.scraping import ScrapeJobRequest
@@ -252,5 +252,11 @@ class AlibabaAdapter(PlatformAdapter):
                 moq_value = parse_moq(model["product_details"].get("moq")).get("moq_value")
             if moq_value is not None and moq_value > options.max_order_quantity:
                 return False
+
+        product_name = model.get("product_name")
+        if not matches_requested_model(product_name, request.search):
+            return False  # a different model than the one requested
+        if is_accessory_listing(product_name, request.search):
+            return False  # case/charger/screen-guard listing, not the product itself
 
         return True

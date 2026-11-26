@@ -1152,7 +1152,8 @@ class AlibabaEngine:
         page.on("response", _on_response)
         result = {"date_posted": "N/A", "product_reviews": None, "store_reviews": None,
                   "seller": None, "store_review_summary": None, "product_media": None,
-                  "product_ex": None, "product_review_summary": None, "product_description": None}
+                  "product_ex": None, "product_review_summary": None, "product_description": None,
+                  "product_coupon": None}
         try:
             # Pacing between detail pages comes from the shared _goto throttle.
             await self._goto(page, href, timeout_ms=45_000, settle_ms=4_000)
@@ -1172,6 +1173,13 @@ class AlibabaEngine:
                 if _is_closed_error(e):
                     raise BrowserClosedError("browser was closed") from e
                 _log.warning("event=seller_extract_failed error=%s", e)
+
+            try:
+                result["product_coupon"] = await page.evaluate(scripts.COUPON_JS)
+            except Exception as e:
+                if _is_closed_error(e):
+                    raise BrowserClosedError("browser was closed") from e
+                _log.warning("event=coupon_extract_failed error=%s", e)
 
             result["product_description"] = await self._extract_description(page)
 
@@ -1491,6 +1499,7 @@ class AlibabaEngine:
         if detail_date and detail_date != "N/A":
             m["product_details"]["date_posted"] = detail_date
         m["product_description"] = parsing.description_block(rv.get("product_description"))
+        m["product_coupon"] = rv.get("product_coupon")
         m["review_summary"] = parsing.build_review_summary(
             rv, card_rating=m["reviews"]["product_reviews"].get("rating"),
             product_url=m["product_details"]["product_detail_url"],

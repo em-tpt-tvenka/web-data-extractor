@@ -10,15 +10,21 @@ from app.core.periods import in_window, resolve_window
 from app.platforms.alibaba import parsing
 from app.platforms.categories import RECORD_TYPE_LISTING, MentionKind, classify_mention
 from app.platforms.common import (
+    best_variant_match,
+    canonical_ids,
     clean_text,
     country_code,
+    detect_spec_conflicts,
+    effective_prices,
     empty_campaign,
     infer_industry,
     is_blank,
     media_items,
     now_iso,
+    parse_offer_amount,
     placeholder_tenant,
     sha_hash,
+    variant_id as make_variant_id,
     warranty_months,
 )
 from app.processing.language import detect_language
@@ -154,8 +160,12 @@ class _ProductContext:
 
         self.price = parsing.resolve_price(pd.get("price_range"), ex)
         self.currency = self.price.get("currency")
-        self.promotion = parsing.promotion_info(ex, self.price)
+        # Raw COUPON_JS capture (text/code/benefit), kept around for the
+        # effective-price wiring below as well as promotion_info's own use.
+        self.coupon = model.get("product_coupon")
+        self.promotion = parsing.promotion_info(ex, self.price, self.coupon)
         self.availability = parsing.availability(ex)
+        self.delivery = parsing.delivery_info(ex)
 
         desc = model.get("product_description") or {}
         self.description = desc.get("description")
@@ -184,6 +194,9 @@ class _ProductContext:
         # Source country is the supplier's registered country (where the offer
         # originates), not the reviewer's location.
         self.supplier_country_code = country_code(self.supplier_country)
+
+        self.variant_combinations = parsing.sku_variant_combinations(ex)
+        self._variant_details = self._build_variant_details()
 
         prns = model.get("product_review_summary_native") or {}
         card_rating = parsing.parse_rating_value(((model.get("reviews") or {}).get("product_reviews") or {})
@@ -230,9 +243,16 @@ class _ProductContext:
 
     def entities(self) -> EntitiesBlock:
         brands = [BrandEntity(brand_name=self.brand)] if self.brand else []
+        # self.capacity/self.color are already None whenever no clean single
+        # capacity/colour pair was found for this listing (Alibaba's generic
+        # SKU attributes do not get forced into one here); canonical_ids
+        # handles both as None.
+        cap = {"value": self.capacity.value, "unit": self.capacity.unit} if self.capacity else None
+        canonical_product_id, variant_key = canonical_ids(self.brand, self.subject, cap, self.color)
         products = [ProductEntity(
             product_id=self.offer_id, product_name=self.subject,
             sku=self.offer_id, model_number=self.model_number, product_url=self.product_url,
+            canonical_product_id=canonical_product_id, variant_key=variant_key,
         )]
         return EntitiesBlock(brands=brands, products=products, retailer=self.retailer())
 
@@ -250,6 +270,91 @@ class _ProductContext:
             sections["Available Variants"] = summary
         return sections
 
+    def _build_variant_details(self) -> list[dict]:
+        """Independent per-SKU records in the shared ``variant_details`` shape
+        (see app/schemas/product.py). Alibaba's own price is a quantity-order
+        -tier ladder for the WHOLE listing, not per SKU (confirmed live: a
+        different colour/spec swatch never changes the displayed price, and
+        no per-SKU price request was ever observed) - so every entry here
+        honestly reuses the listing's own shared price/MOQ instead of
+        inventing a per-SKU figure, while stock and the swatch image (when
+        the attribute is an image-type one) genuinely do vary per SKU and are
+        taken from data already on this same page (no extra request)."""
+        combos = self.variant_combinations
+        if not combos:
+            return []
+        terms = parsing.wholesale_terms(self.ex, self.card_moq) or {}
+        pmin = self.price.get("price_min")
+        shared_commercial = {
+            "price": {"amount": pmin, "currency": self.currency} if pmin is not None else None,
+            "price_unit": self.price.get("price_unit"),
+            "price_tiers": terms.get("price_tiers") or [],
+            "moq": terms.get("moq"),
+            "price_shared_across_skus": True,
+            "note": ("Alibaba prices by order-quantity tier for the WHOLE listing, not per SKU; "
+                     "confirmed live that selecting a different colour/spec swatch does not change "
+                     "the displayed price or MOQ, so every SKU below reuses the listing's own "
+                     "price/MOQ rather than a fabricated per-SKU figure."),
+        }
+        out = []
+        for combo in combos:
+            sku_id = combo["platform_variant_id"]
+            attrs = combo["attributes"]
+            out.append({
+                "variant_id": make_variant_id(self.offer_id, sku_id),
+                "parent_product_id": self.offer_id,
+                "platform_variant_id": sku_id,
+                "variant_name": ", ".join(f"{k}: {v}" for k, v in attrs.items()),
+                "attributes": attrs,
+                "product_url": self.product_url,  # same listing - an Alibaba SKU is not its own page
+                "images": [combo["image"]] if combo.get("image") else [],
+                "availability": parsing.sku_availability(combo.get("stock_quantity")),
+                "commercial": shared_commercial,
+                "metrics": {},  # Alibaba exposes no per-SKU rating/review aggregate
+                "variant_extraction": {
+                    "status": "completed", "source": "platform",
+                    "note": "from the product page's own SKU attribute + inventory data; no extra request",
+                },
+            })
+        return out
+
+    def _review_variant_fields(self, variant_text) -> dict:
+        """variant_id / platform_variant_id / variant_attributes /
+        variant_mapping for one review, matched against this listing's own
+        SKU combinations. Alibaba reviews carry at most a raw SKU/model code
+        (never a labelled "Colour: Red" line the way Amazon's "bought" text
+        does), so a match is only made when that code is EXACTLY one of this
+        listing's own SKU ids, or when it parses as this listing's own
+        attribute-name: value pairs. Never guessed otherwise - a review with
+        no matchable signal is honestly parent_level."""
+        empty = {"variant_id": None, "platform_variant_id": None, "variant_attributes": None,
+                 "variant_mapping": {"status": "parent_level", "method": None, "confidence": None}}
+        combinations = self._variant_details
+        if is_blank(variant_text) or not combinations:
+            return empty
+        text = str(variant_text).strip()
+        by_id = {c["platform_variant_id"]: c for c in combinations}
+        if text in by_id:
+            c = by_id[text]
+            return {
+                "variant_id": c.get("variant_id"), "platform_variant_id": c.get("platform_variant_id"),
+                "variant_attributes": c.get("attributes"),
+                "variant_mapping": {"status": "verified", "method": "source_sku_id", "confidence": 1.0},
+            }
+        parsed_attrs = parsing.parse_listing_variant_text(text, list(self.variants.keys()))
+        if not parsed_attrs:
+            return empty
+        match, confidence = best_variant_match(parsed_attrs, combinations)
+        if match is None:
+            return {"variant_id": None, "platform_variant_id": None, "variant_attributes": parsed_attrs,
+                    "variant_mapping": {"status": "unknown", "method": "source_metadata", "confidence": 0.0}}
+        return {
+            "variant_id": match.get("variant_id"), "platform_variant_id": match.get("platform_variant_id"),
+            "variant_attributes": match.get("attributes"),
+            "variant_mapping": {"status": "verified" if confidence >= 0.999 else "inferred",
+                                "method": "source_metadata", "confidence": confidence},
+        }
+
     def product_attributes(self) -> ProductAttributesBlock:
         ex = self.ex
         return ProductAttributesBlock(
@@ -261,6 +366,7 @@ class _ProductContext:
             variants=self.variants,
             manufacturer=self.manufacturer,
             specifications=self.specifications(),
+            variant_details=self._variant_details,
             # Alibaba-only attributes, read from the product's own attributes.
             material=_value(ex.get("material")),
             weight=_value(ex.get("weight")),
@@ -288,6 +394,19 @@ class _ProductContext:
             disc_amt = round(original - pmin, 2)
             if disc_pct is None:
                 disc_pct = round(disc_amt / original * 100, 2)
+
+        # Alibaba is B2B/wholesale: no bank offers, no exchange/trade-in offers
+        # exist on the platform, so those two stay None always (never guessed).
+        # A genuine seller coupon (banner text, e.g. "₹9,464.85 off ₹1,89,297")
+        # is the only real discount concept here; only parsed into a number
+        # when the banner text itself carries one.
+        coupon_amount = (
+            parse_offer_amount((self.coupon or {}).get("text"), base_price=pmin)
+            if self.coupon and self.promotion.get("coupon_available") else None
+        )
+        ep = effective_prices(pmin, self.currency, bank_offer_amount=None,
+                              coupon_amount=coupon_amount, exchange_amount=None)
+
         return CommercialBlock(
             price=PriceBlock(
                 listed_price=_money(original if original is not None else pmin, self.currency),
@@ -302,6 +421,14 @@ class _ProductContext:
                 price_source=p.get("price_source"),
                 usd_price_min=p.get("usd_min"),
                 usd_price_max=p.get("usd_max"),
+                bank_offer_adjusted_price=MoneyAmount(**ep["bank_offer_adjusted_price"])
+                if ep["bank_offer_adjusted_price"] else None,
+                coupon_adjusted_price=MoneyAmount(**ep["coupon_adjusted_price"])
+                if ep["coupon_adjusted_price"] else None,
+                exchange_adjusted_price=MoneyAmount(**ep["exchange_adjusted_price"])
+                if ep["exchange_adjusted_price"] else None,
+                final_effective_price=MoneyAmount(**ep["final_effective_price"])
+                if ep["final_effective_price"] else None,
             ),
             price_range=PriceRangeBlock(
                 minimum=pmin, maximum=pmax if pmax is not None else pmin,
@@ -310,7 +437,7 @@ class _ProductContext:
             promotion=PromotionBlock(**self.promotion),
             payment_options=PaymentOptionsBlock(),
             availability=AvailabilityBlock(**self.availability),
-            delivery=DeliveryBlock(),
+            delivery=DeliveryBlock(**(self.delivery or {})),
             warranty=self.warranty,
             offers_detail=parsing.wholesale_terms(self.ex, self.card_moq),
         )
@@ -387,6 +514,7 @@ class _ProductContext:
         }
         entry["language"] = detect_language(text)
         entry["reviewer_id_hash"] = sha_hash(reviewer) if reviewer else None
+        entry.update(self._review_variant_fields(entry["variant"]))
         return entry
 
     def reviews(self, request: ScrapeJobRequest, pq: dict, sq: dict) -> list[dict]:
@@ -510,6 +638,8 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         total_reviews = (ctx.model.get("review_summary") or {}).get("total_reviews")
     # Same body as Amazon: description, else the highlights, else the title.
     body = ctx.description or (" | ".join(ctx.highlights) if ctx.highlights else None) or ctx.subject
+    attrs = ctx.product_attributes()
+    spec_conflicts = detect_spec_conflicts(ctx.subject, attrs.specifications)
 
     return SocialMentionRecord(
         _id=record_id,
@@ -538,7 +668,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         ),
         entities=ctx.entities(),
         taxonomy=ctx.taxonomy(request),
-        product_attributes=ctx.product_attributes(),
+        product_attributes=attrs,
         commercial=ctx.commercial(),
         metrics=MetricsBlock(
             rating=RatingMetric(value=ctx.product_rating) if ctx.product_rating is not None else None,
@@ -553,7 +683,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         campaign=empty_campaign(),
         deduplication=DeduplicationBlock(content_hash=content_hash, canonical_record_id=record_id),
         provenance=_provenance(run_id),
-        quality=QualityBlock(),
+        quality=QualityBlock(validation_errors=spec_conflicts) if spec_conflicts else QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
         review_summary=ctx.review_summary(reviews, pq, sq, request),
         reviews=reviews,
