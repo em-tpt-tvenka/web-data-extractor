@@ -35,10 +35,11 @@ MFG_LABELS = [
     ("customer_care", r"customer\s+care(?:\s+details)?"),
 ]
 MFG_SPEC_KEYS = {
-    "manufactured_by": ["Manufacturer", "Manufactured By", "Manufacturer Name", "Manufacturer Details"],
-    "marketed_by": ["Marketed By", "Marketer"],
-    "packed_by": ["Packed By", "Packer", "Packer Details"],
-    "imported_by": ["Imported By", "Importer", "Importer Details"],
+    "manufactured_by": ["Manufacturer", "Manufactured By", "Manufacturer Name", "Manufacturer Details",
+                        "Name and Address of the Manufacturer"],
+    "marketed_by": ["Marketed By", "Marketer", "Name and Address of the Marketer"],
+    "packed_by": ["Packed By", "Packer", "Packer Details", "Name and Address of the Packer"],
+    "imported_by": ["Imported By", "Importer", "Importer Details", "Name and Address of the Importer"],
     "country_of_origin": ["Country of Origin"],
     "generic_name": ["Generic Name"],
     "net_quantity": ["Net Quantity"],
@@ -205,11 +206,24 @@ SPEC_ROW_KEYS_NOT_HEADERS = {
     "other display features", "other details", "smart phone", "smartphone"
 }
 
+# Flipkart shows the legal/manufacturer-info block (generic name, country of
+# origin, manufacturer/packer/importer name & address, ...) under its own
+# collapsible tab; engine._expand_sections clicks this exact label ("Manufacturer
+# Info"/"Manufacturer Details", or "Manufacturing, Packaging and Import Info" on
+# some categories) to reveal it. It is a label-only sub-header introducing that
+# mini-table, never a key with a value of its own, so it must be recognized as a
+# header here too -- otherwise it gets consumed as the first row's KEY, shifting
+# every key/value pair in the block by one (e.g. "Generic Name" becomes the
+# value of a bogus "Manufacturer Info" row instead of the key for "Mobiles").
+SPEC_LEGAL_SUBHEADER_RE = re.compile(
+    r"^manufactur(?:er\s+(?:info|details)|ing,?\s*packaging\s*(?:and|&)\s*import\s+info)$", re.I)
+
+
 def is_spec_header(line: str) -> bool:
     l = line.strip().lower()
     if l in SPEC_ROW_KEYS_NOT_HEADERS:
         return False
-    if l in SPEC_HEADERS:
+    if l in SPEC_HEADERS or SPEC_LEGAL_SUBHEADER_RE.match(l):
         return True
     return bool(re.fullmatch(r"(?:general|display|camera|processor|os & processor|memory & storage|connectivity|call|multimedia|battery & power|audio|video|dimensions|warranty|additional)\s+(?:features|details|specifications)", l))
 
@@ -408,6 +422,16 @@ def parse_reviews(text: str) -> list:
             "posted_date": posted_date,
             "posted_relative": posted_rel,
             "helpful_count": helpful,
+            # The second number near "Helpful" is the thumbs-down ("Not
+            # helpful") count Flipkart shows right next to it - previously
+            # parsed here and then silently dropped before reaching the
+            # output; now kept.
+            "not_helpful_count": second,
+            # Raw "Review for: <label> <value> • ..." text, when the card has
+            # one (certified-buyer reviews only) - additive; parsed into a
+            # proper attribute dict by parse_review_variant_text() below for
+            # review-to-variant matching (see flipkart/mapper.py).
+            "variant_text": variant_raw,
         })
     return reviews
 
@@ -746,3 +770,153 @@ def attach_review_media(reviews: list, cards: list) -> tuple:
             r["videos"] = list(dict.fromkeys((r.get("videos") or []) + vids))
             vids_added += len(vids)
     return imgs_added, vids_added, matched
+
+
+# ── independent per-variant scraping: combinations + review variant text ────
+#
+# Flipkart does not embed a single per-SKU attribute table the way Amazon's
+# twister JSON does. The real, verifiable sources it gives us instead are:
+#   1. the on-page swatches engine.py already discovers (JS_VARIANTS /
+#      `data["variants"]`): each option is a real link to another Flipkart
+#      product id/URL, but only for the ONE dimension that swatch belongs to
+#      (e.g. a storage/RAM swatch does not also tell us the colour of that
+#      SKU). Confirmed live on a Samsung Galaxy A36 5G listing: colour is NOT
+#      swatch-linked at all on that product's page (every colour is a fully
+#      separate, un-linked search result) - only a combined "Variant" swatch
+#      ("128 GB + 8 GB" / "256 GB + 8 GB") is. This is a genuine platform
+#      limitation, not a bug: combinations built from swatches alone only
+#      ever carry the dimension(s) actually swatch-linked on that page.
+#   2. each variant's OWN specification table, once its own page is visited
+#      (engine._scrape_variant_details) - "General | Color", "Memory &
+#      Storage Features | RAM", "... | Internal Storage" etc. are read
+#      directly off that SKU's own page, which is strictly more reliable
+#      than inferring attributes from swatch option text.
+# Both are merged (never fabricated) into one canonical attribute vocabulary
+# so they line up with each other and with review "Review for" text.
+
+_LABEL_CANON = {
+    "color": "Colour", "colour": "Colour",
+    "storage": "Storage", "internal storage": "Storage", "rom": "Storage",
+    "ram": "RAM",
+    "size": "Size",
+    "variant": "Variant",
+    "pack of": "Pack Of",
+    "capacity": "Capacity",
+    "model": "Model", "model number": "Model", "model name": "Model",
+}
+
+# Swatch option text trails price/discount noise (e.g. "128 GB + 4 GB  ↓22%
+# 22,999 ₹17,999"); mapper.py applies the same cleanup to the `variants`
+# field's own option labels. Duplicated here (not imported from mapper, which
+# imports this module) so extract_variant_combinations() can clean option
+# text without a circular import.
+_VARIANT_OPTION_CUT = re.compile(r"↓|\d[\d,]*\s*₹|₹\s*\d")
+
+
+def clean_variant_option(text):
+    if not isinstance(text, str) or not text:
+        return text
+    m = _VARIANT_OPTION_CUT.search(text)
+    if m:
+        text = text[:m.start()]
+    return re.sub(r"\s+", " ", text).strip()
+
+
+_SPEC_ATTR_NAMES = {
+    "Colour": ("Color", "Colour"),
+    "RAM": ("RAM",),
+    "Storage": ("Internal Storage", "Storage", "ROM"),
+    "Model": ("Model Number", "Model Name", "Model"),
+    "Size": ("Size",),
+    "Capacity": ("Capacity",),
+}
+
+
+def attributes_from_specs(flat: dict) -> dict[str, str]:
+    """Real variant-defining attributes (Colour/RAM/Storage/Model/...) read
+    directly off a product page's OWN specification table (confirmed live:
+    "General | Color" = "Awesome Lavender", "Memory & Storage Features | RAM"
+    = "8 GB", "... | Internal Storage" = "256 GB") - the most reliable source
+    for a SKU's full attribute set, since it comes straight from that SKU's
+    own page rather than being inferred from a swatch label. Canonical label
+    names line this up with extract_variant_combinations() and
+    parse_review_variant_text() below. Never guessed: a dimension whose spec
+    row is absent is simply left out."""
+    out: dict[str, str] = {}
+    for canon, names in _SPEC_ATTR_NAMES.items():
+        v = find_spec(flat, *names)
+        if v:
+            out[canon] = clean(v)
+    return out
+
+
+def extract_variant_combinations(variants: dict) -> list[dict]:
+    """Per-product-id variant combinations from Flipkart's own on-page swatch
+    discovery (``variants``: ``{label: [{option, url, product_id}, ...]}``,
+    already extracted by the engine's JS_VARIANTS from the page's own
+    colour/storage/RAM/... swatches - each swatch links to its own real
+    Flipkart product page/pid). Unlike the ``variants`` field kept for
+    backward compatibility (one representative option list per dimension,
+    with noisy option text), this groups by platform product id so every
+    distinct SKU is visited once, carrying whatever attribute(s) its OWN
+    swatch(es) actually reveal (see module docstring above for why that may
+    be a partial combination - never fabricated, never guessed)."""
+    out: list[dict] = []
+    if not isinstance(variants, dict) or not variants:
+        return out
+    by_pid: dict[str, dict] = {}
+    for label, opts in variants.items():
+        if not isinstance(opts, list):
+            continue
+        canon_label = _LABEL_CANON.get(str(label).strip().lower(), str(label).strip())
+        for o in opts:
+            if not isinstance(o, dict):
+                continue
+            pid = o.get("product_id")
+            option = clean_variant_option(o.get("option"))
+            url = o.get("url")
+            if not pid or not option or not url:
+                continue
+            entry = by_pid.setdefault(pid, {"platform_variant_id": pid, "product_url": url, "attributes": {}})
+            entry["attributes"].setdefault(canon_label, option)
+    return [c for c in by_pid.values() if c["attributes"]]
+
+
+# Flipkart draws its own on-page swatch dimensions from a small, documented
+# set of labels (see JS_VARIANTS); the review "Review for:" line uses the same
+# vocabulary. Matching against that known vocabulary (rather than "the first
+# word before the first space") is required because a real label can be more
+# than one word ("Pack of") - confirmed live the single-word case ("Color",
+# "RAM", "Storage") parses correctly either way, but a generic first-space
+# split would mis-split any multi-word label if one is ever seen.
+_KNOWN_VARIANT_LABELS = sorted(set(_LABEL_CANON), key=len, reverse=True)
+_VARIANT_PART_RE = re.compile(
+    r"(?i)^(" + "|".join(re.escape(w) for w in _KNOWN_VARIANT_LABELS) + r")\s+(.+)$"
+)
+_VARIANT_BULLET_RE = re.compile(r"\s*[•·]\s*")
+
+
+def parse_review_variant_text(text: str | None) -> dict[str, str]:
+    """Flipkart's own per-review "Review for: <label> <value> • <label>
+    <value> ..." text (certified-buyer reviews only), confirmed live on a
+    Samsung Galaxy A36 5G listing, e.g. "Review for: Color Dark Blue • RAM
+    8 GB • Storage 128 GB". Dimensions are bullet-separated (• or ·); each
+    part is matched against the known label vocabulary (_KNOWN_VARIANT_LABELS)
+    rather than split on the first space, so a real multi-word label is never
+    mis-split. Returns {} when the text is empty or no known label is
+    recognized in any part - never guessed from free text."""
+    if not text:
+        return {}
+    out: dict[str, str] = {}
+    for part in _VARIANT_BULLET_RE.split(text):
+        part = part.strip()
+        if not part:
+            continue
+        m = _VARIANT_PART_RE.match(part)
+        if not m:
+            continue
+        label = _LABEL_CANON.get(m.group(1).strip().lower())
+        value = clean(m.group(2))
+        if label and value:
+            out[label] = value
+    return out

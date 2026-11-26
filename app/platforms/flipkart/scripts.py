@@ -12,7 +12,18 @@ JS_SEARCH_RESULTS = r"""
     const key = pidm ? pidm[1] : m[1];
     if (seen.has(key)) return;
     seen.add(key);
-    const title = (a.getAttribute('title') || a.innerText || '').trim().split('\n')[0];
+    // The card anchor's own first text line is UI chrome ("Bestseller" / "Add
+    // to Compare" checkbox label), not the product title -- the title lives on
+    // the product image's alt text. Fall back to the first innerText line that
+    // isn't one of those known badge/action labels if the image has none.
+    const imgAlt = (a.querySelector('img[alt]') || {}).getAttribute
+      ? a.querySelector('img[alt]').getAttribute('alt') : null;
+    const badgeRe = /^(bestseller|add to compare|sponsored|ad|assured)$/i;
+    let title = (imgAlt || '').trim();
+    if (!title) {
+      const lines = (a.getAttribute('title') || a.innerText || '').split('\n').map(t => t.trim()).filter(Boolean);
+      title = lines.find(t => !badgeRe.test(t)) || lines[0] || '';
+    }
     const sponsored = /\bsponsored\b|\bad\b/i.test(
       (a.closest('div') ? a.closest('div').innerText : '').slice(0, 200));
     out.push({url: href, product_id: pidm ? pidm[1] : null, item_id: m[1], title, is_sponsored: sponsored});
@@ -40,16 +51,37 @@ JS_PRICES = r"""
     return false;
   };
   const all = [...document.querySelectorAll('div,span,del,s,p')].filter(e => top(e) < 1800);
-  let best = 0;
+  // The buy-box's own price text is reliably rendered in the largest font on
+  // the page; a variant-swatch chip or an unrelated "Similar Products"/
+  // recommendation carousel card showing some OTHER product's (or some OTHER
+  // configuration's) price is always set in a visibly smaller font. Picking
+  // the max-font-size candidate - for both the live price and the
+  // struck-through original price - keeps the scan from latching onto
+  // whichever matching element merely happens to come first in document
+  // order, which previously let a smaller-font, unrelated element contaminate
+  // the result (seen live: an unrelated Samsung flagship's struck price, or a
+  // different storage variant's own struck price, both elsewhere on the same
+  // page and both in a smaller font than the real MRP).
+  let bestSelling = 0, bestMrp = 0;
   for (const e of all.filter(e => e.children.length === 0)) {
     const t = e.textContent.trim();
+    const isStruck = struck(e);
+    let bare = null;
     if (/^₹\s?[\d,]{3,}$/.test(t)) {
-      if (struck(e)) { if (!out.mrp) out.mrp = t; }
-      else {
-        const fs = parseFloat(getComputedStyle(e).fontSize);
-        if (fs > best) { best = fs; out.selling = t; }
-      }
+      bare = t.replace(/^₹\s?/, '');
+    } else if (isStruck && /^[\d,]{3,}$/.test(t)) {
+      // The struck-through original-price text can be rendered as a bare
+      // number with the ₹ glyph in its own separate sibling node (seen on
+      // Flipkart's current buy-box markup), so it never matches the
+      // ₹-prefixed pattern above. Only accepted when genuinely struck -
+      // never for a bare number alone.
+      bare = t;
     }
+    if (bare === null) continue;
+    const fs = parseFloat(getComputedStyle(e).fontSize);
+    if (isStruck) {
+      if (fs > bestMrp) { bestMrp = fs; out.mrp = "₹" + bare; }
+    } else if (fs > bestSelling) { bestSelling = fs; out.selling = "₹" + bare; }
   }
   for (const e of all) {
     const t = (e.innerText || '').trim();
@@ -139,7 +171,7 @@ JS_HIGHLIGHTS = """
 }
 """
 
-JS_SPECS_TABLES = """
+JS_SPECS_TABLES = r"""
 () => {
   const specs = {};
 
@@ -152,7 +184,7 @@ JS_SPECS_TABLES = """
     let title = 'General';
     const p = t.previousElementSibling || (t.parentElement && t.parentElement.previousElementSibling);
     if (p && p.innerText) {
-      const line = p.innerText.trim().split('\\n')[0].trim();
+      const line = p.innerText.trim().split('\n')[0].trim();
       if (line && line.length < 50) title = line;
     }
     for (const r of rows) {
@@ -166,10 +198,11 @@ JS_SPECS_TABLES = """
     }
   });
 
-  const totalTableRows = Object.values(specs).reduce((sum, sec) => sum + Object.keys(sec).length, 0);
-  if (totalTableRows >= 2) return specs;
+  const totalRows = () => Object.values(specs).reduce((sum, sec) => sum + Object.keys(sec).length, 0);
+  if (totalRows() >= 2) return specs;
 
-  // 2. Check for modern Flipkart div-based specification rows
+  // 2. Check for modern Flipkart div-based specification rows (guessed,
+  // obfuscated class-name fragments from an older Flipkart template).
   const heads = [...document.querySelectorAll('div,span,h2,h3,p')]
       .filter(e => /^(Specifications|Product Details|Specifications & Features|Product Information)$/i.test(e.innerText.trim()));
 
@@ -193,9 +226,116 @@ JS_SPECS_TABLES = """
             }
           }
         }
-        const totalDivRows = Object.values(specs).reduce((sum, sec) => sum + Object.keys(sec).length, 0);
-        if (totalDivRows >= 2) return specs;
+        if (totalRows() >= 2) return specs;
       }
+    }
+  }
+
+  if (totalRows() >= 2) return specs;
+
+  // 3. Class-name-independent structural detection. Flipkart's obfuscated
+  // CSS classes churn across deployments/A-B templates (confirmed live, Nov
+  // 2026: paths 1 and 2 above both find nothing on a real, currently-served
+  // product page that nonetheless has full specs on-screen), so this path
+  // never matches on a class name. It instead recognizes a section purely
+  // by (a) a known, extensible section-header vocabulary and (b) the
+  // structural shape of a label/value row: a container whose immediate
+  // children are each either a row directly, or a single-child wrapper
+  // around one - where a "row" is an element with 2 (or 3, the 3rd being an
+  // empty spacer) children, the first two of which are leaf elements (no
+  // children of their own) carrying short label text and value text
+  // respectively. Confirmed live on Flipkart's current template: a
+  // top-level container holds one such title+content pair per section
+  // ("General", "Display Features", "Camera Features", "Battery & Power
+  // Features", "Connectivity Features", "Dimensions", "Memory & Storage
+  // Features", "Multimedia Features", "OS & Processor Features", "Call
+  // Features", ...), and each content div's children are single-row
+  // wrappers. A legal/manufacturer-info block that Flipkart instead renders
+  // in a separate modal dialog (opened by engine._expand_sections clicking
+  // "Manufacturer Info") is NOT reachable this way - it has no adjacent
+  // content sibling to walk into - so it is deliberately left to the
+  // existing text-based extraction (JS_SPECS_TEXT), which the engine merges
+  // in alongside this result.
+  const KNOWN_HEADERS = new Set([
+    'general', 'dimensions', 'warranty', 'connectivity', 'display', 'camera', 'battery',
+    'processor', 'multimedia', 'sound', 'other', 'performance', 'design', 'platform',
+    'storage', 'ports', 'software', 'sensors', 'audio', 'video', 'product details',
+    'key features', 'additional features', 'manufacturer info', 'manufacturer details',
+    'network & connectivity', 'memory & storage', 'os & processor',
+  ]);
+  const HEADER_SUFFIX_RE = new RegExp(
+    '^(general|display|camera|processor|os\\s*&\\s*processor|memory\\s*&\\s*storage|' +
+    'connectivity|call|multimedia|battery\\s*&\\s*power|audio|video|dimensions|warranty|' +
+    'additional|network|operating\\s*system)\\s+(features|details|specifications)$', 'i');
+
+  function isHeaderText(t) {
+    const s = (t || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!s || s.length > 60) return false;
+    if (KNOWN_HEADERS.has(s)) return true;
+    return HEADER_SUFFIX_RE.test(s);
+  }
+
+  function isLeaf(el) {
+    return !!el && el.nodeType === 1 && el.children.length === 0;
+  }
+
+  function findRow(el) {
+    if (!el || el.nodeType !== 1) return null;
+    const kids = [...el.children];
+    if (kids.length < 2 || kids.length > 3) return null;
+    const c0 = kids[0], c1 = kids[1];
+    if (!isLeaf(c0) || !isLeaf(c1)) return null;
+    const label = (c0.innerText || '').trim();
+    const value = (c1.innerText || '').trim();
+    if (!label || !value) return null;
+    if (label.length < 2 || label.length > 80) return null;
+    if (value.length > 400) return null;
+    if (label.toLowerCase() === value.toLowerCase()) return null;
+    if (kids.length === 3) {
+      const c2 = kids[2];
+      if (!isLeaf(c2)) return null;
+      if ((c2.innerText || '').trim()) return null;
+    }
+    return { label, value };
+  }
+
+  function rowFrom(node) {
+    if (!node || node.nodeType !== 1) return null;
+    let r = findRow(node);
+    if (r) return r;
+    if (node.children.length === 1) {
+      r = findRow(node.children[0]);
+      if (r) return r;
+    }
+    return null;
+  }
+
+  const headerLeaves = [...document.querySelectorAll('div,span,h2,h3,h4,li')]
+      .filter(e => e.children.length === 0 && isHeaderText(e.innerText));
+
+  for (const h of headerLeaves) {
+    const title = h.innerText.trim().replace(/\s+/g, ' ');
+    const parent = h.parentElement;
+    if (!parent) continue;
+    const siblings = [...parent.children];
+    const hIdx = siblings.indexOf(h);
+    if (hIdx === -1) continue;
+    // The content container is the (first) sibling right after the header
+    // within the same parent - true for every section confirmed live.
+    let content = null;
+    for (let i = hIdx + 1; i < siblings.length; i++) {
+      if (siblings[i].children.length > 0) { content = siblings[i]; break; }
+    }
+    if (!content) continue;
+    const rows = [];
+    for (const child of content.children) {
+      const r = rowFrom(child);
+      if (r) rows.push(r);
+    }
+    if (!rows.length) continue;
+    for (const { label, value } of rows) {
+      if (!specs[title]) specs[title] = {};
+      if (!(label in specs[title])) specs[title][label] = value;
     }
   }
 

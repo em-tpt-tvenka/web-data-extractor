@@ -8,6 +8,14 @@ from app.core import identifiers
 from app.core.logging import get_logger
 from app.core.periods import in_window, resolve_window
 from app.platforms.categories import RECORD_TYPE_LISTING, RECORD_TYPE_MENTION
+from app.platforms.common import (
+    best_offer_amount,
+    best_variant_match,
+    canonical_ids,
+    detect_spec_conflicts,
+    effective_prices,
+    parse_offer_amount,
+)
 from app.platforms.flipkart import parsing
 from app.processing.language import detect_language
 from app.schemas.record import (
@@ -116,6 +124,43 @@ def _clean_variants(variants):
     return cleaned
 
 
+def _variant_mapping_fields(variant_text: str | None, combinations: list[dict]) -> dict:
+    """variant_id / platform_variant_id / variant_name / variant_attributes /
+    variant_mapping for one review, from Flipkart's own real "Review for:
+    Color Dark Blue • RAM 8 GB • Storage 128 GB" text (certified-buyer
+    reviews only - confirmed live), matched against this product's known
+    variant combinations (parent included). Never guesses: a review with no
+    "Review for" text at all is parent_level (the genuine, honest fallback
+    when Flipkart's own source gives no per-review variant evidence); one
+    whose text can't be confidently matched to exactly one known combination
+    is unknown rather than assigned at random."""
+    parsed_attrs = parsing.parse_review_variant_text(variant_text)
+    if not parsed_attrs:
+        return {
+            "variant_id": None, "platform_variant_id": None, "variant_name": None,
+            "variant_attributes": None,
+            "variant_mapping": {"status": "parent_level", "method": None, "confidence": None},
+        }
+    match, confidence = best_variant_match(parsed_attrs, combinations)
+    if match is None:
+        return {
+            "variant_id": None, "platform_variant_id": None, "variant_name": variant_text,
+            "variant_attributes": parsed_attrs,
+            "variant_mapping": {"status": "unknown", "method": "source_metadata", "confidence": 0.0},
+        }
+    return {
+        "variant_id": match.get("variant_id"),
+        "platform_variant_id": match.get("platform_variant_id"),
+        "variant_name": match.get("variant_name"),
+        "variant_attributes": match.get("attributes"),
+        "variant_mapping": {
+            "status": "verified" if confidence >= 0.999 else "inferred",
+            "method": "source_metadata",
+            "confidence": confidence,
+        },
+    }
+
+
 class _ProductContext:
     def __init__(self, model: dict, request: ScrapeJobRequest):
         self.model = model
@@ -136,10 +181,21 @@ class _ProductContext:
         self.delivery = model.get("delivery", {}) or {}
         self.breadcrumbs = model.get("breadcrumbs") or []
 
-        # Robust extraction for model_number, color, capacity
-        model_num = parsing.find_spec(self.flat, "Model Number", "Model Name", "Model", "Shade Name", "Shade Number", "Shade")
+        # Robust extraction for model_number, color, capacity.
+        # "Model Name" (e.g. "Galaxy S26 5G") is a DIFFERENT field from "Model
+        # Number" (e.g. "SM-S942B") - Flipkart shows both as separate spec
+        # rows, so it must never be used as a model_number fallback (that
+        # conflation was a confirmed bug: a real product's "Model Name" value
+        # was coming out as its model_number). "Shade"/"Shade Name"/"Shade
+        # Number" remain as genuine model-number equivalents for cosmetics.
+        model_num = parsing.find_spec(self.flat, "Model Number", "Model No", "Model No.",
+                                      "Shade Name", "Shade Number", "Shade")
         if not model_num and self.subject:
-            m = re.search(r"\b(Galaxy\s+[A-Za-z0-9]+|[A-Za-z0-9]+-[A-Za-z0-9]+)\b", self.subject, re.I)
+            # Only a genuine alphanumeric code pattern (brand-prefix-dash-code,
+            # e.g. "SM-S942B") is a plausible model number guessed from the
+            # title; a bare "Galaxy S26"-style word is the model NAME, not a
+            # number, and must not be guessed as one.
+            m = re.search(r"\b([A-Za-z]{1,6}-[A-Za-z0-9]{3,})\b", self.subject)
             if m:
                 model_num = m.group(1).strip()
             else:
@@ -147,6 +203,7 @@ class _ProductContext:
                 if m2:
                     model_num = m2.group(1).strip()
         self.model_number = model_num
+        self.model_name = parsing.find_spec(self.flat, "Model Name")
 
         color = parsing.find_spec(self.flat, "Color", "Colour", "Shade", "Shade Name")
         if not color and self.subject:
@@ -179,9 +236,12 @@ class _ProductContext:
 
     def entities(self) -> EntitiesBlock:
         brands = [BrandEntity(brand_name=self.brand)] if self.brand else []
+        canonical_product_id, variant_key = canonical_ids(
+            self.brand, self.subject, self.capacity, self.color)
         products = [ProductEntity(
             product_id=self.product_id, product_name=self.subject,
             sku=self.sku, model_number=self.model_number, product_url=self.product_url,
+            canonical_product_id=canonical_product_id, variant_key=variant_key,
         )]
         return EntitiesBlock(
             brands=brands, products=products,
@@ -224,6 +284,7 @@ class _ProductContext:
 
         return ProductAttributesBlock(
             model_number=self.model_number,
+            model_name=self.model_name,
             capacity=Capacity(**self.capacity) if self.capacity else None,
             color=self.color,
             energy_rating=self.energy_rating,
@@ -231,6 +292,7 @@ class _ProductContext:
             variants=self.variants,
             manufacturer=self.manufacturer,
             specifications=specs,
+            variant_details=self.model.get("variant_details") or [],
         )
 
     def commercial(self) -> CommercialBlock:
@@ -262,6 +324,17 @@ class _ProductContext:
         if min_p is not None and max_p is not None and min_p > max_p:
             min_p, max_p = max_p, min_p
 
+        # Distinct per-offer-type effective prices - only computed from a real
+        # numeric amount we can parse, never estimated from a bare boolean.
+        bank_offer_amount = best_offer_amount(offers.get("bank_offers"), base_price=final_selling)
+        exchange_amount = parse_offer_amount(offers.get("exchange_offer"), base_price=final_selling)
+        coupon_amount = (
+            best_offer_amount(offers.get("additional_benefits"), base_price=final_selling)
+            if offers.get("coupon_mentioned") else None
+        )
+        ep = effective_prices(final_selling, self.currency, bank_offer_amount=bank_offer_amount,
+                              coupon_amount=coupon_amount, exchange_amount=exchange_amount)
+
         return CommercialBlock(
             price=PriceBlock(
                 listed_price=_money(listed, self.currency),
@@ -274,6 +347,14 @@ class _ProductContext:
                 lowest_price_with_offers=_money(special, self.currency) if special else None,
                 offer_discount_amount=price.get("offer_discount_amount"),
                 extra_discount_amount=price.get("extra_discount_amount"),
+                bank_offer_adjusted_price=MoneyAmount(**ep["bank_offer_adjusted_price"])
+                if ep["bank_offer_adjusted_price"] else None,
+                coupon_adjusted_price=MoneyAmount(**ep["coupon_adjusted_price"])
+                if ep["coupon_adjusted_price"] else None,
+                exchange_adjusted_price=MoneyAmount(**ep["exchange_adjusted_price"])
+                if ep["exchange_adjusted_price"] else None,
+                final_effective_price=MoneyAmount(**ep["final_effective_price"])
+                if ep["final_effective_price"] else None,
             ),
             price_range=PriceRangeBlock(
                 minimum=min_p,
@@ -482,6 +563,9 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         summary["reviews_in_output"] = len(kept_reviews)
         summary["date_window"] = request.scraping_options.date_range.type.value
 
+    attrs = ctx.product_attributes()
+    spec_conflicts = detect_spec_conflicts(ctx.subject, attrs.specifications)
+
     return SocialMentionRecord(
         _id=record_id,
         record_type=RECORD_TYPE_LISTING,
@@ -508,7 +592,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         ),
         entities=ctx.entities(),
         taxonomy=ctx.taxonomy(request),
-        product_attributes=ctx.product_attributes(),
+        product_attributes=attrs,
         commercial=ctx.commercial(),
         metrics=MetricsBlock(
             rating=RatingMetric(value=rating) if rating is not None else None,
@@ -523,7 +607,7 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
         campaign=CampaignBlock(),
         deduplication=DeduplicationBlock(content_hash=content_hash, canonical_record_id=record_id),
         provenance=_provenance(run_id),
-        quality=QualityBlock(),
+        quality=QualityBlock(validation_errors=spec_conflicts) if spec_conflicts else QualityBlock(),
         lifecycle=LifecycleBlock(first_seen_at=ctx.scraped_at, last_seen_at=ctx.scraped_at),
         review_summary=summary or None,
         reviews=[
@@ -536,8 +620,11 @@ def _listing_record(ctx: _ProductContext, request: ScrapeJobRequest, run_id: str
                 "posted_date": r.get("posted_date"),
                 "posted_relative": r.get("posted_relative"),
                 "helpful_count": r.get("helpful_count"),
+                "not_helpful_count": r.get("not_helpful_count"),
                 "images": r.get("images") or [],
                 "videos": r.get("videos") or [],
+                "parent_product_id": ctx.product_id,
+                **_variant_mapping_fields(r.get("variant_text"), ctx.model.get("variant_details") or []),
             }
             for r in kept_reviews
         ],

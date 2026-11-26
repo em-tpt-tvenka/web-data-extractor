@@ -3,6 +3,7 @@ from __future__ import annotations
 from app.core.config import settings
 from app.core.logging import get_logger
 from app.core.periods import resolve_window
+from app.platforms import common
 from app.platforms.base import PlatformAdapter, ScrapeResult
 from app.platforms.flipkart import mapper
 from app.platforms.flipkart.engine import EngineConfig, FlipkartEngine
@@ -103,6 +104,12 @@ class FlipkartAdapter(PlatformAdapter):
             name = (model.get("product_name") or "").lower()
             if any(k.lower() in name for k in filters.exclude_keywords if k):
                 return False
+
+        product_name = model.get("product_name")
+        if not common.matches_requested_model(product_name, request.search):
+            return False  # a different model/generation than the one requested
+        if common.is_accessory_listing(product_name, request.search):
+            return False  # case/charger/screen-guard listing, not the product itself
         return True
 
     def _run_meta(self, request, options, models, kept, pages_processed) -> dict:

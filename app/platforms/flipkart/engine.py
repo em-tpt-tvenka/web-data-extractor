@@ -11,6 +11,7 @@ from urllib.parse import quote_plus
 from playwright.async_api import Page, async_playwright
 
 from app.core.logging import get_logger
+from app.platforms import common
 from app.platforms.browser import proxy_settings, random_user_agent
 from app.platforms.browser_launch import with_chrome_fallback
 from app.platforms.flipkart import parsing, scripts
@@ -67,6 +68,12 @@ class EngineConfig:
     review_window_start: date | None = None
     review_retries: int = 3           # retries of a page Flipkart redirected to /login
     review_retry_backoff: float = 4.0  # seconds, doubled per retry
+    # Flipkart has no existing per-run product concurrency knob to reuse here:
+    # products are already scraped strictly sequentially, one browser tab at a
+    # time (see run()). This only bounds how many of ONE product's OTHER real
+    # variants (independent per-variant scraping) are visited in parallel, in
+    # new tabs of the SAME browser context.
+    variant_detail_concurrency: int = 2
     headless: bool = False
     browser_channel: str = "chrome"
     chrome_profile_dir: str | None = None
@@ -131,10 +138,11 @@ class FlipkartEngine:
                     try:
                         data = await self._scrape_product(page, item)
                         if data:
+                            data["variant_details"] = await self._scrape_all_variant_details(ctx, data)
                             models.append(data)
-                            _log.info("event=product_done id=%s reviews=%d",
+                            _log.info("event=product_done id=%s reviews=%d variants=%d",
                                       data.get("product_id") or data.get("item_id"),
-                                      len(data.get("reviews", [])))
+                                      len(data.get("reviews", [])), len(data["variant_details"]))
                     except Exception as exc:
                         _log.error("event=product_failed url=%s error=%s",
                                    (item.get("url") or "")[:90], exc)
@@ -221,7 +229,13 @@ class FlipkartEngine:
                 pass
         return list(found.values())
 
-    async def _scrape_product(self, page: Page, item: dict) -> dict | None:
+    async def _scrape_product_page(self, page: Page, item: dict) -> dict | None:
+        """Everything the product page itself shows - identity, price,
+        ratings, offers, specs, media, swatch variants - WITHOUT reviews.
+        Used both for the main product (``_scrape_product`` below appends
+        reviews after this) and, unchanged, to independently visit another
+        real variant's own page (``_scrape_variant_details``), which
+        deliberately does not re-scrape reviews for every variant."""
         cfg = self.cfg
         url = item["url"]
         await page.goto(url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
@@ -284,6 +298,13 @@ class FlipkartEngine:
         data["images"] = imgs
         data["videos"] = vids
         data["variants"] = await self._ev(page, scripts.JS_VARIANTS, {}) or {}
+        return data
+
+    async def _scrape_product(self, page: Page, item: dict) -> dict | None:
+        cfg = self.cfg
+        data = await self._scrape_product_page(page, item)
+        if data is None:
+            return None
 
         data["review_summary"] = {}
         data["reviews"] = []
@@ -293,8 +314,124 @@ class FlipkartEngine:
                 data["review_summary"] = summary
                 data["reviews"] = reviews
             except Exception as exc:
-                _log.error("event=reviews_failed url=%s error=%s", url[:90], exc)
+                _log.error("event=reviews_failed url=%s error=%s", item["url"][:90], exc)
         return data
+
+    async def _scrape_variant_details(self, ctx, parent_product_id: str | None,
+                                      combinations: list[dict]) -> list[dict]:
+        """Independently visit each OTHER real variant's own Flipkart product
+        page (a new tab in the SAME browser context, never a new browser) and
+        reuse ``_scrape_product_page`` - the exact same price/specs/images/
+        availability extraction used for the parent product, zero new
+        extraction code - to get that variant's own data. Reviews are
+        deliberately NOT re-scraped per variant: Flipkart's own real per-review
+        variant signal ("Review for: ..."), when present, is matched back from
+        the reviews already collected once at the parent listing (see
+        mapper.py). Bounded by ``variant_detail_concurrency``; one variant's
+        failure is isolated (recorded as ``variant_extraction: {"status":
+        "failed", ...}``) and never fails the product or the other variants."""
+        others = [c for c in combinations if c.get("platform_variant_id") != parent_product_id]
+        if not others:
+            return []
+        sem = asyncio.Semaphore(max(1, self.cfg.variant_detail_concurrency))
+
+        async def _one(combo: dict) -> dict:
+            pid = combo["platform_variant_id"]
+            attrs = dict(combo["attributes"])
+            base = {
+                "variant_id": common.variant_id(parent_product_id, pid),
+                "parent_product_id": parent_product_id,
+                "platform_variant_id": pid,
+                "variant_name": ", ".join(f"{k}: {v}" for k, v in attrs.items()),
+                "attributes": attrs,
+                "product_url": combo["product_url"],
+            }
+            async with sem:
+                page = None
+                try:
+                    page = await ctx.new_page()
+                    parsed = await self._scrape_product_page(page, {"url": combo["product_url"],
+                                                                     "is_sponsored": False})
+                    if parsed is None:
+                        raise RuntimeError("blocked or not a product page")
+                    # The variant's own specification table is the most
+                    # reliable attribute source (real values read straight off
+                    # that SKU's own page) - merged in alongside whatever the
+                    # parent's swatch already told us; never overwritten with
+                    # a guess, only supplemented with real evidence.
+                    own_attrs = parsing.attributes_from_specs(parsed.get("specifications_flat") or {})
+                    merged = {**attrs, **own_attrs}
+                    base["attributes"] = merged
+                    base["variant_name"] = ", ".join(f"{k}: {v}" for k, v in merged.items())
+                    ratings = parsed.get("ratings") or {}
+                    base.update({
+                        "images": parsed.get("images", []),
+                        "videos": parsed.get("videos", []),
+                        "specifications": parsed.get("specifications", {}),
+                        "availability": {"status": parsing.availability_status(
+                            (parsed.get("price") or {}).get("availability"))},
+                        "commercial": {"price": parsed.get("price"), "offers": parsed.get("offers")},
+                        "metrics": {"rating": ratings.get("average_rating"),
+                                    "total_ratings": ratings.get("total_ratings"),
+                                    "total_reviews": ratings.get("total_reviews")},
+                        "variant_extraction": {"status": "completed", "source": "platform"},
+                    })
+                except Exception as exc:
+                    _log.warning("event=variant_detail_failed parent=%s pid=%s error=%s",
+                                 parent_product_id, pid, exc)
+                    base["variant_extraction"] = {"status": "failed", "source": "platform",
+                                                  "error": str(exc)[:200]}
+                finally:
+                    if page is not None:
+                        try:
+                            await page.close()
+                        except Exception:
+                            pass
+            return base
+
+        return list(await asyncio.gather(*[_one(c) for c in others]))
+
+    async def _scrape_all_variant_details(self, ctx, data: dict) -> list[dict]:
+        """Build this product's variant combinations from its own on-page
+        swatches, visit every OTHER one (data["product_id"]/"item_id" is
+        already fully scraped by the caller), and fold the parent's own
+        combination in using data already scraped above - no second visit to
+        its own page. Isolated from the rest of the product: any failure here
+        is logged and yields an empty variant_details list rather than
+        failing the whole product."""
+        parent_pid = data.get("product_id") or data.get("item_id")
+        try:
+            combos = parsing.extract_variant_combinations(data.get("variants") or {})
+            variant_details = await self._scrape_variant_details(ctx, parent_pid, combos)
+
+            own_combo = next((c for c in combos if c.get("platform_variant_id") == parent_pid), None)
+            parent_spec_attrs = parsing.attributes_from_specs(data.get("specifications_flat") or {})
+            parent_attrs = {**(own_combo or {}).get("attributes", {}), **parent_spec_attrs}
+            if parent_attrs:
+                ratings = data.get("ratings") or {}
+                variant_details.insert(0, {
+                    "variant_id": common.variant_id(parent_pid, parent_pid),
+                    "parent_product_id": parent_pid,
+                    "platform_variant_id": parent_pid,
+                    "variant_name": ", ".join(f"{k}: {v}" for k, v in parent_attrs.items()),
+                    "attributes": parent_attrs,
+                    "product_url": data["url"],
+                    "images": data.get("images", []),
+                    "videos": data.get("videos", []),
+                    "specifications": data.get("specifications", {}),
+                    "availability": {"status": parsing.availability_status(
+                        (data.get("price") or {}).get("availability"))},
+                    "commercial": {"price": data.get("price"), "offers": data.get("offers")},
+                    "metrics": {"rating": ratings.get("average_rating"),
+                                "total_ratings": ratings.get("total_ratings"),
+                                "total_reviews": ratings.get("total_reviews")},
+                    "variant_extraction": {"status": "completed", "source": "platform",
+                                           "note": "parent/default listing - already scraped above"},
+                })
+            return variant_details
+        except Exception as exc:
+            _log.warning("event=variant_details_failed url=%s error=%s", data.get("url"), exc)
+            return []
 
     def _build_price(self, pr: dict, text: str, offer: dict) -> dict:
         tp = parsing.price_from_text(text)
@@ -386,15 +523,29 @@ class FlipkartEngine:
 
     async def _build_specs(self, page: Page, text: str) -> dict:
         specs = await self._ev(page, scripts.JS_SPECS_TABLES, {}) or {}
-        source = "table"
-        if not specs:
-            block = await self._ev(page, scripts.JS_SPECS_TEXT, "") or ""
-            if not block:
-                block = parsing.section(
-                    text, r"^Specifications\s*$",
-                    [r"^Ratings & Reviews", r"^Questions and Answers", r"^Safe and Secure"])
-            specs = parsing.parse_spec_text(block)
-            source = "text"
+        source = "table" if specs else "text"
+        block = await self._ev(page, scripts.JS_SPECS_TEXT, "") or ""
+        if not block and not specs:
+            block = parsing.section(
+                text, r"^Specifications\s*$",
+                [r"^Ratings & Reviews", r"^Questions and Answers", r"^Safe and Secure"])
+        if block:
+            text_specs = parsing.parse_spec_text(block)
+            if not specs:
+                specs = text_specs
+            else:
+                # The structural (JS_SPECS_TABLES) result above never reaches
+                # a legal/manufacturer-info block Flipkart renders in a
+                # separate modal dialog (opened by _expand_sections clicking
+                # "Manufacturer Info") - confirmed live: that modal has no
+                # content sibling adjacent to its own header to walk into.
+                # The text-based extraction reliably captures it instead, so
+                # merge in any section the structural pass did not already
+                # find for itself - supplementing, never overwriting a
+                # section the structural pass already populated.
+                for name, rows in text_specs.items():
+                    if name not in specs:
+                        specs[name] = rows
         return {
             "specifications": specs,
             "specifications_flat": parsing.flatten_specs(specs),
