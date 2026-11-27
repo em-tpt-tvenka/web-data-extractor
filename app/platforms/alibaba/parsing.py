@@ -647,12 +647,37 @@ def resolve_price(price_range_raw, ex: dict | None) -> dict:
     Alibaba's own US-dollar figures (``dollarPrice``), never a conversion."""
     ex = ex or {}
     price = parse_price(price_range_raw)
-    tier_prices = [t["price"] for t in ex.get("price_tiers") or []
-                   if isinstance(t, dict) and _is_number(t.get("price"))]
+    tiers = [t for t in ex.get("price_tiers") or [] if isinstance(t, dict) and _is_number(t.get("price"))]
+    tier_prices = [t["price"] for t in tiers]
     rng = ex.get("price_range_detail") or {}
     price["price_source"] = "card" if price["price_min"] is not None else "none"
     if tier_prices:
-        price["price_min"], price["price_max"] = min(tier_prices), max(tier_prices)
+        # Each ladder entry can carry BOTH its regular price AND (when a
+        # listing-wide discount is running) a lower promotion_price for the
+        # SAME quantity band (confirmed live: a tier shown as "2-99 pieces"
+        # displayed a struck ₹928.87 next to a current ₹715.61 - both read
+        # from the one ladder entry). When every tier reports one, the
+        # promotional ladder is what a buyer actually pays, so IT becomes
+        # price_min/price_max, with the regular ladder kept as the real,
+        # same-tier-paired original/struck-through range - never the
+        # search-card's own single-tier badge, which describes a different
+        # quantity point and would mix two unrelated prices into one "range".
+        promo_tier_prices = [t.get("promotion_price") for t in tiers if _is_number(t.get("promotion_price"))]
+        has_tier_promo = (len(promo_tier_prices) == len(tier_prices)
+                          and any(p != r for p, r in zip(promo_tier_prices, tier_prices)))
+        if has_tier_promo:
+            price["original_min"], price["original_max"] = min(tier_prices), max(tier_prices)
+            price["price_min"], price["price_max"] = min(promo_tier_prices), max(promo_tier_prices)
+            price["discount_percentage"] = None  # recomputed below from this real pair, never the card badge
+        else:
+            price["price_min"], price["price_max"] = min(tier_prices), max(tier_prices)
+            # No per-tier promotion data: a card-level struck-through price /
+            # "N% off" badge describes a different quantity point (the card's
+            # own single min-order tier), so it must not be kept as if it
+            # were this ladder's own original price (confirmed live: doing so
+            # produced a nonsense "discount" between two unrelated tiers).
+            price["original_min"] = price["original_max"] = None
+            price["discount_percentage"] = None
         price["price_source"] = "price_tiers"
         if not price.get("currency"):
             price["currency"] = currency_from_pattern(ex.get("price_currency_pattern"))

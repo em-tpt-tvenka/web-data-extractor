@@ -285,9 +285,18 @@ SELLER_JS = """
         .reduce((acc, a) => acc.concat((a.values || []).map(v => v.name)), []).filter(Boolean);
 
     const price = pr.price || {};
+    // Each ladder entry can carry BOTH its regular price AND, when a
+    // listing-wide discount is running, a lower promotionPrice for the SAME
+    // quantity band (confirmed live: a "2-99 pieces" tier showed a struck
+    // ₹928.87 next to a current ₹715.61, both on this one entry). Both are
+    // captured so the parser can use the genuinely-payable promotional
+    // ladder as the real price instead of defaulting to the pre-discount one.
     const tiers = (price.productLadderPrices || []).map(t => ({
         min_quantity: t.min, max_quantity: (t.max === -1 ? null : t.max),
         price: t.price, formatted_price: t.formatPrice, usd_price: t.dollarPrice,
+        promotion_price: (typeof t.promotionPrice === 'number' ? t.promotionPrice : null),
+        formatted_promotion_price: t.formatPromotionPrice || null,
+        promotion_usd_price: (typeof t.promotionDollarPrice === 'number' ? t.promotionDollarPrice : null),
     }));
     // Products sold at a price range (no quantity ladder) carry it, with the
     // promotional range when a discount runs, in productRangePrices.
@@ -306,8 +315,14 @@ SELLER_JS = """
         promo_text:    rp.pricePromotionRangeText || null,
     } : null;
 
-    const usdNums = tiers.map(t => Number(t.usd_price))
+    // Same regular-vs-promotional preference as the INR ladder above: when
+    // every tier reports its own promotional USD price, that is the one
+    // genuinely payable, so it is pooled instead of the pre-discount figure.
+    const promoUsdNums = tiers.map(t => Number(t.promotion_usd_price))
         .filter(x => Number.isFinite(x) && x > 0);
+    const usdNums = (tiers.length && promoUsdNums.length === tiers.length)
+        ? promoUsdNums
+        : tiers.map(t => Number(t.usd_price)).filter(x => Number.isFinite(x) && x > 0);
     const flatUsd = [price.dollarPrice, price.minDollarPrice, price.maxDollarPrice]
         .map(Number).filter(x => Number.isFinite(x) && x > 0);
     const rangeUsd = !range ? [] : (range.usd_promo_min !== null
