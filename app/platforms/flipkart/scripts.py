@@ -50,18 +50,53 @@ JS_PRICES = r"""
     }
     return false;
   };
-  const all = [...document.querySelectorAll('div,span,del,s,p')].filter(e => top(e) < 1800);
-  // The buy-box's own price text is reliably rendered in the largest font on
-  // the page; a variant-swatch chip or an unrelated "Similar Products"/
-  // recommendation carousel card showing some OTHER product's (or some OTHER
-  // configuration's) price is always set in a visibly smaller font. Picking
-  // the max-font-size candidate - for both the live price and the
-  // struck-through original price - keeps the scan from latching onto
-  // whichever matching element merely happens to come first in document
-  // order, which previously let a smaller-font, unrelated element contaminate
-  // the result (seen live: an unrelated Samsung flagship's struck price, or a
-  // different storage variant's own struck price, both elsewhere on the same
-  // page and both in a smaller font than the real MRP).
+  // The "Digital plans with this product" upsell widget (Google One etc.)
+  // shows its OWN subscription price (e.g. "₹177"/quarter) which can outrank
+  // the real buy-box price under the bare-number/font-size heuristic below -
+  // confirmed live (selling_price came back as "177", the Google One price,
+  // not the phone's). Exclude anything at or below that widget's position.
+  let cutoffY = 1800;
+  for (const e of document.querySelectorAll('div,span,h2,h3,p')) {
+    if (e.children.length === 0 && /^Digital plans with this product$/i.test(e.textContent.trim())) {
+      cutoffY = Math.min(cutoffY, top(e) - 10);
+      break;
+    }
+  }
+  // Font-size alone is NOT a reliable way to scope the scan to the real
+  // buy-box: confirmed live on a Samsung Galaxy S26 5G listing that a
+  // sponsored "AD" carousel card (a completely different phone, e.g. "Google
+  // Pixel 11 ... 89,999" / "Mivi One 5G ... 21,999") can render inline
+  // (not always inside a cross-origin iframe) above the real buy-box, and a
+  // same-product variant swatch (e.g. the "512 GB" option while viewing the
+  // "256 GB" page) always shows ITS OWN price too - both are large/prominent
+  // enough to beat the real price under a pure font-size heuristic in some
+  // loads. What reliably distinguishes them: every one of these
+  // (sponsored-ad cards, other-variant swatches, "Similar Products"/
+  // recommendation carousel cards) is a link - `a[href]` - to a DIFFERENT
+  // Flipkart product listing, identified by its own `?pid=`; the real
+  // buy-box price text is never inside such a cross-product link (it may
+  // still sit inside a non-navigational <a> - e.g. a "Protect Promise fee"
+  // tooltip trigger - but that anchor has no `pid` of its own, or one that
+  // matches the CURRENT page's own `pid`). Confirmed live across 3 different
+  // products (a phone, a laptop, a cheap accessory): this scoping alone
+  // removes every contaminating candidate while leaving the real price(s)
+  // untouched.
+  const curPid = (new URLSearchParams(location.search)).get('pid');
+  const inOtherProductLink = e => {
+    const a = e.closest('a[href*="/p/itm"]');
+    if (!a) return false;
+    const m = a.href.match(/[?&]pid=([^&]+)/);
+    const aPid = m ? m[1] : null;
+    return !!aPid && aPid !== curPid;
+  };
+  const all = [...document.querySelectorAll('div,span,del,s,p')]
+      .filter(e => top(e) < cutoffY && !inOtherProductLink(e));
+  // Among what's left (already scoped to this product's own page content),
+  // the buy-box's own price text is reliably rendered in the largest font on
+  // the page. Picking the max-font-size candidate - for both the live price
+  // and the struck-through original price - keeps the scan from latching
+  // onto whichever matching element merely happens to come first in document
+  // order.
   let bestSelling = 0, bestMrp = 0;
   for (const e of all.filter(e => e.children.length === 0)) {
     const t = e.textContent.trim();
@@ -386,6 +421,35 @@ JS_BREADCRUMBS = """
     }
   }
   return [];
+}
+"""
+
+JS_SIBLING_LINKS = """
+() => {
+  // Generic, label-independent sibling-SKU discovery: every real anchor on
+  // THIS page that points at the same base product (/p/itm<id>) is another
+  // valid combination, whatever dimension it varies (colour, storage, RAM,
+  // ...) - confirmed live that Flipkart's newer template renders colour
+  // swatches as plain <img>-only links with no "Color" heading anywhere
+  // nearby (unlike storage/RAM, which do get a "Variant:" text label), so
+  // JS_VARIANTS' label-based search above silently missed 3 of 4 colours on
+  // a real Galaxy S26 listing. This never reads the link's own text/alt for
+  // the attribute value (never guessed) - the actual attributes are read
+  // from each SKU's own specification table once its page is visited.
+  const m = location.pathname.match(/\\/p\\/(itm[0-9a-z]+)/i);
+  if (!m) return [];
+  const itm = m[1];
+  const seen = new Set();
+  const out = [];
+  document.querySelectorAll('a[href*="/p/' + itm + '"]').forEach(a => {
+    const href = a.href;
+    const pidm = href.match(/[?&]pid=([^&]+)/);
+    const pid = pidm ? pidm[1] : null;
+    if (!pid || seen.has(pid)) return;
+    seen.add(pid);
+    out.push({pid, url: href});
+  });
+  return out;
 }
 """
 

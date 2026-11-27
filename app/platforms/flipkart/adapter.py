@@ -64,7 +64,20 @@ class FlipkartAdapter(PlatformAdapter):
         if search.brand:
             terms.append(search.brand)
         terms.extend(search.keywords)
-        search_text = " ".join(t for t in terms if t).strip()
+        # Keep each word once (as Amazon's search_text builder already does):
+        # a request with the product name repeated across several
+        # overlapping "keywords" (e.g. "Galaxy S26", "Samsung S26 5G", "Galaxy
+        # S26 5G Smartphone") otherwise produces a long, highly repetitive
+        # query that confused Flipkart's own search relevance - confirmed
+        # live it can surface mostly accessories/wrong-brand results instead
+        # of the real product, where the deduped product name alone did not.
+        words, seen = [], set()
+        for t in terms:
+            for w in (t or "").split():
+                if w.lower() not in seen:
+                    seen.add(w.lower())
+                    words.append(w)
+        search_text = " ".join(words)
 
         filters = request.filters
         opts = request.scraping_options
@@ -93,7 +106,7 @@ class FlipkartAdapter(PlatformAdapter):
     def _passes_filters(self, model: dict, request: ScrapeJobRequest, options: FlipkartOptions) -> bool:
         filters = request.filters
         price = model.get("price", {}) or {}
-        selling = price.get("special_deal_price") or price.get("selling_price")
+        selling = price.get("lowest_price_with_offers") or price.get("selling_price")
 
         if filters.min_price is not None and selling is not None and selling < float(filters.min_price):
             return False

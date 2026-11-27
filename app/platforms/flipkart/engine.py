@@ -46,6 +46,13 @@ window.chrome = { runtime: {} };
 
 _BLOCK_RE = re.compile(r"captcha|access denied|are you a human|unusual traffic", re.I)
 
+# Bounds for the sibling-link variant crawl (see _crawl_variant_details):
+# generous enough for a real 4-colour x 2-storage (8 SKU) product with room
+# to spare, while guaranteeing a product with an unusually large combination
+# matrix can't turn one product into an unbounded crawl.
+_VARIANT_MAX_DEPTH = 3
+_VARIANT_MAX_TOTAL = 24
+
 
 @dataclass
 class EngineConfig:
@@ -179,6 +186,34 @@ class FlipkartEngine:
             params += f"&p%5B%5D=facets.price_range.to%3D{int(self.cfg.max_price)}"
         return f"{base}/search?{params}"
 
+    async def _load_search_page(self, page, url: str, attempts: int = 3) -> tuple[list, bool]:
+        """Load one search-results page with retries. A one-off navigation
+        error or bot-check challenge must not silently zero out the whole
+        job: confirmed live that a single failed/blocked attempt on page 1
+        (with no retry, and max_pages=1 so no other page to fall back to)
+        left a real job with 0 products discovered, while the exact same
+        search succeeded moments later on a fresh attempt - i.e. a transient
+        failure, not a real "no results" or a code regression. Returns
+        (results, blocked); blocked=True only once every attempt either
+        errored or hit the block-page check."""
+        for attempt in range(1, attempts + 1):
+            try:
+                await page.goto(url, wait_until="domcontentloaded", timeout=self.cfg.nav_timeout_ms)
+                await page.wait_for_timeout(2000)
+                await self._dismiss_login(page)
+                await self._scroll_page(page)
+                body = await self._inner_text(page)
+                if _BLOCK_RE.search(body):
+                    _log.warning("event=search_page_blocked attempt=%d/%d url=%s", attempt, attempts, url[:110])
+                    await page.wait_for_timeout(2500 * attempt)
+                    continue
+                return await self._ev(page, scripts.JS_SEARCH_RESULTS, []) or [], False
+            except Exception as exc:
+                _log.warning("event=search_page_failed attempt=%d/%d url=%s error=%s",
+                             attempt, attempts, url[:110], exc)
+                await page.wait_for_timeout(2000 * attempt)
+        return [], True
+
     async def _search(self, ctx) -> list[dict]:
         cfg = self.cfg
         page_limit = cfg.max_pages if cfg.max_pages > 0 else 10
@@ -189,20 +224,11 @@ class FlipkartEngine:
             for page_no in range(1, page_limit + 1):
                 url = self._search_url(page_no)
                 _log.info("event=search_page page=%d url=%s", page_no, url[:110])
-                try:
-                    await page.goto(url, wait_until="domcontentloaded", timeout=cfg.nav_timeout_ms)
-                    await page.wait_for_timeout(2000)
-                    await self._dismiss_login(page)
-                    await self._scroll_page(page)
-                except Exception as exc:
-                    _log.warning("event=search_page_failed page=%d error=%s", page_no, exc)
-                    continue
-                body = await self._inner_text(page)
-                if _BLOCK_RE.search(body):
+                results, blocked = await self._load_search_page(page, url)
+                if blocked:
                     _log.warning("event=search_blocked page=%d", page_no)
                     break
                 self.pages_processed += 1
-                results = await self._ev(page, scripts.JS_SEARCH_RESULTS, []) or []
                 added = 0
                 for r in results:
                     pid = r.get("product_id") or r.get("item_id")
@@ -277,10 +303,20 @@ class FlipkartEngine:
         data["sku"] = prod.get("sku")
         data["description"] = prod.get("description")
 
-        data["price"] = self._build_price(await self._ev(page, scripts.JS_PRICES, {}) or {}, text, offer)
+        # Strip the "Digital plans with this product" upsell block (Google One,
+        # Air fryer coupons, etc.) before any price/offer regex runs on the
+        # page text - confirmed live that its own "Extra ₹X Off on 1st
+        # quarter" text otherwise gets misread as the PRODUCT's
+        # extra_discount_amount, and it sits between the real offers section
+        # and "Similar Products", so leaving it in also risks bleeding into
+        # section-scoped extraction if an expected end-marker is ever absent.
+        clean_text = text.split("Digital plans with this product")[0]
+
+        data["price"] = self._build_price(await self._ev(page, scripts.JS_PRICES, {}) or {}, clean_text, offer)
         data["ratings"] = self._build_ratings(agg, text)
-        data["offers"] = self._build_offers(text)
-        data["delivery"], data["seller"], data["warranty_and_policies"] = self._build_logistics(text)
+        data["offers"] = self._build_offers(clean_text)
+        await self._fill_emi_offers(page, data["offers"])
+        data["delivery"], data["seller"], data["warranty_and_policies"] = self._build_logistics(clean_text)
 
         # Real product-highlight bullets only. Do NOT fall back to the marketing
         # description here: that paragraph already lives in content.text, and
@@ -298,6 +334,11 @@ class FlipkartEngine:
         data["images"] = imgs
         data["videos"] = vids
         data["variants"] = await self._ev(page, scripts.JS_VARIANTS, {}) or {}
+        # Internal only (never surfaced to callers of to_records/the API) -
+        # feeds _scrape_all_variant_details's sibling-link crawl; captured
+        # here, on this exact page/navigation, so every visited SKU (parent
+        # and every variant) supplies its own further siblings the same way.
+        data["sibling_links"] = await self._ev(page, scripts.JS_SIBLING_LINKS, []) or []
         return data
 
     async def _scrape_product(self, page: Page, item: dict) -> dict | None:
@@ -317,27 +358,39 @@ class FlipkartEngine:
                 _log.error("event=reviews_failed url=%s error=%s", item["url"][:90], exc)
         return data
 
-    async def _scrape_variant_details(self, ctx, parent_product_id: str | None,
-                                      combinations: list[dict]) -> list[dict]:
-        """Independently visit each OTHER real variant's own Flipkart product
-        page (a new tab in the SAME browser context, never a new browser) and
-        reuse ``_scrape_product_page`` - the exact same price/specs/images/
-        availability extraction used for the parent product, zero new
-        extraction code - to get that variant's own data. Reviews are
-        deliberately NOT re-scraped per variant: Flipkart's own real per-review
-        variant signal ("Review for: ..."), when present, is matched back from
-        the reviews already collected once at the parent listing (see
-        mapper.py). Bounded by ``variant_detail_concurrency``; one variant's
-        failure is isolated (recorded as ``variant_extraction: {"status":
-        "failed", ...}``) and never fails the product or the other variants."""
-        others = [c for c in combinations if c.get("platform_variant_id") != parent_product_id]
-        if not others:
-            return []
+    async def _crawl_variant_details(self, ctx, parent_product_id: str | None,
+                                     seed_combinations: list[dict]) -> list[dict]:
+        """Breadth-first crawl of this product's OTHER real SKUs, each
+        visited in a new tab of the SAME browser context (never a new
+        browser), reusing ``_scrape_product_page`` - the exact same price/
+        specs/images/availability extraction used for the parent product,
+        zero new extraction code. The frontier expands using whatever
+        FURTHER sibling links each visited page itself reveals
+        (``sibling_links``, captured by _scrape_product_page), not just the
+        parent's own swatches: confirmed live that Flipkart's colour swatches
+        only cross-link from the page you're currently viewing, while a given
+        colour's OTHER storage options only appear once you're on THAT
+        colour's own page - so a single-page combo scan (the old behaviour)
+        silently missed 3 of a Galaxy S26 listing's 4 real colours. Bounded
+        by ``variant_detail_concurrency`` (per-depth parallelism) and
+        ``_VARIANT_MAX_DEPTH``/``_VARIANT_MAX_TOTAL`` (so a product with an
+        unusually large combination matrix can't runaway-crawl). Reviews are
+        deliberately NOT re-scraped per variant: Flipkart's own real
+        per-review variant signal ("Review for: ..."), when present, is
+        matched back from the reviews already collected once at the parent
+        listing (see mapper.py). One SKU's failure is isolated (recorded as
+        ``variant_extraction: {"status": "failed", ...}``) and never stops
+        the rest of the crawl."""
         sem = asyncio.Semaphore(max(1, self.cfg.variant_detail_concurrency))
+        visited: dict[str, dict] = {}
+        known_pids = {parent_product_id}
+        frontier = {c["platform_variant_id"]: c for c in seed_combinations
+                    if c.get("platform_variant_id") not in known_pids}
+        known_pids |= set(frontier)
 
-        async def _one(combo: dict) -> dict:
+        async def _visit(combo: dict) -> dict:
             pid = combo["platform_variant_id"]
-            attrs = dict(combo["attributes"])
+            attrs = dict(combo.get("attributes") or {})
             base = {
                 "variant_id": common.variant_id(parent_product_id, pid),
                 "parent_product_id": parent_product_id,
@@ -346,6 +399,7 @@ class FlipkartEngine:
                 "attributes": attrs,
                 "product_url": combo["product_url"],
             }
+            discovered: list[dict] = []
             async with sem:
                 page = None
                 try:
@@ -357,8 +411,8 @@ class FlipkartEngine:
                     # The variant's own specification table is the most
                     # reliable attribute source (real values read straight off
                     # that SKU's own page) - merged in alongside whatever the
-                    # parent's swatch already told us; never overwritten with
-                    # a guess, only supplemented with real evidence.
+                    # sibling link already told us; never overwritten with a
+                    # guess, only supplemented with real evidence.
                     own_attrs = parsing.attributes_from_specs(parsed.get("specifications_flat") or {})
                     merged = {**attrs, **own_attrs}
                     base["attributes"] = merged
@@ -376,6 +430,7 @@ class FlipkartEngine:
                                     "total_reviews": ratings.get("total_reviews")},
                         "variant_extraction": {"status": "completed", "source": "platform"},
                     })
+                    discovered = parsing.sibling_combos(parsed.get("sibling_links"), exclude_pid=pid)
                 except Exception as exc:
                     _log.warning("event=variant_detail_failed parent=%s pid=%s error=%s",
                                  parent_product_id, pid, exc)
@@ -387,22 +442,51 @@ class FlipkartEngine:
                             await page.close()
                         except Exception:
                             pass
-            return base
+            return base, discovered
 
-        return list(await asyncio.gather(*[_one(c) for c in others]))
+        depth = 0
+        while frontier and depth < _VARIANT_MAX_DEPTH and len(visited) < _VARIANT_MAX_TOTAL:
+            batch = list(frontier.values())
+            frontier = {}
+            for base, discovered in await asyncio.gather(*[_visit(c) for c in batch]):
+                visited[base["platform_variant_id"]] = base
+                if len(visited) >= _VARIANT_MAX_TOTAL:
+                    continue
+                for nc in discovered:
+                    npid = nc["platform_variant_id"]
+                    if npid not in known_pids:
+                        known_pids.add(npid)
+                        frontier[npid] = nc
+            depth += 1
+        return list(visited.values())
 
     async def _scrape_all_variant_details(self, ctx, data: dict) -> list[dict]:
-        """Build this product's variant combinations from its own on-page
-        swatches, visit every OTHER one (data["product_id"]/"item_id" is
-        already fully scraped by the caller), and fold the parent's own
-        combination in using data already scraped above - no second visit to
-        its own page. Isolated from the rest of the product: any failure here
-        is logged and yields an empty variant_details list rather than
-        failing the whole product."""
+        """Build this product's variant combinations from every sibling link
+        discovered on its own page - both the generic, label-independent
+        ``sibling_links`` scan (catches colour, which Flipkart's newer
+        template renders with no text label at all) and the label-based
+        on-page-swatch scan (kept for whatever attribute text IT does carry,
+        e.g. storage/RAM pill text) - then crawls every OTHER one
+        (data["product_id"]/"item_id" is already fully scraped by the
+        caller), and folds the parent's own combination in using data already
+        scraped above - no second visit to its own page. Isolated from the
+        rest of the product: any failure here is logged and yields an empty
+        variant_details list rather than failing the whole product."""
         parent_pid = data.get("product_id") or data.get("item_id")
         try:
             combos = parsing.extract_variant_combinations(data.get("variants") or {})
-            variant_details = await self._scrape_variant_details(ctx, parent_pid, combos)
+            by_pid = {c["platform_variant_id"]: dict(c)
+                      for c in parsing.sibling_combos(data.get("sibling_links"), exclude_pid=parent_pid)}
+            for c in combos:
+                pid = c["platform_variant_id"]
+                if pid == parent_pid:
+                    continue
+                entry = by_pid.setdefault(pid, {"platform_variant_id": pid,
+                                                "product_url": c["product_url"], "attributes": {}})
+                entry["attributes"] = {**entry.get("attributes", {}), **c.get("attributes", {})}
+                entry.setdefault("product_url", c["product_url"])
+
+            variant_details = await self._crawl_variant_details(ctx, parent_pid, list(by_pid.values()))
 
             own_combo = next((c for c in combos if c.get("platform_variant_id") == parent_pid), None)
             parent_spec_attrs = parsing.attributes_from_specs(data.get("specifications_flat") or {})
@@ -445,6 +529,10 @@ class FlipkartEngine:
         discount = pr.get("discount") or tp["discount"]
         if not discount and selling and mrp and mrp > selling:
             discount = f"{round((mrp - selling) / mrp * 100)}%"
+        # Flipkart's own "Buy at ₹X / Lowest price for you" callout - the best
+        # price achievable after applying all available offers together, not
+        # a separately-badged "special deal" (there's no such label on the
+        # page; that was just this field's earlier, misleading name).
         wow = re.search(r"Buy at\s*₹\s*([\d,]+)", text)
         fee = re.search(r"\+\s*₹\s*([\d,]+)\s*Protect Promise Fee", text, re.I)
         extra = re.search(r"Extra\s*₹\s*([\d,]+)\s*off", text, re.I)
@@ -453,7 +541,7 @@ class FlipkartEngine:
             "selling_price": selling,
             "mrp": mrp,
             "discount_percent": discount,
-            "special_deal_price": parsing.to_number(wow.group(1)) if wow else None,
+            "lowest_price_with_offers": parsing.to_number(wow.group(1)) if wow else None,
             "protect_promise_fee": parsing.to_number(fee.group(1)) if fee else None,
             "availability": offer.get("availability"),
             "discount_amount": round(mrp - selling, 2) if mrp and selling and mrp > selling else None,
@@ -488,16 +576,64 @@ class FlipkartEngine:
         exch_blk = parsing.section(text, r"^Exchange offer\s*$", end_all[:3] + [r"^Bank offers"])
         old_style = re.findall(r"^(?:Bank Offer|Partner Offer|Special Price)\s*(.+)$", text, re.I | re.M)
         offers = {
-            "bank_offers": parsing.group_offers(bank_blk, r"^₹[\d,]+\s*off|^\d+%") or old_style,
-            "emi_offers": parsing.group_offers(emi_blk, r"^₹[\d,]+/m"),
-            "instant_loan_offers": parsing.group_offers(loan_blk, r"^₹[\d,]+/m"),
-            "exchange_offer": " | ".join(l for l in exch_blk.splitlines() if l.strip() and l.strip() != "Apply"),
+            "bank_offers": parsing.group_offers(bank_blk, r"^₹[\d,]+\s*off|^\d+%", min_segments=2) or old_style,
+            "emi_offers": parsing.group_offers(emi_blk, r"^₹[\d,]+/m", min_segments=2),
+            "instant_loan_offers": parsing.group_offers(loan_blk, r"^₹[\d,]+/m", min_segments=2),
+            # Dedup + drop section/button chrome ("Exchange offer" header,
+            # "Apply"/"Change pincode..." buttons) the same way bank offers
+            # needed it - confirmed live the block can repeat its own amount
+            # line twice around that chrome (e.g. "Not available at this
+            # Pincode | Up to X | Change pincode to exchange item | Exchange
+            # offer | Up to X").
+            "exchange_offer": " | ".join(dict.fromkeys(
+                l.strip() for l in exch_blk.splitlines()
+                if l.strip() and l.strip().lower() not in
+                ("apply", "exchange offer", "change pincode to exchange item", "know more")
+            )),
+            # Each real benefit starts with "Unlock ..." - splitting on that
+            # (rather than on blank lines, which this block doesn't have)
+            # gives group_offers' own dedup a real boundary to work with;
+            # confirmed live the page can render the same benefit tile twice,
+            # which previously surfaced as one offer string with the same
+            # sentence repeated back to back.
             "additional_benefits": parsing.group_offers(
-                parsing.section(text, r"^Additional benefits on this purchase\s*$", [r"^Delivery details"]), r"^$"),
+                parsing.section(text, r"^Additional benefits on this purchase\s*$", [r"^Delivery details"]),
+                r"^Unlock\b"),
         }
         offers["no_cost_emi_mentioned"] = bool(re.search(r"no[\s-]*cost\s*emi", text, re.I))
         offers["coupon_mentioned"] = bool(re.search(r"\bcoupon\b", text, re.I))
         return offers
+
+    async def _fill_emi_offers(self, page: Page, offers: dict) -> None:
+        """Flipkart renders EMI/instant-loan tiles in the SAME panel as bank
+        offers, swapped in only after "View EMI offers" is clicked (confirmed
+        live: clicking it replaces the "Bank offers" header/tiles in place,
+        it does not add a separate section) - which is why emi_offers and
+        instant_loan_offers came back empty even on products that genuinely
+        have EMI plans. _build_offers() already ran against the pre-click
+        text (so bank_offers is correct); here we toggle to the EMI view,
+        parse that text for EMI/instant-loan tiles only, then toggle back so
+        the page is left in its original state for the rest of scraping."""
+        try:
+            toggle = page.get_by_text(re.compile(r"^View EMI offers$", re.I))
+            if not await toggle.count():
+                return
+            el = toggle.first
+            if not await el.is_visible():
+                return
+            await el.scroll_into_view_if_needed(timeout=1500)
+            await el.click(timeout=2000)
+            await page.wait_for_timeout(500)
+            emi_text = (await self._inner_text(page)).split("Digital plans with this product")[0]
+            fresh = self._build_offers(emi_text)
+            offers["emi_offers"] = fresh["emi_offers"]
+            offers["instant_loan_offers"] = fresh["instant_loan_offers"]
+            back = page.get_by_text(re.compile(r"^View non-EMI offers$", re.I))
+            if await back.count():
+                await back.first.click(timeout=2000)
+                await page.wait_for_timeout(300)
+        except Exception as exc:
+            _log.warning("event=emi_offers_fetch_failed error=%s", exc)
 
     def _build_logistics(self, text: str):
         deliv = re.search(r"Delivery by\s*([^\n]+)", text)

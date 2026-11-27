@@ -295,23 +295,56 @@ class _ProductContext:
             variant_details=self.model.get("variant_details") or [],
         )
 
+    def _aggregate_availability(self, price: dict) -> str | None:
+        """The parent record's own status when only one configuration is
+        known; "partially_available" when variant_details shows a genuine
+        mix (confirmed bug: a product whose 512GB variant was in_stock still
+        reported the whole product out_of_stock, because this just copied
+        the single scraped-as-parent variant's own status)."""
+        statuses = {
+            s for vd in (self.model.get("variant_details") or [])
+            if (s := (vd.get("availability") or {}).get("status"))
+        }
+        if len(statuses) > 1:
+            return "partially_available"
+        if statuses:
+            return next(iter(statuses))
+        return parsing.availability_status(price.get("availability"))
+
     def commercial(self) -> CommercialBlock:
         price = self.price
         selling = price.get("selling_price")
         original = price.get("mrp")
-        special = price.get("special_deal_price")
+        # Flipkart's own "Buy at ₹X / Lowest price for you" callout - the best
+        # price achievable after applying all available offers together. Not
+        # a separately-badged "special deal" (there's no such label on the
+        # page); kept as its own field (lowest_price_with_offers) rather than
+        # conflated with the regular selling price.
+        lowest_with_offers = price.get("lowest_price_with_offers")
 
-        if special and selling and special < (selling * 0.5):
-            special = None
+        if lowest_with_offers and selling and lowest_with_offers < (selling * 0.5):
+            lowest_with_offers = None
 
-        final_selling = special or selling
+        # final_selling (lowest-with-offers-or-regular) is the right BASIS for
+        # stacking further bank/coupon/exchange offers on top of (it's the
+        # best currently-advertised price before those), but it must never be
+        # reported AS the regular selling_price - that field and
+        # lowest_price_with_offers were previously both set from this same
+        # value, silently losing the real regular selling price whenever the
+        # "Buy at" callout was lower (confirmed: a product showing selling=
+        # 87999/lowest_with_offers=75999 reported selling_price=75999, the
+        # "Buy at" figure, not the regular one).
+        final_selling = lowest_with_offers or selling
         listed = original or selling or final_selling
         if listed and final_selling and listed < final_selling:
             listed = final_selling
 
+        # The regular discount is MRP vs the REGULAR selling price, never vs
+        # the "Buy at" lowest-with-offers price (that's its own, separate
+        # discount, observable as listed_price vs lowest_price_with_offers).
         disc_amt = disc_pct = None
-        if original and final_selling and original > final_selling:
-            disc_amt = round(original - final_selling, 2)
+        if original and selling and original > selling:
+            disc_amt = round(original - selling, 2)
             disc_pct = round(disc_amt / original * 100, 2)
         elif price.get("discount_percent"):
             disc_pct = parsing.to_number(price.get("discount_percent"))
@@ -319,10 +352,20 @@ class _ProductContext:
         is_promo = bool(disc_amt or disc_pct or offers.get("bank_offers"))
         free_delivery = self.delivery.get("free_delivery")
 
-        min_p = final_selling
-        max_p = original if (original and min_p and original >= min_p) else final_selling
-        if min_p is not None and max_p is not None and min_p > max_p:
-            min_p, max_p = max_p, min_p
+        # Price range: use the REAL selling prices of every known variant
+        # (never MRP mixed with a selling/lowest-with-offers price -
+        # confirmed bug: a product with two variants selling at 87999/99999
+        # was reporting a "range" of 75999 (one variant's "Buy at" lowest
+        # price) to 137999 (its MRP), which isn't a real range of anything
+        # purchasable).
+        variant_prices = [
+            v for vd in (self.model.get("variant_details") or [])
+            if (v := ((vd.get("commercial") or {}).get("price") or {}).get("selling_price")) is not None
+        ]
+        if variant_prices:
+            min_p, max_p = min(variant_prices), max(variant_prices)
+        else:
+            min_p = max_p = selling or final_selling
 
         # Distinct per-offer-type effective prices - only computed from a real
         # numeric amount we can parse, never estimated from a bare boolean.
@@ -338,13 +381,13 @@ class _ProductContext:
         return CommercialBlock(
             price=PriceBlock(
                 listed_price=_money(listed, self.currency),
-                selling_price=_money(final_selling, self.currency),
+                selling_price=_money(selling or final_selling, self.currency),
                 original_price=_money(original, self.currency),
                 discount_amount=disc_amt,
                 discount_percentage=disc_pct,
                 price_type="promotional" if is_promo else "regular",
                 price_observed_at=self.scraped_at,
-                lowest_price_with_offers=_money(special, self.currency) if special else None,
+                lowest_price_with_offers=_money(lowest_with_offers, self.currency) if lowest_with_offers else None,
                 offer_discount_amount=price.get("offer_discount_amount"),
                 extra_discount_amount=price.get("extra_discount_amount"),
                 bank_offer_adjusted_price=MoneyAmount(**ep["bank_offer_adjusted_price"])
@@ -374,7 +417,7 @@ class _ProductContext:
                 exchange_offer_available=bool(offers.get("exchange_offer")),
                 cash_on_delivery=bool(self.policies.get("cash_on_delivery")),
             ),
-            availability=AvailabilityBlock(status=parsing.availability_status(price.get("availability"))),
+            availability=AvailabilityBlock(status=self._aggregate_availability(price)),
             delivery=DeliveryBlock(
                 delivery_charge=_money(0, self.currency) if free_delivery else None,
                 delivery_type="free_delivery" if free_delivery else None,

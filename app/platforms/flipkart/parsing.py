@@ -96,19 +96,41 @@ def section(text: str, start: str, ends=()) -> str:
     return rest[:cut].strip()
 
 
-def group_offers(block: str, start_regex: str) -> list:
-    skip = {"best value for you", "apply", "know more", "t&c", ""}
+def group_offers(block: str, start_regex: str, min_segments: int = 1) -> list:
+    # Section/button chrome that can trail onto the last real offer line
+    # within a block (confirmed live: "Bank offers" repeating as its own
+    # line, and a "View EMI offers"/"View non-EMI offers" toggle link, both
+    # getting silently appended to the previous offer's text via " | "
+    # instead of being dropped).
+    skip = {"best value for you", "apply", "know more", "t&c", "",
+            "bank offers", "emi offers", "additional benefits",
+            "view emi offers", "view non-emi offers", "view all offers", "view more"}
+    # A "<total amount> off" badge (e.g. "₹0 off") sits right before the
+    # toggle link at the very end of the block regardless of which section
+    # this is (confirmed live on the EMI block, where it doesn't match
+    # start_regex's "/m" shape and so previously got silently appended onto
+    # the last real tile instead of being split off and dropped below).
+    badge_re = r"^₹[\d,]+\s*off$"
     offers, cur = [], []
     for line in (l.strip() for l in block.splitlines()):
         if line.lower() in skip:
             continue
-        if re.search(start_regex, line, re.I) and cur:
+        if (re.search(start_regex, line, re.I) or re.search(badge_re, line)) and cur:
             offers.append(" | ".join(cur))
             cur = []
         cur.append(line)
     if cur:
         offers.append(" | ".join(cur))
-    return offers
+    # The section header repeats itself as a trailing "<header>\n<total
+    # amount>\n<toggle link>" badge right after the last real tile (e.g.
+    # "Bank offers\n₹12,000 off\nView EMI offers"); the header and toggle
+    # line are already dropped via `skip` above, leaving a bogus one-segment
+    # offer that's just that total amount with no bank/card info attached -
+    # confirmed live every real bank/EMI/loan tile always carries at least
+    # one more segment (bank name, card type, tenure). Real single-segment
+    # offers (e.g. additional_benefits' "Unlock ..." entries) pass
+    # min_segments=1 (the default) so this never filters them.
+    return [o for o in dict.fromkeys(offers) if o and o.count(" | ") + 1 >= min_segments]
 
 
 def weighted_average(breakdown: dict):
@@ -880,6 +902,27 @@ def extract_variant_combinations(variants: dict) -> list[dict]:
             entry = by_pid.setdefault(pid, {"platform_variant_id": pid, "product_url": url, "attributes": {}})
             entry["attributes"].setdefault(canon_label, option)
     return [c for c in by_pid.values() if c["attributes"]]
+
+
+def sibling_combos(links: list[dict] | None, exclude_pid: str | None = None) -> list[dict]:
+    """Companion to extract_variant_combinations(): turns JS_SIBLING_LINKS'
+    generic same-base-product anchor list (any dimension, discovered without
+    needing a recognized text label - see that script's docstring for why
+    that matters for colour) into the same combo shape used elsewhere.
+    Attributes start empty here - deliberately never guessed from link text -
+    and are filled once that SKU's own page is visited and its own
+    specification table is read (attributes_from_specs)."""
+    out: list[dict] = []
+    seen: set[str] = set()
+    for l in links or []:
+        if not isinstance(l, dict):
+            continue
+        pid, url = l.get("pid"), l.get("url")
+        if not pid or not url or pid == exclude_pid or pid in seen:
+            continue
+        seen.add(pid)
+        out.append({"platform_variant_id": pid, "product_url": url, "attributes": {}})
+    return out
 
 
 # Flipkart draws its own on-page swatch dimensions from a small, documented
