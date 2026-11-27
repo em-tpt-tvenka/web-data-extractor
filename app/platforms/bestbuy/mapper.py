@@ -170,6 +170,23 @@ class _ProductContext:
             specifications=self.specs,
         )
 
+    def _aggregate_availability(self) -> str | None:
+        """The parent record's own status when only one configuration is
+        known; "partially_available" when variant_details shows a genuine
+        mix (same fix as Flipkart: don't just copy one variant's status).
+        Best Buy doesn't populate variant_details yet, so this is currently
+        a no-op fallback - kept consistent with every other platform so no
+        further pass is needed once variants are implemented here."""
+        statuses = {
+            s for vd in (self.model.get("variant_details") or [])
+            if (s := (vd.get("availability") or {}).get("status"))
+        }
+        if len(statuses) > 1:
+            return "partially_available"
+        if statuses:
+            return next(iter(statuses))
+        return self.model.get("availability")
+
     def commercial(self) -> CommercialBlock:
         selling = self.price.get("selling_price")
         original = self.price.get("original_price")
@@ -178,6 +195,19 @@ class _ProductContext:
             disc_amt = round(original - selling, 2)
             disc_pct = round(disc_amt / original * 100, 2)
         is_promo = bool(disc_amt)
+
+        # Price range: use the REAL selling prices of every known variant
+        # (same fix as Flipkart) - only when variant_details is actually
+        # populated; otherwise keep the old no-range fallback unchanged.
+        variant_prices = [
+            v for vd in (self.model.get("variant_details") or [])
+            if (v := ((vd.get("commercial") or {}).get("price") or {}).get("selling_price")) is not None
+        ]
+        if variant_prices:
+            price_range_block = PriceRangeBlock(
+                minimum=min(variant_prices), maximum=max(variant_prices), currency=self.currency)
+        else:
+            price_range_block = PriceRangeBlock(currency=self.currency)
 
         delivery_block = None
         if self.delivery:
@@ -234,9 +264,9 @@ class _ProductContext:
                 final_effective_price=MoneyAmount(**ep["final_effective_price"])
                 if ep["final_effective_price"] else None,
             ),
-            price_range=PriceRangeBlock(currency=self.currency),
+            price_range=price_range_block,
             promotion=PromotionBlock(is_promotional=is_promo),
-            availability=AvailabilityBlock(status=self.model.get("availability"),
+            availability=AvailabilityBlock(status=self._aggregate_availability(),
                                            stock_quantity=self.stock_quantity),
             delivery=delivery_block,
             warranty=warranty_block,
