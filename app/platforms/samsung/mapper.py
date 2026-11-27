@@ -222,6 +222,28 @@ class _ProductContext:
             variant_details=self.model.get("variant_details") or [],
         )
 
+    def _aggregate_availability(self) -> str | None:
+        """The single known status when only one configuration's status is
+        known; "partially_available" when ``variant_details`` shows a genuine
+        mix across sibling SKUs -- confirmed live (Galaxy S25 Ultra): several
+        256GB/512GB colour SKUs are out_of_stock while others (and the
+        current/selected SKU) are in_stock, so reporting the whole product
+        as a single status (the old behaviour, which just copied the current
+        SKU's own status) silently hid that most of the family is
+        unavailable."""
+        def _status(vd: dict) -> str | None:
+            avail = vd.get("availability")
+            return avail.get("status") if isinstance(avail, dict) else avail
+
+        statuses = {
+            s for vd in (self.model.get("variant_details") or []) if (s := _status(vd))
+        }
+        if len(statuses) > 1:
+            return "partially_available"
+        if statuses:
+            return next(iter(statuses))
+        return self.price.get("availability")
+
     def commercial(self) -> CommercialBlock:
         selling = self.price.get("selling_price")
         original = self.price.get("mrp")
@@ -237,8 +259,22 @@ class _ProductContext:
         promo_type = ("discount" if disc_amt else ("bank_offer" if has_bank else None))
         months = warranty_months(self.warranty_text)
         free_delivery = bool(self.delivery.get("free_delivery"))
-        min_p = selling
-        max_p = original if (original and selling and original >= selling) else selling
+
+        # Price range: the real selling prices of every known sibling SKU
+        # (never MRP mixed in) -- confirmed live (Galaxy S25 Ultra): the old
+        # logic reported a "range" of this SKU's own selling price (119999)
+        # to its own MRP (129999), which isn't a real range of anything
+        # purchasable, and it ignored that other in-stock sibling SKUs in
+        # variant_details sell as high as 139999. Falls back to the single
+        # known selling price only when no variant_details exist.
+        variant_prices = [
+            v for vd in (self.model.get("variant_details") or [])
+            if (v := ((vd.get("commercial") or {}).get("price") or {}).get("selling_price")) is not None
+        ]
+        if variant_prices:
+            min_p, max_p = min(variant_prices), max(variant_prices)
+        else:
+            min_p = max_p = selling
         # Payment options are emitted only on explicit page evidence, else None.
         payment = PaymentOptionsBlock(
             emi_available=True if offers.get("emi_offers") else None,
@@ -280,11 +316,11 @@ class _ProductContext:
             ),
             price_range=PriceRangeBlock(
                 minimum=min_p, maximum=max_p,
-                currency=self.currency if selling is not None else None,
+                currency=self.currency if min_p is not None else None,
             ),
             promotion=PromotionBlock(is_promotional=is_promo, promotion_type=promo_type),
             payment_options=payment if any(payment.model_dump().values()) else None,
-            availability=AvailabilityBlock(status=self.price.get("availability")),
+            availability=AvailabilityBlock(status=self._aggregate_availability()),
             delivery=DeliveryBlock(delivery_charge=_money(0, self.currency) if free_delivery else None,
                                    delivery_type="free_delivery" if free_delivery else None)
             if free_delivery else None,

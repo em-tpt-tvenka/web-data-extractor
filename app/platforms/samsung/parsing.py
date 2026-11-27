@@ -581,6 +581,38 @@ def _price(html: str, soup: BeautifulSoup, products: list[dict], hidden: dict | 
             elif "outofstock" in avail or "discontinued" in avail:
                 availability = "out_of_stock"
 
+    # The selected configuration's own radio-option tile on Samsung's "Hubble"
+    # buy-page template (device-line / storage / colour pickers) carries its
+    # own ``data-price`` (MRP) / ``data-discountprice`` (selling) pair per
+    # option. When ld+json carries no offers (confirmed live: the Galaxy S26
+    # family buy page, whose ProductGroup ld+json has none), the only other
+    # sources are whole-page regexes below, which blindly grab whichever
+    # option happens to appear FIRST in the document -- confirmed live to be
+    # a DIFFERENT, wrong configuration's price/MRP whenever the actually
+    # selected one (identified by the ``current_model_code``/``shopSKU``
+    # hidden field) isn't that first one (e.g. the page lists "Galaxy S26+",
+    # "Galaxy S26", "Galaxy S26 FE" tiles in that fixed order regardless of
+    # which is selected). Scoping to the one tile whose own ``data-modelcode``
+    # matches the page's own selected SKU avoids that cross-configuration
+    # mixup entirely.
+    current_sku = (hidden.get("current_model_code") or hidden.get("shopSKU") or "").strip()
+    if current_sku and (selling is None or mrp is None):
+        for rm in re.finditer(r'<input[^>]*class="hubble-pd-radio__input"[^>]*>', html):
+            tag = rm.group(0)
+            mc = re.search(r'data-modelcode="([^"]*)"', tag)
+            if not mc or not mc.group(1) or not current_sku.startswith(mc.group(1)):
+                continue
+            dp = re.search(r'data-price="([^"]*)"', tag)
+            ddp = re.search(r'data-discountprice="([^"]*)"', tag)
+            scoped_mrp = _to_number(dp.group(1)) if dp else None
+            scoped_selling = _to_number(ddp.group(1)) if ddp else None
+            if mrp is None and scoped_mrp is not None:
+                mrp = scoped_mrp
+            if selling is None and scoped_selling is not None:
+                selling = scoped_selling
+            if scoped_mrp is not None or scoped_selling is not None:
+                break
+
     # Schema.org price on the commercial '/buy/' page:
     # <input itemprop="price" content="64999">. Samsung leaves this empty when
     # the exact SKU is no longer sold (EOL/out of stock) -- that is a genuine
