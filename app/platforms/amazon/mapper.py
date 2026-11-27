@@ -229,6 +229,29 @@ class _ProductContext:
             variant_details=self.model.get("variant_details") or [],
         )
 
+    def _aggregate_availability(self) -> tuple[str | None, int | None]:
+        """The parent record's own availability when only one configuration is
+        known; "partially_available" when variant_details shows a genuine mix
+        (same bug class confirmed on Flipkart: a product whose other
+        variants were in_stock still reported the whole product's status as
+        just the single scraped-as-parent variant's own status - confirmed
+        live here on Samsung Galaxy A36 5G, where the Dark Blue/128GB parent
+        is "limited_stock" (1 left) while the other 3 color/storage
+        combinations are plainly "in_stock"). stock_quantity is kept only
+        when every known variant agrees on status (a single number cannot
+        describe a mixed-status product)."""
+        variant_details = self.model.get("variant_details") or []
+        statuses = {
+            s for vd in variant_details
+            if (s := (vd.get("availability") or {}).get("status"))
+        }
+        avail = self.model.get("availability") or {}
+        if len(statuses) > 1:
+            return "partially_available", None
+        if statuses:
+            return next(iter(statuses)), avail.get("stock_quantity")
+        return avail.get("status"), avail.get("stock_quantity")
+
     def commercial(self) -> CommercialBlock:
         price = self.price
         selling = price.get("selling_price")
@@ -251,12 +274,26 @@ class _ProductContext:
         promo_type = self.promotion.get("promotion_type") or (
             "discount" if (disc_amt or disc_pct) else ("bank_offer" if has_bank else None))
 
-        min_p = final_selling
-        max_p = original if (original and min_p and original >= min_p) else final_selling
+        # Price range: use the REAL selling prices of every known variant
+        # (never MRP mixed with a selling price - same bug class confirmed on
+        # Flipkart: falling back to the single-known-price logic here mixed
+        # this product's OWN mrp (39499, the 128GB Dark Blue variant's MRP)
+        # into what should be a range of purchasable prices across variants,
+        # e.g. reporting 29298-39499 live when the 4 known variants' real
+        # selling prices actually span 27199-36047).
+        variant_prices = [
+            v for vd in (self.model.get("variant_details") or [])
+            if (v := ((vd.get("commercial") or {}).get("price") or {}).get("selling_price")) is not None
+        ]
+        if variant_prices:
+            min_p, max_p = min(variant_prices), max(variant_prices)
+        else:
+            min_p = final_selling
+            max_p = original if (original and min_p and original >= min_p) else final_selling
 
         cost = self.delivery.get("delivery_cost")
         delivery_type = "free_delivery" if cost == 0 else ("paid_delivery" if cost else None)
-        avail = self.model.get("availability") or {}
+        avail_status, avail_qty = self._aggregate_availability()
 
         # Distinct per-offer-type effective prices - only computed from a real
         # numeric amount we can parse, never estimated from a bare boolean.
@@ -308,8 +345,7 @@ class _ProductContext:
                 exchange_offer_available=self.payment.get("exchange_offer_available"),
                 cash_on_delivery=self.payment.get("cash_on_delivery"),
             ),
-            availability=AvailabilityBlock(status=avail.get("status"),
-                                           stock_quantity=avail.get("stock_quantity")),
+            availability=AvailabilityBlock(status=avail_status, stock_quantity=avail_qty),
             delivery=DeliveryBlock(
                 delivery_charge=_money(cost, self.currency),
                 estimated_delivery_date=self.delivery.get("estimate"),
